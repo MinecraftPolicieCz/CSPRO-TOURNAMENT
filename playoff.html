@@ -4,18 +4,30 @@
     <meta charset="UTF-8">
     <title>CSPRO.CZ - PlayOff</title>
     <style>
-        :root { --bg-color: #121212; --accent-color: #f3a933; --card-bg: #1e1e1e; }
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --border-color: #333; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
-        .page { width: 1100px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        .bracket { display: flex; gap: 40px; align-items: center; margin-top: 30px; }
-        .match-box { background: var(--card-bg); border: 1px solid #333; border-radius: 6px; width: 220px; margin: 15px 0; }
-        .team-row { display: flex; border-bottom: 1px solid #333; }
-        input { background: transparent; border: none; color: white; padding: 10px; width: 100%; font-size: 13px; }
-        input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #333; color: var(--accent-color); font-weight: bold; }
-        .champion-card { background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 25px; border-radius: 12px; margin-top: 50px; text-align: center; width: 400px; }
-        .champion-card input { color: black; font-size: 2em; font-weight: 900; text-align: center; }
+
+        .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        h1 { color: var(--accent-color); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 50px; }
+
+        .bracket { display: flex; justify-content: space-between; width: 100%; align-items: stretch; }
+        .column { display: flex; flex-direction: column; justify-content: space-around; width: 280px; }
+        .round-title { text-align: center; color: #555; text-transform: uppercase; font-size: 0.8em; font-weight: bold; margin-bottom: 20px; letter-spacing: 2px; }
+
+        .match-box { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin: 15px 0; overflow: hidden; transition: 0.3s; }
+        .match-box:hover { border-color: var(--accent-color); }
+        .team-row { display: flex; border-bottom: 1px solid #222; align-items: center; }
+        .team-row:last-child { border-bottom: none; }
+        
+        input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 14px; }
+        input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; background: #0a0a0a; }
+        
+        .champion-section { margin-top: 80px; width: 500px; padding: 40px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); border-radius: 20px; text-align: center; box-shadow: 0 15px 40px rgba(243, 169, 51, 0.2); }
+        .champion-section h2 { color: black; font-weight: 800; margin: 0 0 15px 0; text-transform: uppercase; }
+        .champion-section input { color: black; font-size: 2.5em; font-weight: 900; text-align: center; border-bottom: 3px solid rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -26,22 +38,37 @@
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
     </nav>
+
     <div class="page">
-        <h1>PLAYOFF PAVOUK</h1>
+        <h1>PlayOff Pavouk</h1>
+        
         <div class="bracket">
-            <div><div class="match-box"><div class="team-row"><input id="q1_t1" placeholder="Tým"><input id="q1_s1" type="number" value="0"></div><div class="team-row"><input id="q1_t2" placeholder="Tým"><input id="q1_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="q2_t1" placeholder="Tým"><input id="q2_s1" type="number" value="0"></div><div class="team-row"><input id="q2_t2" placeholder="Tým"><input id="q2_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="q3_t1" placeholder="Tým"><input id="q3_s1" type="number" value="0"></div><div class="team-row"><input id="q3_t2" placeholder="Tým"><input id="q3_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="q4_t1" placeholder="Tým"><input id="q4_s1" type="number" value="0"></div><div class="team-row"><input id="q4_t2" placeholder="Tým"><input id="q4_s2" type="number" value="0"></div></div>
+            <div class="column">
+                <div class="round-title">Čtvrtfinále</div>
+                <div class="match-box"><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div></div>
+                <div class="match-box"><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number" value="0"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number" value="0"></div></div>
+                <div class="match-box"><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number" value="0"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number" value="0"></div></div>
+                <div class="match-box"><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number" value="0"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number" value="0"></div></div>
             </div>
-            <div><div class="match-box" style="margin-top: 60px;"><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/Q2"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/Q2"><input id="s1_s2" type="number" value="0"></div></div>
-                <div class="match-box" style="margin-top: 120px;"><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/Q4"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/Q4"><input id="s2_s2" type="number" value="0"></div></div>
+
+            <div class="column">
+                <div class="round-title">Semifinále</div>
+                <div class="match-box"><div class="team-row"><input id="s1_t1" placeholder="Semifinále A"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Semifinále A"><input id="s1_s2" type="number" value="0"></div></div>
+                <div class="match-box"><div class="team-row"><input id="s2_t1" placeholder="Semifinále B"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Semifinále B"><input id="s2_s2" type="number" value="0"></div></div>
             </div>
-            <div><div class="match-box" style="border: 2px solid gold;"><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
+
+            <div class="column">
+                <div class="round-title" style="color:gold;">Grand Finále</div>
+                <div class="match-box" style="border: 2px solid gold;"><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
             </div>
         </div>
-        <div class="champion-card"><div style="color:black; font-weight:bold;">ŠAMPION</div><input id="champ_name" placeholder="NÁZEV TÝMU"></div>
+
+        <div class="champion-section">
+            <h2>Šampion Sezóny</h2>
+            <input id="champ_name" placeholder="NÁZEV TÝMU">
+        </div>
     </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
