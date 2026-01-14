@@ -4,43 +4,63 @@
     <meta charset="UTF-8">
     <title>CSPRO.CZ - Admin Login</title>
     <style>
-        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
-        .login-card { background: #1e1e1e; padding: 40px; border-radius: 12px; border: 1px solid #333; width: 350px; text-align: center; }
+        body { font-family: 'Segoe UI', sans-serif; background: #121212; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid #f3a933; position: fixed; top: 0; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
+        .login-card { background: #1e1e1e; padding: 40px; border-radius: 12px; border: 1px solid #333; width: 350px; text-align: center; margin-top: 60px; }
         h2 { color: #f3a933; text-transform: uppercase; letter-spacing: 2px; }
         input { width: 100%; padding: 12px; margin: 10px 0; background: #000; border: 1px solid #444; color: white; border-radius: 4px; box-sizing: border-box; }
         button { width: 100%; padding: 12px; background: #f3a933; border: none; color: black; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 10px; text-transform: uppercase; }
-        .back-link { display: block; margin-top: 20px; color: #888; text-decoration: none; font-size: 0.9em; }
+        button:hover { background: #ffd700; }
     </style>
 </head>
 <body>
+
+    <nav>
+        <a href="index.html" class="nav-link">Domů</a>
+        <a href="playoff.html" class="nav-link">PlayOff</a>
+        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+        <a href="pravidla.html" class="nav-link">Pravidla</a>
+    </nav>
+
     <div class="login-card">
         <h2>Admin Panel</h2>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="pass" placeholder="Heslo">
-        <button onclick="login()">Přihlásit se</button>
-        <a href="playoff.html" class="back-link">← Zpět na výsledky</a>
+        <button id="loginBtn">Přihlásit se</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script>
+    <script type="module">
+        // Importy pro Firebase 12.7.0
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
         const firebaseConfig = {
-            apiKey: "AIzaSyBwygFW020kcMt0VuNT9hpfZPWtFGxNz_U",
+            apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U",
             authDomain: "cspro-web.firebaseapp.com",
             projectId: "cspro-web",
             storageBucket: "cspro-web.firebasestorage.app",
             messagingSenderId: "412820092666",
             appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43"
         };
-        firebase.initializeApp(firebaseConfig);
 
-        function login() {
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Funkce pro přihlášení
+        document.getElementById('loginBtn').addEventListener('click', () => {
             const email = document.getElementById('email').value;
             const pass = document.getElementById('pass').value;
-            firebase.auth().signInWithEmailAndPassword(email, pass)
-                .then(() => { window.location.href = "playoff.html"; })
-                .catch(err => alert("Chyba: " + err.message));
-        }
+
+            signInWithEmailAndPassword(auth, email, pass)
+                .then((userCredential) => {
+                    alert("Přihlášení úspěšné!");
+                    window.location.href = "index.html"; // Přesměrování na domů
+                })
+                .catch((error) => {
+                    alert("Chyba: " + error.message);
+                });
+        });
     </script>
 </body>
 </html>
