@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Archiv Sezón - CSPRO.CZ</title>
+    <style>
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
+        .page { width: 1000px; padding: 60px 20px; }
+        .season-list { display: flex; flex-direction: column; gap: 15px; }
+        .season-item { background: #1a1a1a; padding: 20px; border-radius: 8px; border-left: 5px solid var(--accent-color); text-decoration: none; color: white; display: flex; justify-content: space-between; align-items: center; }
+        .season-item:hover { background: #222; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="nav-link">Domů</a>
+        <a href="playoff.html" class="nav-link">PlayOff</a>
+        <a href="archiv.html" class="nav-link">Archiv</a>
+    </nav>
+    <div class="page">
+        <h1 style="color: var(--accent-color);">ARCHIV SEZÓN</h1>
+        <div class="season-list">
+            <a href="sezona1.html" class="season-item">
+                <span>SEZÓNA #1 (2026)</span>
+                <span style="color: #888;">Dokončeno ›</span>
+            </a>
+            </div>
+    </div>
+</body>
+</html>
