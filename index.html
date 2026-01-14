@@ -6,34 +6,67 @@
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); }
+        
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; transition: 0.3s; }
         .nav-link:hover { color: var(--accent-color); background: #222; }
-        .hero { text-align: center; padding: 60px 20px; max-width: 1000px; }
-        h1 { font-size: 3em; color: var(--accent-color); text-transform: uppercase; letter-spacing: 5px; }
-        .twitch-container { width: 100%; max-width: 900px; aspect-ratio: 16 / 9; background: #000; margin-top: 30px; border: 2px solid #333; }
-        .menu-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 40px; width: 100%; }
+
+        .hero { text-align: center; padding: 40px 20px; max-width: 1000px; width: 100%; }
+        h1 { font-size: 3em; color: var(--accent-color); text-transform: uppercase; letter-spacing: 5px; margin: 20px 0; }
+        
+        .twitch-container { 
+            width: 100%; 
+            aspect-ratio: 16 / 9; 
+            background: #000; 
+            border: 2px solid #333; 
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 40px;
+        }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; }
         .menu-card { background: var(--card-bg); padding: 25px; border-radius: 8px; text-decoration: none; color: white; border: 1px solid #333; text-align: center; transition: 0.3s; }
         .menu-card:hover { border-color: var(--accent-color); transform: translateY(-5px); }
+        .menu-card h3 { color: var(--accent-color); margin-top: 0; }
     </style>
 </head>
 <body>
+
     <nav>
         <a href="index.html" class="nav-link">Domů</a>
         <a href="playoff.html" class="nav-link">PlayOff</a>
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
+        <a href="archiv.html" class="nav-link">Archiv</a>
     </nav>
+
     <div class="hero">
         <h1>CSPRO.CZ TOURNAMENT</h1>
+        
         <div class="twitch-container">
-            <iframe src="https://player.twitch.tv/?channel=TVUJ_KANAL&parent=tvojjmeno.github.io" frameborder="0" allowfullscreen="true" scrolling="no" height="100%" width="100%"></iframe>
+            <iframe
+                src="https://player.twitch.tv/?channel=stratycs&parent=TVUJ-WEB.github.io"
+                height="100%"
+                width="100%"
+                allowfullscreen="true">
+            </iframe>
         </div>
+
         <div class="menu-grid">
-            <a href="playoff.html" class="menu-card"><h3>PlayOff</h3><p>Aktuální pavouk</p></a>
-            <a href="kvalifikace.html" class="menu-card"><h3>Kvalifikace</h3><p>8 slotů (32 týmů)</p></a>
-            <a href="archiv.html" class="menu-card"><h3>Archiv</h3><p>Minulé sezóny</p></a>
+            <a href="playoff.html" class="menu-card">
+                <h3>Aktuální PlayOff</h3>
+                <p>Pavouk zápasů a live výsledky.</p>
+            </a>
+            <a href="kvalifikace.html" class="menu-card">
+                <h3>Kvalifikace</h3>
+                <p>8 slotů pro 32 týmů.</p>
+            </a>
+            <a href="archiv.html" class="menu-card">
+                <h3>Archiv Sezón</h3>
+                <p>Historie minulých sezón.</p>
+            </a>
         </div>
     </div>
+
 </body>
 </html>
