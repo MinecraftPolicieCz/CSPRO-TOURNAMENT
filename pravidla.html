@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>CSPRO.CZ TOURNAMENT S1 - Pravidla</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #ffffff;
+            --accent-color: #f3a933; 
+            --border-color: #333;
+        }
+
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background: var(--bg-color); 
+            color: var(--text-color); 
+            margin: 0; 
+            padding: 0; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+        }
+
+        .page { 
+            width: 1000px; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            padding: 60px 80px; 
+            box-sizing: border-box; 
+        }
+
+        h1 { 
+            color: var(--accent-color); 
+            text-transform: uppercase; 
+            letter-spacing: 3px; 
+            margin: 0 0 10px 0; 
+            font-size: 2.8em; 
+            text-align: center; 
+            border-bottom: 3px solid var(--accent-color);
+            padding-bottom: 20px;
+        }
+
+        .sub-title { 
+            color: #888; 
+            margin-bottom: 50px; 
+            font-size: 1.2em; 
+            text-align: center; 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+        }
+
+        .print-btn { 
+            background: var(--accent-color); 
+            border: none; 
+            padding: 12px 25px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 4px; 
+            position: fixed; 
+            right: 30px; 
+            top: 30px; 
+            z-index: 100; 
+            text-transform: uppercase;
+        }
+
+        .rules-section { 
+            width: 100%; 
+            text-align: left; 
+            line-height: 1.8; 
+        }
+
+        .rules-section h2 { 
+            color: var(--accent-color); 
+            font-size: 1.6em;
+            margin-top: 40px; 
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            display: flex;
+            align-items: center;
+        }
+
+        .rules-section h2::before {
+            content: "";
+            display: inline-block;
+            width: 10px;
+            height: 25px;
+            background: var(--accent-color);
+            margin-right: 15px;
+        }
+
+        .rules-section ul { 
+            list-style-type: none; 
+            padding: 0; 
+            margin: 0;
+        }
+
+        .rules-section li { 
+            background: var(--card-bg);
+            margin-bottom: 12px; 
+            padding: 15px 20px 15px 45px; 
+            border-radius: 6px;
+            border-left: 3px solid #444;
+            position: relative; 
+            font-size: 1.1em; 
+        }
+
+        .rules-section li::before { 
+            content: "›"; 
+            color: var(--accent-color); 
+            position: absolute; 
+            left: 15px; 
+            font-size: 1.8em; 
+            line-height: 1; 
+            font-weight: bold; 
+            top: 12px;
+        }
+
+        footer {
+            margin-top: auto;
+            padding-top: 50px;
+            text-align: center;
+            color: #555;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @media print {
+            .print-btn { display: none; }
+            .page { width: 100%; height: auto; padding: 40px; }
+            body { background: white; color: black; }
+            .rules-section li { 
+                border: 1px solid #ddd; 
+                background: #fff !important; 
+                color: black;
+                page-break-inside: avoid;
+            }
+            h1, .rules-section h2 { color: black !important; border-color: black !important; }
+            footer { color: #000; }
+        }
+    </style>
+</head>
+<body>
+
+    <button class="print-btn" onclick="window.print()">Vytisknout / Uložit PDF</button>
+
+    <div class="page">
+        <h1>CSPRO.CZ TOURNAMENT S1</h1>
+        <div class="sub-title">Oficiální pravidla a předpisy turnaje</div>
+
+        <div class="rules-section">
+            <h2>1. Formát zápasů a série</h2>
+            <ul>
+                <li><strong>Kvalifikace:</strong> Základní kola probíhají formátem BO1. Rozhodující zápasy o postup do PlayOff jsou BO3.</li>
+                <li><strong>PlayOff:</strong> Čtvrtfinále a semifinále se hrají jako BO3. Velké Finále je BO5.</li>
+                <li><strong>Herní nastavení:</strong> Standardní MR12, startovní money 800, overtime s cyklem 16 000.</li>
+            </ul>
+
+            <h2>2. Mapy a Veto systém</h2>
+            <ul>
+                <li><strong>Map Pool:</strong> Ancient, Anubis, Dust II, Inferno, Mirage, Nuke, Vertigo.</li>
+                <li><strong>Veto:</strong> Týmy střídavě banují mapy. Tým s vyšším nasazením rozhoduje o pořadí banování.</li>
+            </ul>
+
+            <h2>3. Fair Play a Podvádění</h2>
+            <ul>
+                <li><strong>Zákaz podvádění:</strong> Jakákoliv forma podvádění (cheating) je přísně zakázána.</li>
+                <li><strong>Externí software:</strong> Je zakázáno používat jakýkoliv software, který poskytuje neoprávněnou výhodu nebo umožňuje cheaty.</li>
+                <li><strong>Trest:</strong> Odhalení podvodu vede k okamžité diskvalifikaci týmu a trvalému banu pro hráče.</li>
+                <li><strong>Toxicita:</strong> Rasismus, urážky soupeřů nebo nesportovní projevy jsou nepřípustné.</li>
+            </ul>
+
+            <h2>4. Technická ustanovení</h2>
+            <ul>
+                <li><strong>Check-in:</strong> Týmy musí být v lobby připraveny nejpozději 15 minut před plánovaným startem.</li>
+                <li><strong>Taktické pauzy:</strong> Každý tým má k dispozici 4 pauzy po 30 sekundách na každou mapu.</li>
+                <li><strong>Technické pauzy:</strong> Maximální délka technické pauzy je 10 minut na tým.</li>
+            </ul>
+        </div>
+
+        <footer>
+            © 2026 CSPRO.CZ TOURNAMENT - Oficiální dokumentace
+        </footer>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>CSPRO.CZ QUALIFIER</title>
+    <style>
+        :root {
+            --bg-color: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text-color: #ffffff;
+            --accent-color: #f3a933; 
+            --border-color: #333;
+            --qualify-color: #4caf50;
+        }
+
+        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-color); color: var(--text-color); margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; }
+
+        .page { width: 1000px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 30px 20px; box-sizing: border-box; page-break-after: always; }
+
+        /* NADPISY - Sjednoceno s PlayOff */
+        .header-container { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            gap: 15px; 
+            width: 100%; 
+            margin-bottom: 5px;
+            flex-wrap: wrap;
+        }
+
+        h1 { 
+            color: var(--accent-color); 
+            text-transform: uppercase; 
+            letter-spacing: 2px; 
+            font-size: 2.2em; 
+            margin: 0; 
+        }
+
+        .season-input { 
+            background: rgba(255,255,255,0.05); 
+            border: 1px dashed var(--accent-color); 
+            color: var(--accent-color); 
+            font-size: 1.8em; 
+            font-weight: bold; 
+            width: auto;
+            min-width: 120px;
+            text-align: center; 
+            border-radius: 6px; 
+            text-transform: uppercase;
+            padding: 2px 10px;
+        }
+
+        .sub-title { color: #888; margin-bottom: 20px; font-size: 0.9em; text-transform: uppercase; letter-spacing: 1px; }
+        .print-btn { background: var(--accent-color); border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; border-radius: 4px; position: fixed; right: 20px; top: 20px; z-index: 100; }
+        
+        /* GRID KVALIFIKACE */
+        .qualifier-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; width: 100%; }
+        
+        .slot-group { 
+            background: #1a1a1a; 
+            border: 1px solid #333; 
+            padding: 15px; 
+            border-radius: 8px; 
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .slot-header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center;
+            border-bottom: 1px solid #333;
+            padding-bottom: 5px;
+            margin-bottom: 5px;
+        }
+        .slot-name { color: var(--accent-color); font-weight: bold; font-size: 0.85em; }
+        .format-tag { background: #333; color: #fff; padding: 1px 6px; border-radius: 3px; font-size: 0.7em; font-weight: bold; }
+
+        .match-box { background: #000; border: 1px solid #333; border-radius: 4px; }
+        .team-row { display: flex; border-bottom: 1px solid #222; }
+        .team-row:last-child { border-bottom: none; }
+        
+        input { background: transparent; border: none; color: white; padding: 8px; width: 100%; font-size: 13px; }
+        input[type="number"] { width: 40px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
+        
+        .final-label { text-align: center; font-size: 0.7em; color: #666; font-weight: bold; margin: 2px 0; text-transform: uppercase; }
+        
+        .winner-box { background: var(--qualify-color); border-radius: 4px; margin-top: 5px; }
+        .winner-box input { color: black; font-weight: bold; text-align: center; text-transform: uppercase; }
+
+        @media print {
+            .print-btn { display: none; }
+            .page { width: 100%; padding: 20px; }
+            body { background: white; color: black; }
+            .season-input { border: none; background: none; color: black; }
+            .slot-group { border: 1px solid #000; background: none; }
+            .match-box { border: 1px solid #000; }
+            .format-tag { border: 1px solid #000; color: black; background: #eee; }
+            input { color: black; }
+            h1, .slot-name, .final-label { color: black !important; }
+            .winner-box { border: 2px solid #000; background: #fff !important; }
+        }
+    </style>
+</head>
+<body>
+    <button class="print-btn" onclick="window.print()">STÁHNOUT PDF</button>
+
+    <div class="page">
+        <div class="header-container">
+            <h1>CSPRO.CZ QUALIFIER</h1>
+            <input class="season-input" placeholder="SEZÓNA">
+        </div>
+        <div class="sub-title">Strana 1: Slot #1 - #4 (Týmy 1-16)</div>
+        <div class="qualifier-grid" id="page1-grid"></div>
+    </div>
+
+    <div class="page">
+        <div class="header-container">
+            <h1>CSPRO.CZ QUALIFIER</h1>
+            <input class="season-input" placeholder="SEZÓNA">
+        </div>
+        <div class="sub-title">Strana 2: Slot #5 - #8 (Týmy 17-32)</div>
+        <div class="qualifier-grid" id="page2-grid"></div>
+    </div>
+
+    <script>
+        function createSlot(i) {
+            return `
+                <div class="slot-group">
+                    <div class="slot-header">
+                        <span class="slot-name">SLOT #${i}</span>
+                        <span class="format-tag">BO1</span>
+                    </div>
+                    <div class="match-box">
+                        <div class="team-row"><input placeholder="Tým"><input type="number" value="0"></div>
+                        <div class="team-row"><input placeholder="Tým"><input type="number" value="0"></div>
+                    </div>
+                    <div class="match-box">
+                        <div class="team-row"><input placeholder="Tým"><input type="number" value="0"></div>
+                        <div class="team-row"><input placeholder="Tým"><input type="number" value="0"></div>
+                    </div>
+                    <div class="final-label">Postupové Finále (BO3)</div>
+                    <div class="match-box" style="border-color: var(--qualify-color)">
+                        <div class="team-row"><input placeholder="Vítěz A"><input type="number" value="0"></div>
+                        <div class="team-row"><input placeholder="Vítěz B"><input type="number" value="0"></div>
+                    </div>
+                    <div class="winner-box">
+                        <input placeholder="POSTUPUJÍCÍ">
+                    </div>
+                </div>`;
+        }
+        const grid1 = document.getElementById('page1-grid');
+        const grid2 = document.getElementById('page2-grid');
+        for (let i = 1; i <= 4; i++) grid1.innerHTML += createSlot(i);
+        for (let i = 5; i <= 8; i++) grid2.innerHTML += createSlot(i);
+    </script>
+</body>
+</html>
