@@ -4,111 +4,70 @@
     <meta charset="UTF-8">
     <title>CSPRO.CZ PlayOff</title>
     <style>
-        :root {
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --accent-color: #f3a933; 
-            --gold-gradient: linear-gradient(135deg, #f3a933 0%, #ffd700 50%, #f3a933 100%);
-        }
-
-        body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
-
-        .page { width: 1000px; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 60px; box-sizing: border-box; page-break-after: always; }
-
-        .header-container { display: flex; align-items: center; justify-content: center; gap: 15px; width: 100%; margin-bottom: 5px; flex-wrap: wrap; }
-        h1 { color: var(--accent-color); text-transform: uppercase; letter-spacing: 2px; font-size: 2.2em; margin: 0; }
-        .season-input { background: rgba(255,255,255,0.05); border: 1px dashed var(--accent-color); color: var(--accent-color); font-size: 1.8em; font-weight: bold; min-width: 120px; text-align: center; border-radius: 6px; text-transform: uppercase; padding: 2px 10px; }
-
-        .sub-title { color: #888; margin-bottom: 30px; font-size: 1em; text-transform: uppercase; letter-spacing: 2px; }
-        .print-btn { background: var(--accent-color); border: none; padding: 12px 25px; font-weight: bold; cursor: pointer; border-radius: 4px; position: fixed; right: 20px; top: 20px; z-index: 100; }
-
-        .round-section { width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; gap: 15px; }
-        
-        /* ŠTÍTKY FORMÁTU (BO3/BO5) */
-        .round-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid #333;
-            padding-bottom: 8px;
-            margin-top: 15px;
-        }
-        .round-name { font-size: 0.9em; color: #888; text-transform: uppercase; font-weight: bold; letter-spacing: 1px; }
-        .format-tag { background: #333; color: #fff; padding: 2px 8px; border-radius: 3px; font-size: 0.8em; font-weight: bold; }
-
-        .match-box { background: var(--card-bg); border: 1px solid #333; border-radius: 6px; width: 100%; position: relative; }
-        .match-id { position: absolute; left: -45px; top: 50%; transform: translateY(-50%); font-size: 0.8em; color: var(--accent-color); font-weight: bold; }
+        :root { --bg-color: #121212; --card-bg: #1e1e1e; --accent-color: #f3a933; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; display: flex; flex-direction: column; align-items: center; }
+        .page { width: 1000px; padding: 40px; box-sizing: border-box; }
+        .header-container { display: flex; justify-content: center; gap: 15px; margin-bottom: 20px; }
+        h1 { color: var(--accent-color); text-transform: uppercase; }
+        .match-box { background: var(--card-bg); border: 1px solid #333; border-radius: 6px; margin-bottom: 10px; width: 300px; }
         .team-row { display: flex; border-bottom: 1px solid #333; }
-        input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 15px; }
+        input { background: transparent; border: none; color: white; padding: 10px; width: 100%; }
         input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #333; color: var(--accent-color); font-weight: bold; }
-        
-        .connector-arrow { font-size: 1.5em; color: #444; margin: 10px 0; }
-
-        /* VÍTĚZ */
-        .winner-container { margin-top: 40px; text-align: center; width: 100%; max-width: 650px; }
-        .winner-announcement { font-size: 1.1em; font-weight: bold; color: #ffd700; margin-bottom: 10px; text-transform: uppercase; }
-        .winner-card { background: var(--gold-gradient); padding: 30px; border-radius: 15px; box-shadow: 0 10px 40px rgba(243, 169, 51, 0.3); }
-        .winner-card .team-name { color: #000; font-weight: 900; text-align: center; font-size: 2.5em; text-transform: uppercase; width: 100%; border-bottom: 2px solid rgba(0,0,0,0.1); margin-bottom: 15px; }
-        .players-input { color: #000; font-weight: bold; text-align: center; font-size: 1.1em; width: 100%; height: 60px; resize: none; border: none; background: transparent; font-family: inherit; }
-
-        @media print {
-            .print-btn { display: none; }
-            .page { width: 100%; padding: 30px; }
-            body { background: white; color: black; }
-            .season-input { border: none; background: none; color: black; }
-            .match-box { border: 2px solid #000 !important; background: #fff !important; }
-            .format-tag { border: 1px solid #000; color: black; background: #eee; }
-            .winner-card { border: 4px solid #000 !important; background: #fff !important; box-shadow: none; }
-            input, textarea { color: black !important; }
-            h1, .match-id, .winner-announcement, .round-name { color: black !important; }
-        }
+        .winner-card { background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 20px; border-radius: 10px; text-align: center; margin-top: 30px; }
+        .winner-card input { color: black; font-size: 2em; font-weight: 900; text-align: center; }
     </style>
 </head>
 <body>
-    <button class="print-btn" onclick="window.print()">STÁHNOUT PDF</button>
-
     <div class="page">
         <div class="header-container">
             <h1>CSPRO.CZ PlayOff</h1>
-            <input class="season-input" placeholder="SEZÓNA">
+            <input id="po_season" style="width:100px; border:1px dashed gold; color:gold; text-align:center;" placeholder="S1">
         </div>
-        <div class="sub-title">Část 1: Čtvrtfinále</div>
-        
-        <div class="round-section">
-            <div class="round-header"><span class="round-name">Čtvrtfinálové zápasy</span><span class="format-tag">BO3</span></div>
-            <div class="match-box"><div class="match-id">Q1</div><div class="team-row"><input placeholder="Tým 1"><input type="number" value="0"></div><div class="team-row"><input placeholder="Tým 2"><input type="number" value="0"></div></div>
-            <div class="match-box"><div class="match-id">Q2</div><div class="team-row"><input placeholder="Tým 3"><input type="number" value="0"></div><div class="team-row"><input placeholder="Tým 4"><input type="number" value="0"></div></div>
-            <div class="match-box"><div class="match-id">Q3</div><div class="team-row"><input placeholder="Tým 5"><input type="number" value="0"></div><div class="team-row"><input placeholder="Tým 6"><input type="number" value="0"></div></div>
-            <div class="match-box"><div class="match-id">Q4</div><div class="team-row"><input placeholder="Tým 7"><input type="number" value="0"></div><div class="team-row"><input placeholder="Tým 8"><input type="number" value="0"></div></div>
+
+        <h3>Čtvrtfinále (BO3)</h3>
+        <div class="match-box">
+            <div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div>
+            <div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div>
+        </div>
+        <div class="winner-card">
+            <div style="color:black; font-weight:bold;">ŠAMPION TURNAJE</div>
+            <input id="final_winner" placeholder="NÁZEV TÝMU">
         </div>
     </div>
 
-    <div class="page">
-        <div class="header-container">
-            <h1>CSPRO.CZ PlayOff</h1>
-            <input class="season-input" placeholder="SEZÓNA">
-        </div>
-        <div class="sub-title">Část 2: Finálový blok</div>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBwygFW020kcMt0VuNT9hpfZPWtFGxNz_U",
+            authDomain: "cspro-web.firebaseapp.com",
+            projectId: "cspro-web",
+            storageBucket: "cspro-web.firebasestorage.app",
+            messagingSenderId: "412820092666",
+            appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-        <div class="round-section">
-            <div class="round-header"><span class="round-name">Semifinále</span><span class="format-tag">BO3</span></div>
-            <div class="match-box"><div class="match-id">S1</div><div class="team-row"><input placeholder="Vítěz Q1/Q2"><input type="number" value="0"></div><div class="team-row"><input placeholder="Vítěz Q1/Q2"><input type="number" value="0"></div></div>
-            <div class="match-box"><div class="match-id">S2</div><div class="team-row"><input placeholder="Vítěz Q3/Q4"><input type="number" value="0"></div><div class="team-row"><input placeholder="Vítěz Q3/Q4"><input type="number" value="0"></div></div>
-            
-            <div class="connector-arrow">↓</div>
+        firebase.auth().onAuthStateChanged(user => {
+            document.querySelectorAll('input').forEach(el => {
+                el.readOnly = !user;
+                if(user) el.addEventListener('input', e => {
+                    db.collection("tournament").doc("playoff").set({ [e.target.id]: e.target.value }, { merge: true });
+                });
+            });
+        });
 
-            <div class="round-header"><span class="round-name">Velké Finále</span><span class="format-tag" style="background: gold; color: black;">BO5</span></div>
-            <div class="match-box" style="border: 2px solid var(--accent-color);"><div class="team-row"><input placeholder="Finalista 1"><input type="number" value="0"></div><div class="team-row"><input placeholder="Finalista 2"><input type="number" value="0"></div></div>
-        </div>
-
-        <div class="winner-container">
-            <div class="winner-announcement">Turnaj ovládl a celkovým šampionem se stává:</div>
-            <div class="winner-card">
-                <input class="team-name" placeholder="NÁZEV TÝMU">
-                <textarea class="players-input" placeholder="Sestava: Hráč 1, Hráč 2, Hráč 3, Hráč 4, Hráč 5"></textarea>
-            </div>
-        </div>
-    </div>
+        db.collection("tournament").doc("playoff").onSnapshot(doc => {
+            if (doc.exists) {
+                const data = doc.data();
+                for (const key in data) {
+                    const el = document.getElementById(key);
+                    if (el && document.activeElement !== el) el.value = data[key];
+                }
+            }
+        });
+    </script>
 </body>
 </html>
