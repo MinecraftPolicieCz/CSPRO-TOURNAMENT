@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>CSPRO.CZ - Hlavní stránka</title>
+    <style>
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; }
+        
+        /* Navigace */
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; transition: 0.3s; }
+        .nav-link:hover { color: var(--accent-color); background: #222; }
+
+        .hero-section { text-align: center; padding: 60px 20px; max-width: 1000px; }
+        h1 { font-size: 3.5em; color: var(--accent-color); text-transform: uppercase; letter-spacing: 5px; margin-bottom: 10px; }
+        .stream-placeholder { width: 100%; aspect-ratio: 16 / 9; background: #000; border: 2px solid #333; display: flex; align-items: center; justify-content: center; color: #444; font-size: 1.5em; margin-top: 30px; border-radius: 8px; }
+
+        .menu-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; width: 100%; margin-top: 50px; }
+        .menu-card { background: var(--card-bg); padding: 30px; border-radius: 10px; text-decoration: none; color: white; border: 1px solid #333; transition: 0.3s; text-align: center; }
+        .menu-card:hover { border-color: var(--accent-color); transform: translateY(-5px); }
+        .menu-card h3 { color: var(--accent-color); margin-top: 0; text-transform: uppercase; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html" class="nav-link">Domů</a>
+        <a href="playoff.html" class="nav-link">PlayOff</a>
+        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+        <a href="pravidla.html" class="nav-link">Pravidla</a>
+    </nav>
+
+    <div class="hero-section">
+        <h1>CSPRO.CZ TOURNAMENT</h1>
+        <p style="color: #888; font-size: 1.2em;">Vítejte na oficiálním portálu turnaje</p>
+
+        <div class="stream-placeholder">
+            [ ZDE BUDE TWITCH STREAM ]
+        </div>
+
+        <div class="menu-grid">
+            <a href="playoff.html" class="menu-card">
+                <h3>Aktuální PlayOff</h3>
+                <p>Sledujte pavouka a výsledky finálových zápasů v reálném čase.</p>
+            </a>
+            <a href="kvalifikace.html" class="menu-card">
+                <h3>Kvalifikace</h3>
+                <p>Přehled všech skupin a postupových slotů do hlavní části.</p>
+            </a>
+            <a href="archiv.html" class="menu-card">
+                <h3>Archiv Sezón</h3>
+                <p>Historické tabulky a vítězové minulých sezón.</p>
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
