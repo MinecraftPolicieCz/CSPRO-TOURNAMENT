@@ -2,45 +2,50 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>CSPRO.CZ - Kvalifikace (32 týmů)</title>
+    <title>CSPRO.CZ - Kvalifikace</title>
     <style>
-        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --qualify-color: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         
-        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); }
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; transition: 0.3s; }
         .nav-link:hover { color: var(--accent-color); background: #222; }
 
-        .page { width: 1100px; padding: 40px; box-sizing: border-box; }
-        h1 { text-align: center; color: var(--accent-color); text-transform: uppercase; letter-spacing: 3px; }
+        .page { width: 1150px; padding: 40px; box-sizing: border-box; }
+        h1 { text-align: center; color: var(--accent-color); text-transform: uppercase; letter-spacing: 3px; margin-bottom: 10px; }
+        .sub-title { text-align: center; color: #888; margin-bottom: 40px; text-transform: uppercase; font-size: 0.9em; }
 
-        .qualifier-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 25px; 
-            width: 100%; 
-            margin-top: 30px;
-        }
+        .qualifier-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; width: 100%; }
 
         .slot-group { 
             background: var(--card-bg); 
             border: 1px solid #333; 
             padding: 20px; 
-            border-radius: 8px; 
+            border-radius: 12px; 
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 12px;
+            position: relative;
         }
 
-        .slot-title { color: var(--accent-color); font-weight: bold; font-size: 0.9em; border-bottom: 1px solid #333; padding-bottom: 5px; }
+        .slot-header { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 8px; margin-bottom: 5px; }
+        .slot-name { color: var(--accent-color); font-weight: bold; font-size: 1em; }
         
-        .team-row { display: flex; gap: 5px; background: #000; border: 1px solid #222; border-radius: 4px; overflow: hidden; }
+        .match-box { background: #000; border: 1px solid #333; border-radius: 6px; overflow: hidden; }
+        .match-label { font-size: 0.7em; color: #666; padding: 4px 10px; text-transform: uppercase; font-weight: bold; background: #0a0a0a; border-bottom: 1px solid #222; }
+        
+        .team-row { display: flex; border-bottom: 1px solid #222; }
+        .team-row:last-child { border-bottom: none; }
+        
         input { background: transparent; border: none; color: white; padding: 10px; width: 100%; font-size: 14px; }
-        input[type="number"] { width: 55px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
+        input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
         
-        .winner-box { background: #4caf50; border-radius: 4px; margin-top: 10px; padding: 2px; }
-        .winner-box input { color: black; font-weight: bold; text-align: center; text-transform: uppercase; }
-        .winner-box input::placeholder { color: rgba(0,0,0,0.5); }
+        .connector { text-align: center; color: #444; font-size: 1.2em; margin: -5px 0; }
+        
+        .final-box { border: 1px solid var(--qualify-color); background: rgba(76, 175, 80, 0.05); }
+        .winner-display { background: var(--qualify-color); border-radius: 6px; margin-top: 5px; padding: 2px; }
+        .winner-display input { color: black; font-weight: 900; text-align: center; text-transform: uppercase; }
+        .winner-display input::placeholder { color: rgba(0,0,0,0.4); }
     </style>
 </head>
 <body>
@@ -53,7 +58,9 @@
     </nav>
 
     <div class="page">
-        <h1>KVALIFIKACE - 32 TÝMŮ</h1>
+        <h1>Kvalifikační Sloty</h1>
+        <div class="sub-title">8 Postupových míst (Celkem 32 týmů)</div>
+        
         <div class="qualifier-grid" id="main-grid">
             </div>
     </div>
@@ -63,7 +70,6 @@
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
 
     <script>
-        // Tvůj Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyBwygFW020kcMt0VuNT9hpfZPWtFGxNz_U",
             authDomain: "cspro-web.firebaseapp.com",
@@ -75,30 +81,48 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        // Generátor 8 slotů pro celkem 32 týmů
         const grid = document.getElementById('main-grid');
         for (let i = 1; i <= 8; i++) {
             grid.innerHTML += `
                 <div class="slot-group">
-                    <div class="slot-title">SLOT #${i} (Skupina)</div>
-                    <div class="team-row"><input id="s${i}_t1" placeholder="Tým 1"><input id="s${i}_s1" type="number" value="0"></div>
-                    <div class="team-row"><input id="s${i}_t2" placeholder="Tým 2"><input id="s${i}_s2" type="number" value="0"></div>
-                    <div class="team-row"><input id="s${i}_t3" placeholder="Tým 3"><input id="s${i}_s3" type="number" value="0"></div>
-                    <div class="team-row"><input id="s${i}_t4" placeholder="Tým 4"><input id="s${i}_s4" type="number" value="0"></div>
-                    <div class="winner-box">
-                        <input id="s${i}_win" placeholder="POSTUPUJÍCÍ">
+                    <div class="slot-header">
+                        <span class="slot-name">SLOT #${i}</span>
+                        <span style="font-size:0.7em; color:#555;">BO1 / FINÁLE BO3</span>
+                    </div>
+
+                    <div class="match-box">
+                        <div class="match-label">Zápas A (1 vs 2)</div>
+                        <div class="team-row"><input id="s${i}_m1_t1" placeholder="Tým 1"><input id="s${i}_m1_s1" type="number" value="0"></div>
+                        <div class="team-row"><input id="s${i}_m1_t2" placeholder="Tým 2"><input id="s${i}_m1_s2" type="number" value="0"></div>
+                    </div>
+
+                    <div class="match-box">
+                        <div class="match-label">Zápas B (3 vs 4)</div>
+                        <div class="team-row"><input id="s${i}_m2_t1" placeholder="Tým 3"><input id="s${i}_m2_s1" type="number" value="0"></div>
+                        <div class="team-row"><input id="s${i}_m2_t2" placeholder="Tým 4"><input id="s${i}_m2_s2" type="number" value="0"></div>
+                    </div>
+
+                    <div class="connector">↓</div>
+
+                    <div class="match-box final-box">
+                        <div class="match-label" style="background:var(--qualify-color); color:black;">Postupové Finále</div>
+                        <div class="team-row"><input id="s${i}_f_t1" placeholder="Vítěz A"><input id="s${i}_f_s1" type="number" value="0"></div>
+                        <div class="team-row"><input id="s${i}_f_t2" placeholder="Vítěz B"><input id="s${i}_f_s2" type="number" value="0"></div>
+                    </div>
+
+                    <div class="winner-display">
+                        <input id="s${i}_winner" placeholder="POSTUPUJÍCÍ DO PLAYOFF">
                     </div>
                 </div>`;
         }
 
-        // Admin a Sync logika
         firebase.auth().onAuthStateChanged(user => {
             const inputs = document.querySelectorAll('input');
             inputs.forEach(el => {
-                el.readOnly = !user; // Pokud není user, políčka jsou zamčená
+                el.readOnly = !user;
                 if (user) {
                     el.addEventListener('input', e => {
-                        db.collection("tournament").doc("qualifier").set({
+                        db.collection("tournament").doc("qualifier_bracket").set({
                             [e.target.id]: e.target.value
                         }, { merge: true });
                     });
@@ -106,8 +130,7 @@
             });
         });
 
-        // Načítání dat v reálném čase
-        db.collection("tournament").doc("qualifier").onSnapshot(doc => {
+        db.collection("tournament").doc("qualifier_bracket").onSnapshot(doc => {
             if (doc.exists) {
                 const data = doc.data();
                 for (const key in data) {
