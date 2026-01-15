@@ -2,17 +2,22 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>CSPRO.CZ - Archiv</title>
+    <title>Archiv - CSPRO.CZ</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
-        .page { width: 1000px; padding: 60px 20px; }
-        .card { background: var(--card-bg); padding: 30px; border-radius: 12px; border-left: 6px solid var(--accent-color); margin-bottom: 25px; position: relative; }
-        .card::after { content: '➜'; position: absolute; right: 20px; top: 40%; font-size: 2em; color: #333; }
-        input { background: transparent; border: none; color: white; width: 100%; font-size: 1.5em; font-weight: 800; }
-        textarea { background: transparent; border: none; color: #888; width: 100%; height: 80px; resize: none; margin-top: 10px; font-family: inherit; font-size: 1em; }
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; transition: 0.3s; }
+        .nav-link:hover { color: var(--accent-color); background: #222; }
+        .page { width: 900px; padding: 40px; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid var(--accent-color); margin-bottom: 20px; position: relative; }
+        input { background: transparent; border: none; color: white; width: 80%; font-size: 1.4em; font-weight: bold; outline: none; }
+        textarea { background: transparent; border: none; color: #888; width: 100%; height: 60px; resize: none; margin-top: 10px; font-family: inherit; outline: none; }
+        .admin-controls { display: none; margin-bottom: 20px; }
+        .btn { padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; margin-right: 10px; }
+        .btn-add { background: var(--accent-color); color: black; }
+        #save-btn { color: #4caf50; font-weight: bold; }
+        #logout-btn { color: #ff4d4d; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -22,44 +27,80 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link" style="color:var(--accent-color)">Archiv</a>
-        <a id="logout-btn" class="nav-link" style="display: none; color: #ff4d4d;">Odhlásit</a>
+        <a id="save-btn" class="nav-link" style="display:none">ULOŽIT</a>
+        <a id="logout-btn" class="nav-link" style="display:none">ODHLÁSIT</a>
     </nav>
     <div class="page">
-        <h1>ARCHIV SEZÓN</h1>
-        <div class="card">
-            <input id="arc_s1_t" placeholder="Sezóna #1 (2026)">
-            <textarea id="arc_s1_d" placeholder="Popis sezóny a jméno šampiona..."></textarea>
+        <h1>Správa Sezón</h1>
+        <div id="admin-ui" class="admin-controls">
+            <button id="add-season" class="btn btn-add">+ Přidat novou sezónu</button>
         </div>
-        </div>
+        <div id="seasons-container"></div>
+    </div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-        let unsavedChanges = {};
+        let seasonsData = {};
+
         onAuthStateChanged(auth, user => {
-            const btn = document.getElementById('logout-btn');
             if (user) {
-                btn.style.display = 'block';
-                document.querySelectorAll('input, textarea').forEach(el => {
-                    el.readOnly = false;
-                    el.addEventListener('input', e => { unsavedChanges[e.target.id] = e.target.value; e.target.style.borderBottom = "1px solid red"; });
-                });
-            } else {
-                btn.style.display = 'none';
-                document.querySelectorAll('input, textarea').forEach(el => el.readOnly = true);
+                document.getElementById('admin-ui').style.display = 'block';
+                document.getElementById('save-btn').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
             }
         });
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            if (Object.keys(unsavedChanges).length > 0 && confirm("Uložit archiv?")) {
-                await setDoc(doc(db, "tournament", "archive"), unsavedChanges, { merge: true });
+
+        onSnapshot(doc(db, "tournament", "archive_list"), d => {
+            if (d.exists()) {
+                seasonsData = d.data();
+                render();
             }
-            signOut(auth).then(() => window.location.reload());
         });
-        onSnapshot(doc(db, "tournament", "archive"), d => { if(d.exists()){ const data = d.data(); for(const key in data){ const el = document.getElementById(key); if(el && document.activeElement !== el) el.value = data[key]; } }});
+
+        function render() {
+            const container = document.getElementById('seasons-container');
+            container.innerHTML = "";
+            Object.keys(seasonsData).sort().reverse().forEach(id => {
+                const s = seasonsData[id];
+                const card = document.createElement('div');
+                card.className = "card";
+                card.innerHTML = `
+                    <input id="t_${id}" value="${s.title}" placeholder="Název" ${!auth.currentUser ? 'readonly' : ''}>
+                    <textarea id="d_${id}" placeholder="Popis..." ${!auth.currentUser ? 'readonly' : ''}>${s.desc}</textarea>
+                `;
+                container.appendChild(card);
+                if(auth.currentUser) {
+                    card.querySelectorAll('input, textarea').forEach(el => {
+                        el.addEventListener('input', () => {
+                            seasonsData[id].title = document.getElementById(`t_${id}`).value;
+                            seasonsData[id].desc = document.getElementById(`d_${id}`).value;
+                            card.style.borderLeftColor = "red";
+                        });
+                    });
+                }
+            });
+        }
+
+        document.getElementById('add-season').addEventListener('click', () => {
+            const id = "s" + Date.now();
+            seasonsData[id] = { title: "Nová sezóna 2026", desc: "" };
+            render();
+        });
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            await setDoc(doc(db, "tournament", "archive_list"), seasonsData);
+            alert("Seznam sezón uložen!");
+            window.location.reload();
+        });
+
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
     </script>
 </body>
 </html>
