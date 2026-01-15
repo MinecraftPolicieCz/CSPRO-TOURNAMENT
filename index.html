@@ -42,8 +42,7 @@
         <div class="content-text">
             <h2 style="color:var(--accent-color); text-transform:uppercase; letter-spacing:2px;">Profesionální CS2 Turnaje</h2>
             <p>Vítejte na platformě <span style="color:white; font-weight:bold;">LIGHTSMC.EU</span>, vašem předním organizátorovi kompetitivních turnajů v Counter-Strike 2. Naším posláním je pozvednout česko-slovenskou esportovou scénu skrze profesionálně organizované eventy, které staví férovost a hráčský zážitek na první místo.</p>
-            <p>Věříme, že každý tým, bez ohledu na úroveň, si zaslouží šanci ukázat své kvality v prostředí, které simuluje atmosféru velkých světových turnajů. Právě proto jsme vyvinuli tento unikátní portál, který v reálném čase propojuje správu kvalifikací, playoff pavouků a registraci týmů do jednoho plynulého celku.</p>
-            <p>Naším cílem není jen jednorázový turnaj, ale budování dlouhodobé komunity hráčů, kteří sdílejí vášeň pro CS2. Každá sezóna přináší nové výzvy a my jsme tu, abychom vám zajistili to nejlepší technické i organizační zázemí. Připojte se k nám, ukažte své dovednosti na mapě a napište svůj příběh v historii LIGHTSMC.EU.</p>
+            <p>Věříme, že každý tým si zaslouží šanci ukázat své kvality v prostředí, které simuluje atmosféru velkých světových turnajů. Každá sezóna přináší nové výzvy a my jsme tu, abychom vám zajistili to nejlepší zázemí.</p>
         </div>
         <div id="active-info" class="active-tournament-box">
             <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
@@ -75,10 +74,9 @@
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
-                const infoBox = document.getElementById('active-info');
                 if(activeId) {
                     const s = data[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    infoBox.style.display = "block";
+                    document.getElementById('active-info').style.display = "block";
                     document.getElementById('active-title').innerText = s.title;
                     document.getElementById('active-desc').innerText = s.desc;
                     document.getElementById('hidden_active_title').value = s.title;
@@ -93,8 +91,8 @@
         document.getElementById('registration-form').onsubmit = function(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
             emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3>DĚKUJEME ZA REGISTRACI!</h3>";
-            }, (err) => { alert('Chyba'); btn.disabled = false; });
+                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3>DĚKUJEME!</h3>";
+            }, () => { alert('Chyba'); btn.disabled = false; });
         };
     </script>
 </body>
