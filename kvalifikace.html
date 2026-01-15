@@ -32,13 +32,10 @@
         <a href="kvalifikace.html" class="nav-link active">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
-        <div class="admin-controls">
-            <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-            <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
-        </div>
+        <div class="admin-controls"><a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a><a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a></div>
     </div></nav>
     <div class="page">
-        <div id="status-msg" class="msg-box"><h2 id="msg-text">KONTROLA TURNAJE...</h2></div>
+        <div id="status-msg" class="msg-box"><h2 id="msg-text">KONTROLA...</h2></div>
         <div id="content-area" style="display:none; width:100%;">
             <h1 id="title-display" style="color:var(--accent-color); text-align:center; letter-spacing:5px;">KVALIFIKACE</h1>
             <div id="main-grid" class="grid" style="display:grid"></div>
@@ -66,23 +63,16 @@
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const list = d.data(); activeId = Object.keys(list).find(key => list[key].active === true);
-                const msg = document.getElementById('status-msg'); const content = document.getElementById('content-area');
-                if(!activeId) {
-                    msg.style.display = "block"; content.style.display = "none"; document.getElementById('msg-text').innerText = "MOMENTÁLNĚ SE ŽÁDNÝ TURNAJ NEPŘIPRAVUJE";
-                } else {
-                    const s = list[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    if(dReg && now >= dReg && now < (new Date(s.dateKval || s.dateReg))) {
-                        msg.style.display = "block"; content.style.display = "none"; document.getElementById('msg-text').innerText = "PRÁVĚ PROBÍHAJÍ REGISTRACE. KVALIFIKACE BUDE DOSTUPNÁ PO UZAVŘENÍ PŘIHLÁŠEK.";
-                    } else if (dReg && now < dReg) {
-                        msg.style.display = "block"; content.style.display = "none"; document.getElementById('msg-text').innerText = "TURNAJ SE PŘIPRAVUJE.";
-                    } else {
-                        msg.style.display = "none"; content.style.display = "block"; document.getElementById('title-display').innerText = s.title; loadData(activeId);
-                    }
+                if(!activeId) { document.getElementById('msg-text').innerText = "ŽÁDNÝ AKTIVNÍ TURNAJ"; }
+                else {
+                    const s = list[activeId]; const now = new Date(); const dKval = s.dateKval ? new Date(s.dateKval) : null;
+                    if(!dKval || now < dKval) { document.getElementById('msg-text').innerText = "PRÁVĚ PROBÍHAJÍ REGISTRACE."; }
+                    else { document.getElementById('status-msg').style.display = "none"; document.getElementById('content-area').style.display = "block"; document.getElementById('title-display').innerText = s.title; loadData(activeId); }
                 }
             }
         });
         function loadData(id) { if(unsub) unsub(); unsub = onSnapshot(doc(db, "tournament", "qual_" + id), d => { if(d.exists()){ const data = d.data(); for(const key in data){ const el = document.getElementById(key); if(el && document.activeElement !== el) el.value = data[key]; } } }); }
-        onAuthStateChanged(auth, user => { if(user) { document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block'; document.querySelectorAll('input').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.style.background = "rgba(0,123,255,0.1)"; }; }); } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); } });
+        onAuthStateChanged(auth, user => { if(user) { document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block'; document.querySelectorAll('input').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; }; }); } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); } });
         document.getElementById('save-btn').onclick = async () => { if(activeId) { await setDoc(doc(db, "tournament", "qual_" + activeId), localChanges, {merge:true}); alert("Uloženo!"); location.reload(); } };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
