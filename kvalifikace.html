@@ -63,11 +63,23 @@
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const list = d.data(); activeId = Object.keys(list).find(key => list[key].active === true);
-                if(!activeId) { document.getElementById('msg-text').innerText = "ŽÁDNÝ AKTIVNÍ TURNAJ"; }
+                const msgText = document.getElementById('msg-text');
+                if(!activeId) { msgText.innerText = "ŽÁDNÝ AKTIVNÍ TURNAJ"; }
                 else {
-                    const s = list[activeId]; const now = new Date(); const dKval = s.dateKval ? new Date(s.dateKval) : null;
-                    if(!dKval || now < dKval) { document.getElementById('msg-text').innerText = "PRÁVĚ PROBÍHAJÍ REGISTRACE."; }
-                    else { document.getElementById('status-msg').style.display = "none"; document.getElementById('content-area').style.display = "block"; document.getElementById('title-display').innerText = s.title; loadData(activeId); }
+                    const s = list[activeId]; const now = new Date(); 
+                    const dReg = s.dateReg ? new Date(s.dateReg) : null;
+                    const dKval = s.dateKval ? new Date(s.dateKval) : null;
+
+                    if(!dReg || now < dReg) { 
+                        msgText.innerText = "TURNAJ SE PŘIPRAVUJE..."; 
+                    } else if (!dKval || now < dKval) {
+                        msgText.innerText = "PRÁVĚ PROBÍHAJÍ REGISTRACE. KVALIFIKACE BUDE DOSTUPNÁ PO UZAVŘENÍ PŘIHLÁŠEK.";
+                    } else {
+                        document.getElementById('status-msg').style.display = "none";
+                        document.getElementById('content-area').style.display = "block";
+                        document.getElementById('title-display').innerText = s.title;
+                        loadData(activeId);
+                    }
                 }
             }
         });
