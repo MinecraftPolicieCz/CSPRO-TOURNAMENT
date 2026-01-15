@@ -8,11 +8,12 @@
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --qual: #28a745; --nav-bg: rgba(15, 15, 15, 0.9); }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1150px; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); min-height: 100vh; }
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
         .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
         .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         .page { width: 1150px; padding: 40px; display: flex; flex-direction: column; align-items: center; flex: 1; }
+        .msg-box { text-align: center; margin-top: 100px; padding: 50px; border: 1px solid #333; border-radius: 15px; background: var(--card-bg); width: 650px; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px; width: 100%; display: none; }
         .slot { background: var(--card-bg); border: 1px solid #222; padding: 25px; border-radius: 12px; }
         .match { background: #080808; border: 1px solid #333; margin: 20px 0 12px 0; border-radius: 6px; position: relative; }
@@ -35,13 +36,18 @@
         <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
     </div></nav>
     <div class="page">
-        <div id="status-msg" style="text-align:center; margin-top:100px; padding:50px; border:1px solid #333; border-radius:15px; background: var(--card-bg); width: 600px;"><h2>NAČÍTÁNÍ...</h2></div>
+        <div id="status-msg" class="msg-box">
+            <h2 id="msg-text" style="letter-spacing: 1px;">KONTROLA TURNAJE...</h2>
+        </div>
         <div id="content-area" style="display:none; width:100%;">
-            <h1 id="title-display" style="color:var(--accent-color); text-align:center;">KVALIFIKACE</h1>
+            <h1 id="title-display" style="color:var(--accent-color); text-align:center; letter-spacing:5px;">KVALIFIKACE</h1>
             <div id="main-grid" class="grid" style="display:grid"></div>
         </div>
     </div>
-    <footer><p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p></footer>
+    <footer>
+        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
+        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
+    </footer>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -61,11 +67,17 @@
             if(d.exists()){
                 const list = d.data(); activeId = Object.keys(list).find(key => list[key].active === true);
                 const msg = document.getElementById('status-msg'); const content = document.getElementById('content-area');
-                if(!activeId) { msg.style.display = "block"; content.style.display = "none"; document.querySelector('#status-msg h2').innerText = "ŽÁDNÝ AKTIVNÍ TURNAJ"; }
-                else {
+                if(!activeId) {
+                    msg.style.display = "block"; content.style.display = "none"; document.getElementById('msg-text').innerText = "MOMENTÁLNĚ SE ŽÁDNÝ TURNAJ NEPŘIPRAVUJE";
+                } else {
                     const s = list[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    if(dReg && now < dReg) { msg.style.display = "block"; content.style.display = "none"; document.querySelector('#status-msg h2').innerText = "TURNAJ SE PŘIPRAVUJE"; }
-                    else { msg.style.display = "none"; content.style.display = "block"; document.getElementById('title-display').innerText = s.title; loadData(activeId); }
+                    if(dReg && now >= dReg && now < (new Date(s.dateKval || s.dateReg))) {
+                        msg.style.display = "block"; content.style.display = "none"; document.getElementById('msg-text').innerText = "PRÁVĚ PROBÍHAJÍ REGISTRACE. KVALIFIKACE BUDE DOSTUPNÁ PO UZAVŘENÍ PŘIHLÁŠEK.";
+                    } else if (dReg && now < dReg) {
+                        msg.style.display = "block"; content.style.display = "none"; document.getElementById('msg-text').innerText = "TURNAJ SE PŘIPRAVUJE.";
+                    } else {
+                        msg.style.display = "none"; content.style.display = "block"; document.getElementById('title-display').innerText = s.title; loadData(activeId);
+                    }
                 }
             }
         });
