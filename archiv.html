@@ -7,61 +7,120 @@
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --danger: #ff4d4d; --success: #28a745; --nav-bg: rgba(15, 15, 15, 0.9); }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
+        
+        /* OPRAVENÁ NAVIGACE */
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
         .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
-        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        
+        .admin-controls { display: flex; position: absolute; right: 20px; }
+
         .page { width: 900px; padding: 40px; flex: 1; }
         .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid #333; margin-bottom: 20px; }
         .card.active-card { border-left-color: var(--success); }
-        input, textarea { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
-        .btn-toggle { background: #444; color: white; margin-bottom: 10px; padding: 10px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
+        
+        /* Styl popisků v administraci */
+        .admin-label { display: block; color: var(--accent-color); font-size: 11px; font-weight: 800; margin-bottom: 5px; margin-top: 15px; letter-spacing: 1px; text-transform: uppercase; }
+        
+        input, textarea { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 5px; font-family: inherit; }
+        input:focus, textarea:focus { border-color: var(--accent-color); outline: none; }
+        
+        .btn-toggle { background: #444; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
         .btn-toggle.on { background: var(--success); }
+        .btn-del { background: var(--danger); color: white; padding: 10px 20px; border-radius: 5px; border: none; font-weight: bold; cursor: pointer; }
+        
         footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; margin-top: 50px; }
     </style>
 </head>
 <body>
-    <nav><div class="nav-container">
-        <a href="index.html" class="nav-link">Domů</a>
-        <a href="playoff.html" class="nav-link">PlayOff</a>
-        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-        <a href="pravidla.html" class="nav-link">Pravidla</a>
-        <a href="archiv.html" class="nav-link active">Přehled Turnajů</a>
-        <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
-    </div></nav>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-link">Domů</a>
+            <a href="playoff.html" class="nav-link">PlayOff</a>
+            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+            <a href="pravidla.html" class="nav-link">Pravidla</a>
+            <a href="archiv.html" class="nav-link active">Přehled Turnajů</a>
+            <div class="admin-controls">
+                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+            </div>
+        </div>
+    </nav>
+
     <div class="page">
-        <h1 style="color:var(--accent-color); text-align:center; letter-spacing:3px;">PŘEHLED TURNAJŮ</h1>
-        <div id="admin-add-area" style="display:none"><button id="add-btn" style="background:var(--accent-color); color:white; padding:10px; width:100%; cursor:pointer; border:none; border-radius:5px; margin-bottom:20px; font-weight:bold;">+ NOVÝ TURNAJ</button></div>
+        <h1 style="color:var(--accent-color); text-align:center; letter-spacing:3px;">SPRÁVA TURNAJŮ</h1>
+        <div id="admin-add-area" style="display:none">
+            <button id="add-btn" style="background:var(--accent-color); color:white; padding:15px; width:100%; cursor:pointer; border:none; border-radius:5px; margin-bottom:30px; font-weight:bold;">+ VYTVOŘIT NOVÝ TURNAJ</button>
+        </div>
         <div id="seasons-container"></div>
     </div>
+
     <footer>
         <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
         <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
     </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let seasonsData = {}; let isAdmin = false;
-        onAuthStateChanged(auth, user => { isAdmin = !!user; document.getElementById('save-btn').style.display = isAdmin ? 'block' : 'none'; document.getElementById('logout-btn').style.display = isAdmin ? 'block' : 'none'; document.getElementById('admin-add-area').style.display = isAdmin ? 'block' : 'none'; render(); });
+
+        onAuthStateChanged(auth, user => {
+            isAdmin = !!user;
+            document.getElementById('save-btn').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('logout-btn').style.display = isAdmin ? 'block' : 'none';
+            document.getElementById('admin-add-area').style.display = isAdmin ? 'block' : 'none';
+            render();
+        });
+
         onSnapshot(doc(db, "tournament", "archive_list"), d => { if(d.exists()) { seasonsData = d.data(); render(); } });
+
         function render() {
             const container = document.getElementById('seasons-container'); container.innerHTML = "";
             Object.keys(seasonsData).forEach(id => {
-                const s = seasonsData[id]; const card = document.createElement('div'); card.className = "card" + (s.active ? " active-card" : "");
-                if(!isAdmin) { card.innerHTML = `<div style="color:${s.active ? '#28a745' : '#777'}; font-weight:bold; font-size:0.8em; margin-bottom:5px">${s.active ? '🟢 AKTUÁLNÍ' : '⚪ UKONČENO'}</div><h2>${s.title}</h2><p>${s.desc}</p>`; }
-                else {
-                    card.innerHTML = `<button class="btn-toggle ${s.active ? 'on' : ''}" id="toggle_${id}">${s.active ? 'AKTIVNÍ' : 'VYPNUTO'}</button>
-                    <input type="text" value="${s.title}" id="t_${id}"><textarea id="d_${id}">${s.desc}</textarea>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"><input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}"></div><button id="del_${id}" style="background:#ff4d4d; color:white; padding:10px; margin-top:10px; cursor:pointer; border:none; border-radius:5px; font-weight:bold;">SMAZAT</button>`;
+                const s = seasonsData[id];
+                const card = document.createElement('div');
+                card.className = "card" + (s.active ? " active-card" : "");
+                
+                if(!isAdmin) {
+                    card.innerHTML = `<div style="color:${s.active ? '#28a745' : '#777'}; font-weight:bold; font-size:0.8em; margin-bottom:5px">${s.active ? '🟢 AKTUÁLNÍ' : '⚪ UKONČENO'}</div><h2>${s.title}</h2><p>${s.desc}</p>`;
+                } else {
+                    card.innerHTML = `
+                        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                            <button class="btn-toggle ${s.active ? 'on' : ''}" id="toggle_${id}">${s.active ? 'AKTIVNÍ' : 'VYPNUTO'}</button>
+                            <button class="btn-del" id="del_${id}">SMAZAT</button>
+                        </div>
+                        
+                        <label class="admin-label">Název turnaje</label>
+                        <input type="text" value="${s.title}" id="t_${id}" placeholder="Např. CS2 Winter Clash">
+                        
+                        <label class="admin-label">Popis (zobrazí se na hlavní stránce)</label>
+                        <textarea id="d_${id}" placeholder="Detaily o turnaji...">${s.desc}</textarea>
+                        
+                        <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:10px;">
+                            <div>
+                                <label class="admin-label">Start registrací</label>
+                                <input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}">
+                            </div>
+                            <div>
+                                <label class="admin-label">Start kvalifikace / konec reg.</label>
+                                <input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}">
+                            </div>
+                        </div>`;
+                    
                     setTimeout(() => {
-                        document.getElementById(`toggle_${id}`).onclick = () => { const wasActive = seasonsData[id].active; if(!wasActive) Object.keys(seasonsData).forEach(k => seasonsData[k].active = false); seasonsData[id].active = !wasActive; render(); };
-                        document.getElementById(`del_${id}`).onclick = () => { delete seasonsData[id]; render(); };
+                        document.getElementById(`toggle_${id}`).onclick = () => {
+                            const wasActive = seasonsData[id].active;
+                            Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
+                            seasonsData[id].active = !wasActive;
+                            render();
+                        };
+                        document.getElementById(`del_${id}`).onclick = () => { if(confirm("Smazat?")) { delete seasonsData[id]; render(); } };
                         document.getElementById(`t_${id}`).oninput = (e) => seasonsData[id].title = e.target.value;
                         document.getElementById(`d_${id}`).oninput = (e) => seasonsData[id].desc = e.target.value;
                         document.getElementById(`reg_${id}`).oninput = (e) => seasonsData[id].dateReg = e.target.value;
