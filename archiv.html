@@ -29,10 +29,7 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link active">Přehled Turnajů</a>
-        <div class="admin-controls">
-            <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-            <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
-        </div>
+        <div class="admin-controls"><a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a><a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a></div>
     </div></nav>
     <div class="page">
         <h1 style="color:var(--accent-color); text-align:center;">SPRÁVA TURNAJŮ</h1>
@@ -59,8 +56,8 @@
                 if(!isAdmin) { card.innerHTML = `<div style="color:${s.active ? '#28a745' : '#777'}; font-weight:bold; font-size:0.8em; margin-bottom:5px">${s.active ? '🟢 AKTUÁLNÍ' : '⚪ UKONČENO'}</div><h2>${s.title}</h2><p>${s.desc}</p>`; }
                 else {
                     card.innerHTML = `<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;"><button class="btn-toggle ${s.active ? 'on' : ''}" id="toggle_${id}">${s.active ? 'AKTIVNÍ' : 'VYPNUTO'}</button><button style="background:#ff4d4d; color:white; padding:10px; border-radius:5px; border:none; font-weight:bold; cursor:pointer;" id="del_${id}">SMAZAT</button></div>
-                    <label class="admin-label">Název turnaje</label><input type="text" value="${s.title}" id="t_${id}"><label class="admin-label">Popis (zobrazí se na hlavní stránce)</label><textarea id="d_${id}">${s.desc}</textarea>
-                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:10px;"><div><label class="admin-label">Start registrací</label><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"></div><div><label class="admin-label">Start kvalifikace / konec reg.</label><input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}"></div></div>`;
+                    <label class="admin-label">Název turnaje</label><input type="text" value="${s.title}" id="t_${id}"><label class="admin-label">Popis (na hl. straně)</label><textarea id="d_${id}">${s.desc}</textarea>
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-top:10px;"><div><label class="admin-label">Start registrací</label><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"></div><div><label class="admin-label">Start kvalifikace (pavouka)</label><input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}"></div></div>`;
                     setTimeout(() => {
                         document.getElementById(`toggle_${id}`).onclick = () => { const wasActive = seasonsData[id].active; Object.keys(seasonsData).forEach(k => seasonsData[k].active = false); seasonsData[id].active = !wasActive; render(); };
                         document.getElementById(`del_${id}`).onclick = () => { if(confirm("Smazat?")) { delete seasonsData[id]; render(); } };
@@ -73,7 +70,7 @@
                 container.appendChild(card);
             });
         }
-        document.getElementById('add-btn').onclick = () => { const id = "t" + Date.now(); seasonsData[id] = { title: "Nový turnaj", desc: "...", active: false }; render(); };
+        document.getElementById('add-btn').onclick = () => { const id = "t" + Date.now(); seasonsData[id] = { title: "Nový", desc: "...", active: false }; render(); };
         document.getElementById('save-btn').onclick = async () => { await setDoc(doc(db, "tournament", "archive_list"), seasonsData); alert("Uloženo!"); };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
