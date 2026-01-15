@@ -7,12 +7,12 @@
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --qual: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; transition: 0.3s; }
         .page { width: 1100px; padding: 40px; }
         h1 { text-align: center; text-transform: uppercase; letter-spacing: 2px; }
         #period-admin-qual { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid var(--accent-color); margin: 0 auto 30px auto; width: fit-content; display: none; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-        .slot { background: var(--card-bg); border: 2px solid #333; padding: 20px; border-radius: 12px; position: relative; }
+        .slot { background: var(--card-bg); border: 2px solid #333; padding: 20px; border-radius: 12px; }
         .match { background: #000; border: 1px solid #222; margin: 8px 0; border-radius: 4px; position: relative; }
         .format { position: absolute; left: -45px; top: 30%; font-size: 10px; color: #555; font-weight: bold; }
         .row { display: flex; border-bottom: 1px solid #111; }
@@ -20,6 +20,10 @@
         input[type="number"] { width: 40px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); font-weight: bold; }
         .win-row { background: var(--qual); border-radius: 4px; margin-top: 10px; }
         .win-row input { color: black; font-weight: bold; text-align: center; }
+        /* Admin tlačítka */
+        .admin-btn { display: none; font-weight: bold; }
+        #save-btn { color: #4caf50; border-right: 1px solid #333; }
+        #logout-btn { color: #ff4d4d; }
     </style>
 </head>
 <body>
@@ -29,7 +33,8 @@
         <a href="kvalifikace.html" class="nav-link" style="color:var(--accent-color)">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
-        <a id="logout-btn" class="nav-link" style="display: none; color: #ff4d4d;">Odhlásit</a>
+        <a id="save-btn" class="nav-link admin-btn">ULOŽIT</a>
+        <a id="logout-btn" class="nav-link admin-btn">ODHLÁSIT</a>
     </nav>
 
     <div class="page">
@@ -44,7 +49,6 @@
                 <option value="Podzim 2026">Podzim 2026</option>
             </select>
         </div>
-
         <div id="main-grid" class="grid"></div>
     </div>
 
@@ -52,7 +56,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -61,19 +64,13 @@
 
         const grid = document.getElementById('main-grid');
         for (let i = 1; i <= 8; i++) {
-            grid.innerHTML += `
-            <div class="slot">
-                <div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div>
-                <div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div>
-                <div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div>
-                <div class="match" style="border-color:var(--qual)"><span class="format" style="color:var(--qual)">Bo3</span><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number" value="0"></div></div>
-                <div class="win-row"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div>
-            </div>`;
+            grid.innerHTML += `<div class="slot"><div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div><div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div><div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div><div class="match" style="border-color:var(--qual)"><span class="format" style="color:var(--qual)">Bo3</span><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number" value="0"></div></div><div class="win-row"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div></div>`;
         }
 
         onAuthStateChanged(auth, user => {
+            const adminElements = document.querySelectorAll('.admin-btn');
             if (user) {
-                document.getElementById('logout-btn').style.display = 'block';
+                adminElements.forEach(el => el.style.display = 'block');
                 document.getElementById('period-admin-qual').style.display = 'block';
                 document.querySelectorAll('input, select').forEach(el => {
                     el.readOnly = false; el.disabled = false;
@@ -81,16 +78,26 @@
                     el.addEventListener('change', e => { localChanges[e.target.id] = e.target.value; });
                 });
             } else {
+                adminElements.forEach(el => el.style.display = 'none');
                 document.querySelectorAll('input, select').forEach(el => { el.readOnly = true; el.disabled = true; });
+            }
+        });
+
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            if (Object.keys(localChanges).length > 0) {
+                try {
+                    await setDoc(doc(db, "tournament", "qual"), localChanges, { merge: true });
+                    alert("Kvalifikace uložena.");
+                    localChanges = {};
+                    document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
+                } catch (e) { alert("Chyba: " + e.message); }
             }
         });
 
         document.getElementById('logout-btn').addEventListener('click', async () => {
             if (Object.keys(localChanges).length > 0 && confirm("Uložit kvalifikaci?")) {
-                try {
-                    await setDoc(doc(db, "tournament", "qual"), localChanges, { merge: true });
-                    alert("Uloženo.");
-                } catch (e) { alert("Chyba: " + e.message); return; }
+                try { await setDoc(doc(db, "tournament", "qual"), localChanges, { merge: true }); }
+                catch (e) { alert("Chyba: " + e.message); return; }
             }
             signOut(auth).then(() => window.location.reload());
         });
