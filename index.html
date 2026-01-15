@@ -33,20 +33,27 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", 
+            authDomain: "cspro-web.firebaseapp.com", 
+            projectId: "cspro-web", 
+            storageBucket: "cspro-web.firebasestorage.app", 
+            messagingSenderId: "412820092666", 
+            appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" 
+        };
+
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
 
+        // Zobrazení tlačítka odhlásit pouze přihlášeným
         onAuthStateChanged(auth, user => {
-            if (user) document.getElementById('logout-btn').style.display = 'block';
+            if (user) {
+                document.getElementById('logout-btn').style.display = 'block';
+            }
         });
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.reload());
-        });
-    </script>
-</body>
-</html>
+        // Funkce pro odhlášení
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => window.location.reload());
         });
