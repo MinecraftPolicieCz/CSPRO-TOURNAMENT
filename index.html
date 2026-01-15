@@ -13,7 +13,6 @@
         .hero { text-align: center; padding: 50px 20px; max-width: 800px; }
         h1 { font-size: 4em; color: var(--accent-color); margin-bottom: 10px; }
 
-        /* Box turnaje */
         .active-tournament-box {
             margin: 20px 0;
             padding: 30px;
@@ -22,12 +21,11 @@
             border-radius: 15px;
             width: 100%;
             max-width: 600px;
-            display: none; /* Zapne JS */
+            display: none;
         }
 
-        /* FORMULÁŘ - Styly */
         #registration-form { 
-            display: none; /* Schovaný, dokud se neklikne na tlačítko */
+            display: none; 
             text-align: left; 
             margin-top: 20px; 
             background: rgba(0,0,0,0.3); 
@@ -92,7 +90,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-        // Inicializace EmailJS tvým klíčem
+        // Tady je tvůj Public Key
         emailjs.init("47U6jSVKzAh5kcpa4");
 
         const firebaseConfig = { 
@@ -126,10 +124,9 @@
                         document.getElementById('phase-tag').innerText = "📢 REGISTRACE OTEVŘENA";
                         document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT TÝM</button>';
                         
-                        // Funkce pro otevření formuláře
                         document.getElementById('open-form-btn').onclick = function() {
-                            this.style.display = 'none'; // Schová tlačítko
-                            document.getElementById('registration-form').style.display = 'block'; // Ukáže formulář
+                            this.style.display = 'none'; 
+                            document.getElementById('registration-form').style.display = 'block'; 
                         };
                     } else {
                         document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE";
@@ -139,14 +136,14 @@
             }
         });
 
-        // Odesílání
         document.getElementById('registration-form').onsubmit = function(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn');
             btn.innerText = "ODESÍLÁM...";
             btn.disabled = true;
 
-            emailjs.sendForm('service_f1x9tvr', 'template_jsqybta', this)
+            // Použito tvoje Service ID a nové Template ID
+            emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this)
                 .then(() => {
                     alert('HOTOVO! Přihláška byla odeslána.');
                     document.getElementById('registration-form').innerHTML = "<h3 style='color:var(--accent-color)'>DĚKUJEME ZA REGISTRACI!</h3><p>Potvrzení najdete ve svém e-mailu.</p>";
