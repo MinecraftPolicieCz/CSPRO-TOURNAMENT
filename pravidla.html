@@ -2,76 +2,28 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pravidla | LIGHTSMC.EU</title>
+    <title>Pravidla - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-dark: #050507;
-            --accent: #007bff;
-            --card-bg: rgba(22, 22, 26, 0.7);
-            --text-main: #e0e0e0;
-            --text-dim: #94a3b8;
-            --glass-border: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            background-image: radial-gradient(circle at 0% 0%, rgba(0, 123, 255, 0.05) 0%, transparent 50%);
-        }
-
-        nav {
-            background: rgba(5, 5, 7, 0.8); backdrop-filter: blur(15px);
-            width: 100%; display: flex; justify-content: center;
-            border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 1000;
-        }
-
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; height: 80px; }
-        .nav-link { font-family: 'Rajdhani', sans-serif; color: var(--text-dim); text-decoration: none; padding: 0 20px; font-weight: 600; text-transform: uppercase; font-size: 0.95em; transition: 0.3s; }
-        .nav-link:hover, .nav-link.active { color: var(--accent); }
-
-        .container { max-width: 900px; margin: 60px auto; padding: 0 20px; }
+        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(15, 15, 15, 0.9); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
         
-        h1 { font-family: 'Rajdhani', sans-serif; font-size: 3em; text-align: center; letter-spacing: 10px; margin-bottom: 50px; }
+        /* Sjednocená navigace */
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
+        .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
+        
+        .admin-controls { display: flex; position: absolute; right: 20px; }
 
-        .rule-card {
-            background: var(--card-bg);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 40px;
-            margin-bottom: 30px;
-            backdrop-filter: blur(10px);
-            position: relative;
-        }
-
-        .rule-card::before {
-            content: "RULE_SET";
-            position: absolute; top: 10px; right: 20px;
-            font-family: 'Rajdhani', sans-serif; font-size: 0.7em; color: var(--accent); opacity: 0.5;
-        }
-
-        textarea {
-            width: 100%;
-            background: transparent;
-            border: 1px solid transparent;
-            color: var(--text-dim);
-            font-family: 'Inter', sans-serif;
-            font-size: 1.1em;
-            line-height: 1.8;
-            resize: none;
-            transition: 0.3s;
-            border-radius: 8px;
-            padding: 10px;
-        }
-
-        textarea:focus { border-color: var(--accent); background: rgba(255,255,255,0.02); outline: none; }
-
-        .admin-controls { position: absolute; right: 40px; display: flex; gap: 10px; }
-        .btn-admin { padding: 8px 15px; border-radius: 6px; font-size: 0.7em; font-weight: bold; text-decoration: none; }
+        .page { width: 1000px; padding: 60px 80px; box-sizing: border-box; flex: 1; }
+        h1 { color: var(--accent-color); text-transform: uppercase; letter-spacing: 3px; text-align: center; border-bottom: 3px solid var(--accent-color); padding-bottom: 20px; margin-bottom: 50px; }
+        .rules-section h2 { color: var(--accent-color); text-transform: uppercase; margin-top: 40px; border-left: 5px solid var(--accent-color); padding-left: 15px; font-size: 1.2em; }
+        .rule-item { background: var(--card-bg); margin-bottom: 12px; padding: 20px; border-radius: 8px; border: 1px solid #222; }
+        textarea { background: transparent; border: none; color: white; width: 100%; font-family: inherit; font-size: 1em; resize: none; outline: none; line-height: 1.5; }
+        
+        footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -81,68 +33,44 @@
             <a href="playoff.html" class="nav-link">PlayOff</a>
             <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
             <a href="pravidla.html" class="nav-link active">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Turnaje</a>
+            <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
             <div class="admin-controls">
-                <a id="save-btn" href="#" class="btn-admin" style="display:none; color:#28a745; border:1px solid #28a745">Uložit protokoly</a>
-                <a id="logout-btn" href="#" class="btn-admin" style="display:none; color:#ff4d4d; border:1px solid #ff4d4d">Odhlásit</a>
+                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
             </div>
         </div>
     </nav>
-
-    <div class="container">
-        <h1>PRAVIDLA</h1>
-        
-        <div class="rule-card">
-            <textarea id="r1" rows="5" readonly>Načítání pravidel...</textarea>
-        </div>
-        <div class="rule-card">
-            <textarea id="r2" rows="5" readonly>Načítání pravidel...</textarea>
-        </div>
-        <div class="rule-card">
-            <textarea id="r3" rows="5" readonly>Načítání pravidel...</textarea>
+    <div class="page">
+        <h1>Oficiální Pravidla Turnaje</h1>
+        <div class="rules-section" id="rules-container">
+            <h2>1. Formát zápasů</h2>
+            <div class="rule-item"><textarea id="r1">Kvalifikace BO1. Finále skupin BO3. PlayOff BO3, Velké Finále BO5.</textarea></div>
+            <h2>2. Fair Play</h2>
+            <div class="rule-item"><textarea id="r2">Cheatování je přísně zakázáno. Zakládáme si na vzájemné důvěře.</textarea></div>
+            <h2>3. Soupiska</h2>
+            <div class="rule-item"><textarea id="r3">Tým musí nastoupit v 5 hráčích. Povolen max. 1 host.</textarea></div>
         </div>
     </div>
-
+    <footer>
+        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
+        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
+    </footer>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let localChanges = {};
-
         onAuthStateChanged(auth, user => {
             if (user) {
-                document.getElementById('save-btn').style.display = 'block';
-                document.getElementById('logout-btn').style.display = 'block';
-                document.querySelectorAll('textarea').forEach(el => {
-                    el.readOnly = false;
-                    el.oninput = e => { localChanges[e.target.id] = e.target.value; };
-                });
-            }
+                document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block';
+                document.querySelectorAll('textarea').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.parentElement.style.borderColor = "red"; }; });
+            } else { document.querySelectorAll('textarea').forEach(el => el.readOnly = true); }
         });
-
-        onSnapshot(doc(db, "tournament", "rules"), d => {
-            if(d.exists()){
-                const data = d.data();
-                for(const key in data){
-                    const el = document.getElementById(key);
-                    if(el && document.activeElement !== el) el.value = data[key];
-                }
-            }
-        });
-
-        document.getElementById('save-btn').onclick = async () => {
-            await setDoc(doc(db, "tournament", "rules"), localChanges, { merge: true });
-            alert("Pravidla aktualizována!");
-            location.reload();
-        };
-
+        document.getElementById('save-btn').onclick = async () => { await setDoc(doc(db, "tournament", "rules"), localChanges, { merge: true }); alert("Uloženo!"); location.reload(); };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
+        onSnapshot(doc(db, "tournament", "rules"), d => { if (d.exists()) { const data = d.data(); for (const key in data) { const el = document.getElementById(key); if (el && document.activeElement !== el) el.value = data[key]; } } });
     </script>
 </body>
 </html>
