@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Správa turnajů - CSPRO.CZ</title>
+    <title>Správa turnajů - LIGHTSMC.EU</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --danger: #ff4d4d; --success: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -14,21 +14,22 @@
         .page { width: 900px; padding: 40px; }
         h1 { color: var(--accent-color); letter-spacing: 2px; text-transform: uppercase; text-align: center; }
         
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid #333; margin-bottom: 20px; position: relative; transition: 0.3s; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid #333; margin-bottom: 20px; position: relative; }
         .card.active-card { border-left-color: var(--success); background: #1e251e; }
         
         .active-badge { position: absolute; top: 15px; right: 15px; }
         
         input, textarea { background: #222; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
-        textarea { height: 80px; resize: none; }
-        
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.75em; transition: 0.2s; }
+        .date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; background: #111; padding: 15px; border-radius: 8px; }
+        .date-grid label { font-size: 10px; color: #777; font-weight: bold; }
+
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.75em; }
         .btn-add { background: var(--accent-color); color: black; margin-bottom: 30px; width: 100%; font-size: 1em; }
-        .btn-del { background: var(--danger); color: white; margin-top: 5px; }
+        .btn-del { background: var(--danger); color: white; margin-top: 10px; }
         .btn-toggle { background: #444; color: white; min-width: 100px; }
         .btn-toggle.on { background: var(--success); }
 
-        #save-btn, #logout-btn { display: none; } /* Skryto pro nehlášené */
+        #save-btn, #logout-btn { display: none; }
     </style>
 </head>
 <body>
@@ -38,17 +39,15 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link" style="color:var(--accent-color)">Archiv</a>
-        <a id="save-btn" class="nav-link" style="color:var(--success)">ULOŽIT ZMĚNY</a>
+        <a id="save-btn" class="nav-link" style="color:var(--success)">ULOŽIT</a>
         <a id="logout-btn" class="nav-link" style="color:var(--danger)">ODHLÁSIT</a>
     </nav>
 
     <div class="page">
         <h1 id="page-title">Archiv turnajů</h1>
-        
         <div id="admin-add-area" style="display:none">
             <button class="btn btn-add" id="add-btn">+ VYTVOŘIT NOVÝ TURNAJ</button>
         </div>
-
         <div id="seasons-container"></div>
     </div>
 
@@ -73,26 +72,19 @@
         let seasonsData = {};
         let isAdmin = false;
 
-        // Správa stavu přihlášení
         onAuthStateChanged(auth, user => {
             isAdmin = !!user;
             document.getElementById('save-btn').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('logout-btn').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('admin-add-area').style.display = isAdmin ? 'block' : 'none';
-            
             if(isAdmin) document.getElementById('page-title').innerText = "Správa turnajů";
             render();
         });
 
-        // Načítání dat z Firebase
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()) { 
-                seasonsData = d.data(); 
-                render(); 
-            }
+            if(d.exists()) { seasonsData = d.data(); render(); }
         });
 
-        // Vykreslení seznamu turnajů
         function render() {
             const container = document.getElementById('seasons-container');
             container.innerHTML = "";
@@ -104,69 +96,61 @@
                 card.className = "card" + (s.active ? " active-card" : "");
                 
                 if(!isAdmin) {
-                    // Verze pro diváky
                     card.innerHTML = `
                         <div style="color:${s.active ? '#4caf50' : '#777'}; font-weight:bold; font-size:0.8em; margin-bottom:5px">
                             ${s.active ? '🟢 AKTUÁLNÍ' : '⚪ UKONČENO'}
                         </div>
-                        <h2 style="margin:0">${s.title}</h2>
-                        <p style="color:#bbb; margin-top:10px">${s.desc}</p>
+                        <h2>${s.title}</h2>
+                        <p style="color:#bbb">${s.desc}</p>
                     `;
                 } else {
-                    // Verze pro admina
                     card.innerHTML = `
                         <div class="active-badge">
-                            <button class="btn btn-toggle ${s.active ? 'on' : ''}" id="toggle_${id}">
-                                ${s.active ? 'AKTIVNÍ' : 'VYPNUTO'}
-                            </button>
+                            <button class="btn btn-toggle ${s.active ? 'on' : ''}" id="toggle_${id}">${s.active ? 'AKTIVNÍ' : 'VYPNUTO'}</button>
                         </div>
                         <input type="text" value="${s.title}" id="t_${id}" placeholder="Název turnaje">
                         <textarea id="d_${id}" placeholder="Popis turnaje">${s.desc}</textarea>
+                        
+                        <div class="date-grid">
+                            <div><label>START NÁBORU</label><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"></div>
+                            <div><label>START KVALIFIKACE</label><input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}"></div>
+                            <div style="grid-column: span 2;"><label>START PLAYOFF</label><input type="datetime-local" value="${s.datePlay || ''}" id="play_${id}"></div>
+                        </div>
                         <button class="btn btn-del" id="del_${id}">SMAZAT</button>
                     `;
                     
                     setTimeout(() => {
-                        // Přepínání aktivity (jen jeden může být aktivní)
                         document.getElementById(`toggle_${id}`).onclick = () => {
                             const wasActive = seasonsData[id].active;
                             Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
                             seasonsData[id].active = !wasActive;
                             render();
                         };
-                        // Mazání
-                        document.getElementById(`del_${id}`).onclick = () => {
-                            if(confirm("Opravdu smazat tento turnaj?")) { 
-                                delete seasonsData[id]; 
-                                render(); 
-                            }
-                        };
-                        // Update dat v lokální proměnné
+                        document.getElementById(`del_${id}`).onclick = () => { if(confirm("Smazat?")) { delete seasonsData[id]; render(); } };
                         document.getElementById(`t_${id}`).oninput = (e) => seasonsData[id].title = e.target.value;
                         document.getElementById(`d_${id}`).oninput = (e) => seasonsData[id].desc = e.target.value;
+                        document.getElementById(`reg_${id}`).oninput = (e) => seasonsData[id].dateReg = e.target.value;
+                        document.getElementById(`kval_${id}`).oninput = (e) => seasonsData[id].dateKval = e.target.value;
+                        document.getElementById(`play_${id}`).oninput = (e) => seasonsData[id].datePlay = e.target.value;
                     }, 0);
                 }
                 container.appendChild(card);
             });
         }
 
-        // Tlačítko přidat v těle stránky
         document.getElementById('add-btn').onclick = () => {
             const id = "t" + Date.now();
-            seasonsData[id] = { title: "Nový turnaj", desc: "Popis vítězů...", active: false };
+            seasonsData[id] = { title: "Nový turnaj", desc: "Popis...", active: false };
             render();
         };
 
-        // Tlačítko uložit v NAVIGACI
         document.getElementById('save-btn').onclick = async () => {
             try {
                 await setDoc(doc(db, "tournament", "archive_list"), seasonsData);
-                alert("Změny byly úspěšně uloženy do databáze!");
-            } catch (e) { 
-                alert("Chyba při ukládání: " + e.message); 
-            }
+                alert("Uloženo!");
+            } catch (e) { alert("Chyba: " + e.message); }
         };
 
-        // Odhlášení
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
 </body>
