@@ -21,9 +21,22 @@
         .main-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding: 80px 20px; box-sizing: border-box; }
         h1 { font-size: clamp(3em, 10vw, 5em); color: var(--accent-color); margin-bottom: 30px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); text-align: center; }
         
-        /* Editační pole pro úvod */
+        /* Editační pole - roztahuje se podle obsahu */
         .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
-        textarea#intro-text { width: 100%; background: transparent; border: none; color: #ccc; font-family: inherit; font-size: 1.1em; line-height: 1.8; resize: none; outline: none; height: 400px; }
+        textarea#intro-text { 
+            width: 100%; 
+            background: transparent; 
+            border: none; 
+            color: #ccc; 
+            font-family: inherit; 
+            font-size: 1.1em; 
+            line-height: 1.8; 
+            resize: none; 
+            outline: none; 
+            height: auto; 
+            overflow: hidden; 
+            min-height: 200px;
+        }
         
         .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; box-sizing: border-box; display: none; text-align: center; }
         #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
@@ -48,7 +61,7 @@
     <div class="main-container">
         <h1>LIGHTSMC.EU</h1>
         <div class="content-text">
-            <textarea id="intro-text" placeholder="Zde napište úvodní text o turnaji...">Načítání úvodu...</textarea>
+            <textarea id="intro-text" placeholder="Zde napište úvodní text o turnaji..." readonly>Načítání úvodu...</textarea>
         </div>
         <div id="active-info" class="active-tournament-box">
             <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
@@ -80,27 +93,35 @@
         
         let localChanges = {};
 
-        // Sledování textu úvodu
+        function autoResize(el) {
+            el.style.height = 'auto';
+            el.style.height = el.scrollHeight + 'px';
+        }
+
         onSnapshot(doc(db, "tournament", "content"), d => {
             if(d.exists()) {
                 const data = d.data();
                 const el = document.getElementById('intro-text');
-                if (document.activeElement !== el) el.value = data.intro || "";
+                if (document.activeElement !== el) {
+                    el.value = data.intro || "";
+                    autoResize(el);
+                }
             }
         });
 
         onAuthStateChanged(auth, user => { 
+            const introEl = document.getElementById('intro-text');
             if(user) { 
                 document.getElementById('save-btn').style.display='block'; 
                 document.getElementById('logout-btn').style.display='block';
-                const introEl = document.getElementById('intro-text');
                 introEl.readOnly = false;
                 introEl.oninput = e => { 
                     localChanges.intro = e.target.value; 
                     introEl.parentElement.style.borderColor = "red"; 
+                    autoResize(introEl);
                 };
             } else {
-                document.getElementById('intro-text').readOnly = true;
+                introEl.readOnly = true;
             }
         });
 
