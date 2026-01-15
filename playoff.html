@@ -5,32 +5,18 @@
     <title>PlayOff - CSPRO.CZ</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --line: #333; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1200px; /* Zajišťuje, že body se nesmrskne pod šířku pavouka */ }
-        
-        /* OPRAVENÁ LIŠTA: Roztáhne se přes celou šířku obsahu a je fixní */
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1200px; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; min-width: 1200px; }
-        
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; white-space: nowrap; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
         .nav-link:hover { color: var(--accent-color); background: #222; }
-
-        .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
-        #no-tournament { display:none; text-align: center; margin-top: 100px; border: 1px solid #333; padding: 40px; border-radius: 15px; }
-        #content-area { display: none; width: 100%; flex-direction: column; align-items: center; }
-
+        .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
         .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 50px; }
         .column { display: flex; flex-direction: column; justify-content: space-around; width: 300px; }
-        .match-container { display: flex; flex-direction: column; justify-content: center; min-height: 150px; }
-        .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; position: relative; }
-        .match-box::after { content: '➜'; position: absolute; right: -35px; top: 35%; color: var(--line); font-size: 20px; }
-        .column:last-child .match-box::after { display: none; }
-
-        .format-badge { position: absolute; top: -12px; left: 10px; background: #222; color: var(--accent-color); font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid var(--line); }
+        .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; position: relative; margin: 10px 0; }
         .team-row { display: flex; border-bottom: 1px solid #222; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 14px; outline: none; }
         input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
-
-        .champion-section { margin-top: 60px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 20px; width: 450px; text-align: center; }
-        .champion-section input { color: black; font-size: 2.2em; font-weight: 900; text-align: center; border:none; width: 100%; background: transparent; }
+        .save-btn { background: var(--accent-color); color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 20px; }
     </style>
 </head>
 <body>
@@ -40,62 +26,65 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
-        <a id="save-btn" class="nav-link" style="display:none; color:#4caf50">ULOŽIT</a>
-        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
     </nav>
 
     <div class="page">
-        <div id="no-tournament"><h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2></div>
-        <div id="content-area">
-            <h1 id="title-display">PLAYOFF</h1>
-            <div class="bracket">
-                <div class="column">
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number"></div></div></div>
+        <h1>PLAYOFF</h1>
+        <button class="save-btn" onclick="saveData()">ULOŽIT VÝSLEDKY NA WEB</button>
+        
+        <div class="bracket">
+            <div class="column">
+                <div class="match-box">
+                    <div class="team-row"><input id="m1_t1" placeholder="Tým 1"><input id="m1_s1" type="number"></div>
+                    <div class="team-row"><input id="m1_t2" placeholder="Tým 2"><input id="m1_s2" type="number"></div>
                 </div>
-                <div class="column">
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number"></div></div></div>
                 </div>
-                <div class="column">
-                    <div class="match-container"><div class="match-box" style="border: 2px solid gold;"><div class="format-badge" style="color: gold; border-color: gold;">Bo5</div><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number"></div></div></div>
-                </div>
-            </div>
-            <div class="champion-section"><h2>🏆 ŠAMPION 🏆</h2><input id="champ_name" placeholder="JMÉNO TÝMU"></div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        let activeId = null; let localChanges = {}; let unsub = null;
+        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-        onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()){
-                const list = d.data();
-                activeId = Object.keys(list).find(key => list[key].active === true);
-                if(activeId) {
-                    document.getElementById('no-tournament').style.display = "none";
-                    document.getElementById('content-area').style.display = "flex";
-                    document.getElementById('title-display').innerText = "PLAYOFF - " + list[activeId].title;
-                    loadData(activeId);
-                } else {
-                    document.getElementById('no-tournament').style.display = "block";
-                    document.getElementById('content-area').style.display = "none";
-                }
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", 
+            authDomain: "cspro-web.firebaseapp.com", 
+            projectId: "cspro-web", 
+            storageBucket: "cspro-web.firebasestorage.app", 
+            messagingSenderId: "412820092666", 
+            appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" 
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Funkce pro uložení dat do databáze
+        window.saveData = async () => {
+            const data = {};
+            document.querySelectorAll('input').forEach(i => {
+                if(i.id) data[i.id] = i.value;
+            });
+            try {
+                await setDoc(doc(db, "tournament", "playoff"), data);
+                alert("Data byla úspěšně uložena!");
+            } catch (e) {
+                alert("Chyba při ukládání: " + e.message);
+            }
+        };
+
+        // Načítání dat v reálném čase
+        onSnapshot(doc(db, "tournament", "playoff"), (snap) => {
+            if(snap.exists()){
+                const d = snap.data();
+                Object.keys(d).forEach(key => {
+                    const el = document.getElementById(key);
+                    if(el) el.value = d[key];
+                });
             }
         });
-
-        function loadData(id) {
-            if(unsub) unsub();
-            unsub = onSnapshot(doc(db, "tournament", "playoff_" + id), d => {
-                if(d.exists()){
-                    const data = d.data();
+    </script>
+</body>
+</html>
                     for(const key in data){
                         const el = document.getElementById(key);
                         if(el && document.activeElement !== el) el.value = data[key];
@@ -296,6 +285,7 @@
     </script>
 </body>
 </html>
+
 
 
 
