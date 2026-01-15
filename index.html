@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>LIGHTSMC.EU - Organizace Turnajů</title>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -18,7 +19,6 @@
         .description { font-size: 1.1em; color: #ccc; line-height: 1.8; margin-bottom: 50px; }
         .highlight { color: var(--accent-color); font-weight: bold; }
 
-        /* Aktivní turnaj */
         .active-tournament-box {
             margin: 40px 0;
             padding: 40px;
@@ -32,13 +32,20 @@
         }
         .live-indicator { color: var(--accent-color); font-weight: bold; font-size: 1em; margin-bottom: 15px; text-transform: uppercase; letter-spacing: 2px; }
         
-        .btn-link { display: inline-block; margin-top: 25px; padding: 14px 35px; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none; border-radius: 8px; font-weight: bold; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .reg-requirements { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 10px; margin: 20px 0; text-align: left; font-size: 0.9em; }
+        .reg-requirements ul { margin: 10px 0 0 20px; padding: 0; color: #bbb; }
+        .reg-requirements li { margin-bottom: 5px; }
+
+        #registration-form { text-align: left; margin-top: 20px; display: none; background: rgba(255,255,255,0.05); padding: 25px; border-radius: 10px; border: 1px solid #333; }
+        #registration-form label { display: block; margin-bottom: 5px; font-size: 0.8em; color: var(--accent-color); font-weight: bold; }
+        #registration-form input, #registration-form textarea { width: 100%; padding: 10px; margin-bottom: 15px; background: #000; border: 1px solid #444; color: white; border-radius: 5px; box-sizing: border-box; font-family: inherit; }
+        #registration-form textarea { height: 100px; resize: none; }
+
+        .btn-link { display: inline-block; margin-top: 25px; padding: 14px 35px; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none; border-radius: 8px; font-weight: bold; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; background: transparent; cursor: pointer; }
         .btn-link:hover { background: var(--accent-color); color: black; box-shadow: 0 0 15px var(--accent-color); }
 
         .contact-info { margin-top: 50px; padding: 20px; border-top: 1px solid #222; width: 100%; color: #888; }
-        .contact-info a { color: var(--accent-color); text-decoration: none; }
-
-        footer { padding: 40px; color: #555; font-size: 0.9em; width: 100%; text-align: center; }
+        footer { padding: 40px; color: #555; text-align: center; border-top: 1px solid #222; width: 100%; margin-top: 50px; }
         #logout-btn { color: #ff4d4d; display: none; }
     </style>
 </head>
@@ -57,8 +64,8 @@
         <div class="tagline">Organizace kompetitivních turnajů</div>
         
         <p class="description">
-            Jsme profesionální platforma zaměřená na <span class="highlight">uspořádání esportových turnajů</span> s důrazem na férové prostředí a špičkovou organizaci. 
-            Naším cílem je poskytnout hráčům přehledný systém od registrace až po finálové playoff. 
+            Jsme profesionální platforma zaměřená na <span class="highlight">uspořádání esportových turnajů</span> s důrazem na férové prostředí a špičkovou organizaci.
+            Naším cílem je poskytnout hráčům přehledný systém od registrace až po finálové playoff.
             Zakládáme si na <span class="highlight">transparentnosti výsledků</span> a budování komunity, kde každý zápas má svůj význam.
         </p>
 
@@ -66,22 +73,39 @@
             <div id="phase-tag" class="live-indicator"></div>
             <h2 id="active-title" style="margin:10px 0; font-size: 2.5em; color: white;"></h2>
             <p id="active-desc" style="color: #bbb; line-height: 1.6; font-size: 1.1em;"></p>
+            
             <div id="action-area"></div>
+
+            <form id="registration-form">
+                <input type="hidden" name="active_title" id="hidden_active_title">
+                
+                <label>NÁZEV TÝMU</label>
+                <input type="text" name="team_name" required>
+                
+                <label>DISCORD ID JEDNATELE (kapitána)</label>
+                <input type="text" name="discord_id" required>
+                
+                <label>STEAM URL VŠECH HRÁČŮ (základní sestava)</label>
+                <textarea name="steam_urls" placeholder="Hráč 1: url&#10;Hráč 2: url..." required></textarea>
+                
+                <button type="submit" class="btn-link" style="width:100%; background:var(--accent-color); color:black;">ODESLAT PŘIHLÁŠKU</button>
+            </form>
         </div>
 
         <div class="contact-info">
-            Máte dotaz nebo zájem o spolupráci? Kontaktujte nás na: <a href="mailto:support@lightsmc.eu">support@lightsmc.eu</a>
+            Máte dotaz nebo zájem o spolupráci? Kontaktujte nás na: <a href="mailto:support@lightsmc.eu" style="color:var(--accent-color); text-decoration:none;">support@lightsmc.eu</a>
         </div>
     </div>
 
-    <footer>
-        &copy; 2026 LIGHTSMC.EU | Všechna práva vyhrazena.
-    </footer>
+    <footer>&copy; 2026 LIGHTSMC.EU | Všechna práva vyhrazena.</footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
+        // --- EMAILJS KONFIGURACE ---
+        emailjs.init("47U6jSVKzAh5kcpa4");
 
         const firebaseConfig = { 
             apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", 
@@ -112,36 +136,69 @@
                     infoBox.style.display = "inline-block";
                     document.getElementById('active-title').innerText = s.title;
                     document.getElementById('active-desc').innerText = s.desc;
+                    document.getElementById('hidden_active_title').value = s.title;
 
                     let phase = "PŘIPRAVUJE SE";
-                    let btnHtml = "";
+                    let content = "";
 
                     if (dPlay && now >= dPlay) {
                         phase = "● PLAYOFF PRÁVĚ PROBÍHÁ";
-                        btnHtml = `<a href="playoff.html" class="btn-link">SLEDOVAT PLAYOFF</a>`;
+                        content = `<a href="playoff.html" class="btn-link">SLEDOVAT PLAYOFF</a>`;
                     } else if (dKval && now >= dKval) {
                         phase = "● KVALIFIKACE V PLNÉM PROUDU";
-                        btnHtml = `<a href="kvalifikace.html" class="btn-link">VÝSLEDKY KVALIFIKACE</a>`;
+                        content = `<a href="kvalifikace.html" class="btn-link">VÝSLEDKY KVALIFIKACE</a>`;
                     } else if (dReg && now >= dReg) {
                         phase = "📢 REGISTRACE OTEVŘENA";
-                        btnHtml = `<a href="https://forms.gle/VAS_FORMULAR" target="_blank" class="btn-link" style="background:var(--accent-color); color:black;">ODESLAT PŘIHLÁŠKU</a>`;
+                        content = `
+                            <div class="reg-requirements">
+                                <strong>Požadavky pro přihlášení týmu:</strong>
+                                <ul>
+                                    <li>Oficiální název týmu</li>
+                                    <li>Steam URL všech hráčů (základní sestava)</li>
+                                    <li>Discord ID jednatele (kapitána) týmu</li>
+                                </ul>
+                            </div>
+                            <button id="show-reg-btn" class="btn-link">PŘIHLÁSIT TÝM</button>
+                        `;
                     }
 
                     document.getElementById('phase-tag').innerText = phase;
-                    document.getElementById('action-area').innerHTML = btnHtml;
+                    document.getElementById('action-area').innerHTML = content;
+
+                    const showBtn = document.getElementById('show-reg-btn');
+                    if(showBtn) {
+                        showBtn.onclick = () => {
+                            showBtn.style.display = 'none';
+                            document.getElementById('registration-form').style.display = 'block';
+                        };
+                    }
                 } else {
                     infoBox.style.display = "none";
                 }
             }
         });
 
-        onAuthStateChanged(auth, user => {
-            if (user) document.getElementById('logout-btn').style.display = 'block';
-        });
+        document.getElementById('registration-form').onsubmit = function(e) {
+            e.preventDefault();
+            const btn = this.querySelector('button');
+            btn.innerText = "ODESÍLÁM...";
+            btn.disabled = true;
 
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            signOut(auth).then(() => window.location.reload());
-        });
+            emailjs.sendForm('service_f1x9tvr', 'template_jsqybta', this)
+                .then(() => {
+                    alert('Přihláška byla úspěšně odeslána!');
+                    this.reset();
+                    this.style.display = 'none';
+                    document.getElementById('action-area').innerHTML = "<p style='color:#4caf50; font-weight:bold; text-transform:uppercase;'>Děkujeme za registraci! Brzy se vám ozveme.</p>";
+                }, (error) => {
+                    alert('Chyba při odesílání: ' + JSON.stringify(error));
+                    btn.innerText = "ODESLAT PŘIHLÁŠKU";
+                    btn.disabled = false;
+                });
+        };
+
+        onAuthStateChanged(auth, user => { if (user) document.getElementById('logout-btn').style.display = 'block'; });
+        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
 </body>
 </html>
