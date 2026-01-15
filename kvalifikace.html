@@ -1,59 +1,90 @@
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-    import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>CSPRO.CZ - Kvalifikace</title>
+    <style>
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        .page { width: 1150px; padding: 40px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
+        .slot { background: var(--card-bg); border: 1px solid #333; padding: 15px; border-radius: 10px; }
+        .match { background: #000; border: 1px solid #222; margin: 5px 0; border-radius: 4px; }
+        .row { display: flex; border-bottom: 1px solid #111; }
+        input { background: transparent; border: none; color: white; padding: 8px; width: 100%; font-size: 13px; }
+        input[type="number"] { width: 40px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html" class="nav-link">Domů</a>
+        <a href="playoff.html" class="nav-link">PlayOff</a>
+        <a href="kvalifikace.html" class="nav-link" style="color:var(--accent-color)">Kvalifikace</a>
+        <a href="pravidla.html" class="nav-link">Pravidla</a>
+        <a href="archiv.html" class="nav-link">Archiv</a>
+        <a id="logout-btn" class="nav-link" style="display: none; color: #ff4d4d;">Odhlásit</a>
+    </nav>
 
-    const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-    const auth = getAuth(app);
+    <div class="page">
+        <h1 style="text-align:center">KVALIFIKACE</h1>
+        <div id="main-grid" class="grid"></div>
+    </div>
 
-    let unsavedChanges = {}; 
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
-    // Dynamické generování gridu (pokud ho už nemáš v HTML)
-    const grid = document.getElementById('main-grid');
-    if (grid) {
+        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+        let unsavedChanges = {};
+
+        // Vykreslení
+        const grid = document.getElementById('main-grid');
         for (let i = 1; i <= 8; i++) {
-            grid.innerHTML += `<div class="slot"><div style="color:#f3a933; font-weight:bold;">SLOT #${i}</div><div class="match"><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div><div class="match"><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div><div class="match" style="border-color:#4caf50"><div class="row"><input id="s${i}_f1" placeholder="Vítěz A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Vítěz B"><input id="s${i}_fs2" type="number" value="0"></div></div><div class="win"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div></div>`;
+            grid.innerHTML += `<div class="slot">
+                <div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div>
+                <div class="match"><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div>
+                <div class="match"><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div>
+                <div class="match" style="border-color:#4caf50"><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number" value="0"></div></div>
+                <input id="s${i}_w" placeholder="VÍTĚZ SLOTU" style="background:#222; margin-top:5px; text-align:center; font-weight:bold; color:#4caf50">
+            </div>`;
         }
-    }
 
-    onAuthStateChanged(auth, user => {
-        const logoutBtn = document.getElementById('logout-btn');
-        if (user) {
-            logoutBtn.style.display = 'block';
-            document.querySelectorAll('input').forEach(el => {
-                el.readOnly = false;
-                el.addEventListener('input', e => {
-                    unsavedChanges[e.target.id] = e.target.value;
-                    el.style.backgroundColor = "rgba(243, 169, 51, 0.1)"; // Indikace změny
+        onAuthStateChanged(auth, user => {
+            const btn = document.getElementById('logout-btn');
+            if (user) {
+                btn.style.display = 'block';
+                document.querySelectorAll('input').forEach(el => {
+                    el.readOnly = false;
+                    el.addEventListener('input', e => { unsavedChanges[e.target.id] = e.target.value; });
                 });
-            });
-        } else {
-            logoutBtn.style.display = 'none';
-            document.querySelectorAll('input').forEach(el => el.readOnly = true);
-        }
-    });
+            } else {
+                btn.style.display = 'none';
+                document.querySelectorAll('input').forEach(el => el.readOnly = true);
+            }
+        });
 
-    document.getElementById('logout-btn').addEventListener('click', async () => {
-        if (Object.keys(unsavedChanges).length > 0) {
-            if (confirm("Chcete ULOŽIT změny v kvalifikaci před odhlášením?")) {
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (Object.keys(unsavedChanges).length > 0 && confirm("Uložit změny v Kvalifikaci?")) {
                 await setDoc(doc(db, "tournament", "qual"), unsavedChanges, { merge: true });
             }
-        }
-        signOut(auth).then(() => window.location.reload());
-    });
+            signOut(auth).then(() => window.location.reload());
+        });
 
-    onSnapshot(doc(db, "tournament", "qual"), d => {
-        if(d.exists()){
-            const data = d.data();
-            for(const key in data){
-                const el = document.getElementById(key);
-                if(el && document.activeElement !== el) {
-                    el.value = data[key];
-                    el.style.backgroundColor = "transparent";
+        onSnapshot(doc(db, "tournament", "qual"), d => {
+            if(d.exists()){
+                const data = d.data();
+                for(const key in data){
+                    const el = document.getElementById(key);
+                    if(el && document.activeElement !== el) el.value = data[key];
                 }
             }
-        }
-    });
-</script>
+        });
+    </script>
+</body>
+</html>
