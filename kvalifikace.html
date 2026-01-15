@@ -4,17 +4,23 @@
     <meta charset="UTF-8">
     <title>CSPRO.CZ - Kvalifikace</title>
     <style>
-        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --qual: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
         .page { width: 1150px; padding: 40px; }
-        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 25px; }
-        .slot { background: var(--card-bg); border: 1px solid #333; padding: 15px; border-radius: 10px; }
-        .match { background: #000; border: 1px solid #222; margin: 5px 0; border-radius: 4px; }
+        .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 40px; }
+        .slot { background: var(--card-bg); border: 2px solid #333; padding: 20px; border-radius: 12px; position: relative; }
+        .slot:hover { border-color: var(--accent-color); }
+        .match { background: #000; border: 1px solid #333; margin: 10px 0; border-radius: 6px; position: relative; }
+        .match::after { content: '↓'; position: absolute; bottom: -18px; left: 50%; color: #444; font-weight: bold; }
+        .match:last-of-type::after { content: '🏆'; bottom: -22px; color: var(--qual); }
         .row { display: flex; border-bottom: 1px solid #111; }
-        input { background: transparent; border: none; color: white; padding: 8px; width: 100%; font-size: 13px; }
-        input[type="number"] { width: 40px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); }
+        input { background: transparent; border: none; color: white; padding: 10px; width: 100%; }
+        input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); }
+        .win-box { background: var(--qual); padding: 2px; border-radius: 4px; margin-top: 15px; }
+        .win-box input { color: black; font-weight: 900; text-align: center; text-transform: uppercase; }
+        select { background: #222; color: #888; border: none; font-size: 10px; position: absolute; top: 10px; right: 10px; }
     </style>
 </head>
 <body>
@@ -26,46 +32,37 @@
         <a href="archiv.html" class="nav-link">Archiv</a>
         <a id="logout-btn" class="nav-link" style="display: none; color: #ff4d4d;">Odhlásit</a>
     </nav>
-
     <div class="page">
-        <h1 style="text-align:center">KVALIFIKACE</h1>
+        <h1 style="text-align: center;">KVALIFIKAČNÍ SLOTY (32 TÝMŮ)</h1>
         <div id="main-grid" class="grid"></div>
     </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
         let unsavedChanges = {};
 
-        // Vykreslení
         const grid = document.getElementById('main-grid');
         for (let i = 1; i <= 8; i++) {
-            grid.innerHTML += `<div class="slot">
-                <div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div>
-                <div class="match"><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div>
-                <div class="match"><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div>
-                <div class="match" style="border-color:#4caf50"><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number" value="0"></div></div>
-                <input id="s${i}_w" placeholder="VÍTĚZ SLOTU" style="background:#222; margin-top:5px; text-align:center; font-weight:bold; color:#4caf50">
-            </div>`;
+            grid.innerHTML += `<div class="slot"><select id="s${i}_bo"><option>Bo1</option><option>Bo3</option></select><div style="color:var(--accent-color); font-weight:bold;">SLOT #${i}</div><div class="match"><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div><div class="match"><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div><div class="match" style="border-color:var(--qual)"><div class="row"><input id="s${i}_f1" placeholder="Vítěz A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Vítěz B"><input id="s${i}_fs2" type="number" value="0"></div></div><div class="win-box"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div></div>`;
         }
 
         onAuthStateChanged(auth, user => {
             const btn = document.getElementById('logout-btn');
             if (user) {
                 btn.style.display = 'block';
-                document.querySelectorAll('input').forEach(el => {
-                    el.readOnly = false;
-                    el.addEventListener('input', e => { unsavedChanges[e.target.id] = e.target.value; });
+                document.querySelectorAll('input, select').forEach(el => {
+                    el.disabled = false; el.readOnly = false;
+                    el.addEventListener('change', e => { unsavedChanges[e.target.id] = e.target.value; e.target.style.backgroundColor = "rgba(255,0,0,0.1)"; });
+                    el.addEventListener('input', e => { unsavedChanges[e.target.id] = e.target.value; e.target.style.backgroundColor = "rgba(255,0,0,0.1)"; });
                 });
             } else {
                 btn.style.display = 'none';
-                document.querySelectorAll('input').forEach(el => el.readOnly = true);
+                document.querySelectorAll('input, select').forEach(el => { el.disabled = true; el.readOnly = true; });
             }
         });
 
