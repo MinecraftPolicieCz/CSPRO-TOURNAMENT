@@ -2,374 +2,97 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LIGHTSMC.EU | Nová éra CS2 esportu</title>
+    <title>LIGHTSMC.EU - Gaming & Esport</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
-    <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;600;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        :root {
-            --bg-dark: #050507;
-            --accent: #007bff;
-            --accent-glow: rgba(0, 123, 255, 0.4);
-            --card-bg: rgba(22, 22, 26, 0.7);
-            --text-main: #e0e0e0;
-            --text-dim: #94a3b8;
-            --glass-border: rgba(255, 255, 255, 0.05);
-        }
-
-        body {
-            font-family: 'Inter', sans-serif;
-            background: var(--bg-dark);
-            color: var(--text-main);
-            margin: 0;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 10% 20%, rgba(0, 123, 255, 0.05) 0%, transparent 40%),
-                radial-gradient(circle at 90% 80%, rgba(0, 123, 255, 0.05) 0%, transparent 40%);
-        }
-
-        /* Moderní navigace */
-        nav {
-            background: rgba(5, 5, 7, 0.8);
-            backdrop-filter: blur(15px);
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            border-bottom: 1px solid var(--glass-border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-        }
-
-        .nav-container {
-            display: flex;
-            max-width: 1200px;
-            width: 100%;
-            justify-content: center;
-            align-items: center;
-            height: 80px;
-        }
-
-        .nav-link {
-            font-family: 'Rajdhani', sans-serif;
-            color: var(--text-dim);
-            text-decoration: none;
-            padding: 0 20px;
-            font-weight: 600;
-            text-transform: uppercase;
-            font-size: 0.95em;
-            transition: 0.3s;
-            letter-spacing: 1px;
-        }
-
-        .nav-link:hover, .nav-link.active {
-            color: var(--accent);
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
-
-        /* Hero sekce */
-        .hero {
-            padding: 120px 20px 60px;
-            text-align: center;
-            animation: fadeIn 1s ease-out;
-        }
-
-        h1 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: clamp(3em, 8vw, 6em);
-            font-weight: 700;
-            color: white;
-            margin: 0;
-            letter-spacing: 15px;
-            text-transform: uppercase;
-            background: linear-gradient(to bottom, #fff 0%, #007bff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px var(--accent-glow));
-        }
-
-        .hero-subtitle {
-            font-size: 1.2em;
-            color: var(--text-dim);
-            margin-top: 20px;
-            letter-spacing: 2px;
-        }
-
-        /* Obsahové karty */
-        .main-container {
-            max-width: 1000px;
-            margin: 0 auto;
-            padding: 40px 20px;
-        }
-
-        .glass-card {
-            background: var(--card-bg);
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            padding: 50px;
-            margin-bottom: 40px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .glass-card::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 4px; height: 100%;
-            background: var(--accent);
-        }
-
-        h2 {
-            font-family: 'Rajdhani', sans-serif;
-            font-size: 2em;
-            color: white;
-            margin-top: 0;
-            letter-spacing: 2px;
-        }
-
-        .content-text p {
-            line-height: 1.8;
-            font-size: 1.1em;
-            color: var(--text-dim);
-        }
-
-        /* Aktuální turnaj - Highlight */
-        .active-tournament-box {
-            background: linear-gradient(145deg, rgba(0, 123, 255, 0.1), rgba(0, 0, 0, 0.4));
-            border: 1px solid rgba(0, 123, 255, 0.3);
-            border-radius: 24px;
-            padding: 60px;
-            text-align: center;
-            display: none;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .status-badge {
-            display: inline-block;
-            padding: 8px 20px;
-            background: var(--accent);
-            border-radius: 50px;
-            font-family: 'Rajdhani', sans-serif;
-            font-weight: 700;
-            font-size: 0.9em;
-            margin-bottom: 25px;
-            box-shadow: 0 0 20px var(--accent-glow);
-        }
-
-        /* Formulář */
-        #registration-form {
-            background: rgba(0,0,0,0.3);
-            border-radius: 16px;
-            padding: 30px;
-            margin-top: 40px;
-            text-align: left;
-            border: 1px solid var(--glass-border);
-        }
-
-        label {
-            font-family: 'Rajdhani', sans-serif;
-            display: block;
-            margin: 20px 0 8px;
-            color: var(--accent);
-            font-weight: 700;
-            font-size: 0.9em;
-            letter-spacing: 1px;
-        }
-
-        input, textarea {
-            width: 100%;
-            padding: 16px;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid #333;
-            color: white;
-            border-radius: 12px;
-            box-sizing: border-box;
-            transition: 0.3s;
-        }
-
-        input:focus, textarea:focus {
-            border-color: var(--accent);
-            outline: none;
-            background: rgba(255,255,255,0.07);
-        }
-
-        .btn-main {
-            background: var(--accent);
-            color: white;
-            padding: 20px 40px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-family: 'Rajdhani', sans-serif;
-            text-transform: uppercase;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            margin-top: 30px;
-            transition: 0.4s;
-            font-size: 1.1em;
-            letter-spacing: 2px;
-        }
-
-        .btn-main:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px var(--accent-glow);
-            filter: brightness(1.2);
-        }
-
-        footer {
-            margin-top: 80px;
-            padding: 60px 20px;
-            width: 100%;
-            background: #030305;
-            text-align: center;
-            border-top: 1px solid var(--glass-border);
-            color: #444;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .admin-controls { position: absolute; right: 40px; display: flex; gap: 10px; }
-        .admin-btn { padding: 8px 15px; border-radius: 6px; font-size: 0.7em; font-weight: bold; text-decoration: none; }
+        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(15, 15, 15, 0.9); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
+        .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
+        .admin-controls { display: flex; position: absolute; right: 20px; }
+        .main-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding: 80px 20px; box-sizing: border-box; }
+        h1 { font-size: 5em; color: var(--accent-color); margin-bottom: 30px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); text-align: center; }
+        .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
+        .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; box-sizing: border-box; display: none; text-align: center; }
+        #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
+        label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
+        input, textarea { width: 100%; padding: 14px; background: #080808; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        .btn-main { display: inline-block; padding: 18px 30px; background: var(--accent-color); color: white; border-radius: 6px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 25px; transition: 0.3s; letter-spacing: 1px; }
+        footer { margin-top: auto; padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="index.html" class="nav-link active">Domů</a>
-            <a href="playoff.html" class="nav-link">PlayOff</a>
-            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-            <a href="pravidla.html" class="nav-link">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Turnaje</a>
-            <div class="admin-controls">
-                <a id="save-btn" href="#" class="admin-btn" style="display:none; color:#28a745; border:1px solid #28a745">ADMIN ACTIVE</a>
-                <a id="logout-btn" href="#" class="admin-btn" style="display:none; color:#ff4d4d; border:1px solid #ff4d4d">ODHLÁSIT</a>
-            </div>
+    <nav><div class="nav-container">
+        <a href="index.html" class="nav-link active">Domů</a>
+        <a href="playoff.html" class="nav-link">PlayOff</a>
+        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+        <a href="pravidla.html" class="nav-link">Pravidla</a>
+        <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
+        <div class="admin-controls">
+            <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+            <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
         </div>
-    </nav>
-
-    <div class="hero">
-        <h1>LIGHTSMC.EU</h1>
-        <div class="hero-subtitle">ELITNÍ ČESKO-SLOVENSKÁ CS2 PLATFORMA</div>
-    </div>
-
+    </div></nav>
     <div class="main-container">
-        <div class="glass-card">
-            <div class="content-text">
-                <h2>O PROJEKTU</h2>
-                <p>LIGHTSMC.EU není jen další turnajový portál. Jsme komunita postavená na základech <span style="color:white; font-weight:600;">profesionality, fair-play a špičkového zázemí</span>. Naším cílem je poskytnout začínajícím i pokročilým týmům prostředí, které odpovídá standardům světových lig.</p>
-                <p>Každý zápas je u nás zážitkem. Od automatizovaných systémů až po pečlivě sestavená pravidla – děláme vše pro to, aby se hráči mohli soustředit na jediné: <span style="color:var(--accent);">svůj výkon v poli</span>.</p>
-            </div>
+        <h1>LIGHTSMC.EU</h1>
+        <div class="content-text">
+            <h2 style="color:var(--accent-color); text-transform:uppercase; letter-spacing:2px;">Profesionální CS2 Turnaje</h2>
+            <p>Vítejte na platformě <span style="color:white; font-weight:bold;">LIGHTSMC.EU</span>, vašem předním organizátorovi kompetitivních turnajů v Counter-Strike 2. Naším posláním je pozvednout česko-slovenskou esportovou scénu skrze profesionálně organizované eventy, které staví férovost a hráčský zážitek na první místo.</p>
+            <p>Věříme, že každý tým si zaslouží šanci ukázat své kvality v prostředí, které simuluje atmosféru velkých světových turnajů. Každá sezóna přináší nové výzvy a my jsme tu, abychom vám zajistili to nejlepší zázemí.</p>
         </div>
-
         <div id="active-info" class="active-tournament-box">
-            <div id="phase-tag" class="status-badge">NAČÍTÁNÍ...</div>
-            <h2 id="active-title" style="font-size: 3em; margin-bottom: 10px;"></h2>
-            <p id="active-desc" style="font-size: 1.2em; max-width: 600px; margin: 0 auto 30px;"></p>
-            
+            <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
+            <h2 id="active-title" style="margin: 15px 0;"></h2>
+            <p id="active-desc" style="color:#888"></p>
             <div id="action-area"></div>
-
             <form id="registration-form">
                 <input type="hidden" name="active_title" id="hidden_active_title">
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
-                    <div>
-                        <label>NÁZEV TÝMU</label>
-                        <input type="text" name="team_name" placeholder="Např. Team Liquid" required>
-                    </div>
-                    <div>
-                        <label>DISCORD KAPITÁNA</label>
-                        <input type="text" name="discord_id" placeholder="nick#0000" required>
-                    </div>
-                </div>
-                <label>STEAM PROFILY (5 URL ADRES)</label>
-                <textarea name="steam_urls" rows="5" placeholder="Každý odkaz na nový řádek..." required></textarea>
-                <button type="submit" id="submit-btn" class="btn-main">Odeslat přihlášku do turnaje</button>
+                <label>NÁZEV TÝMU</label><input type="text" name="team_name" required>
+                <label>DISCORD ID JEDNATELE</label><input type="text" name="discord_id" required>
+                <label>STEAM URL VŠECH HRÁČŮ</label><textarea name="steam_urls" required></textarea>
+                <button type="submit" id="submit-btn" class="btn-main">Odeslat přihlášku</button>
             </form>
         </div>
     </div>
-
     <footer>
-        <p><b>LIGHTSMC.EU</b> &copy; 2026</p>
-        <p style="margin-top: 10px; opacity: 0.5;">Powered by Firebase | Esports Platform for CS2</p>
+        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
+        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
     </footer>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-
         emailjs.init("47U6jSVKzAh5kcpa4");
-
-        const firebaseConfig = { 
-            apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", 
-            authDomain: "cspro-web.firebaseapp.com", 
-            projectId: "cspro-web", 
-            storageBucket: "cspro-web.firebasestorage.app", 
-            appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" 
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        onAuthStateChanged(auth, user => {
-            if(user) {
-                document.getElementById('save-btn').style.display='block';
-                document.getElementById('logout-btn').style.display='block';
-            }
-        });
-
+        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+        onAuthStateChanged(auth, user => { if(user) { document.getElementById('save-btn').style.display='block'; document.getElementById('logout-btn').style.display='block'; } });
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
-
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
-                const data = d.data();
-                const activeId = Object.keys(data).find(key => data[key].active === true);
-                
+                const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
                 if(activeId) {
-                    const s = data[activeId];
-                    const now = new Date();
-                    const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    
+                    const s = data[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
                     document.getElementById('active-info').style.display = "block";
                     document.getElementById('active-title').innerText = s.title;
                     document.getElementById('active-desc').innerText = s.desc;
                     document.getElementById('hidden_active_title').value = s.title;
-
                     if (dReg && now >= dReg) {
-                        document.getElementById('phase-tag').innerText = "REGISTRACE OTEVŘENA";
-                        document.getElementById('phase-tag').style.background = "#28a745";
-                        document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT SE DO TURNAJE</button>';
-                        document.getElementById('open-form-btn').onclick = function() {
-                            this.style.display = 'none';
-                            document.getElementById('registration-form').style.display = 'block';
-                        };
-                    } else {
-                        document.getElementById('phase-tag').innerText = "TURNAJ SE PŘIPRAVUJE";
-                        document.getElementById('action-area').innerHTML = '<p style="color:#888; font-style:italic">Registrace zatím nejsou dostupné.</p>';
-                    }
+                        document.getElementById('phase-tag').innerText = "📢 REGISTRACE OTEVŘENA";
+                        document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT TÝM</button>';
+                        document.getElementById('open-form-btn').onclick = function() { this.style.display = 'none'; document.getElementById('registration-form').style.display = 'block'; };
+                    } else { document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE"; }
                 }
             }
         });
-
         document.getElementById('registration-form').onsubmit = function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "ODESÍLÁNÍ...";
-            btn.disabled = true;
-
+            e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
             emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Vaše přihláška byla úspěšně odeslána!');
-                document.getElementById('registration-form').innerHTML = "<div style='text-align:center; padding:40px;'><h2>PŘIHLÁŠKA PŘIJATA!</h2><p>Brzy vás budeme kontaktovat na Discordu.</p></div>";
-            }, (error) => {
-                alert('Chyba při odesílání: ' + JSON.stringify(error));
-                btn.disabled = false;
-                btn.innerText = "Zkusit znovu";
-            });
+                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3>DĚKUJEME!</h3>";
+            }, () => { alert('Chyba'); btn.disabled = false; });
         };
     </script>
 </body>
