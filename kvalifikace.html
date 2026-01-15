@@ -5,7 +5,7 @@
     <title>Kvalifikace - LIGHTSMC.EU</title>
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --qual: #28a745; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1150px; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1150px; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); min-height: 100vh; }
         
         nav { background: rgba(15, 15, 15, 0.9); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
@@ -13,7 +13,7 @@
         .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 
-        .page { width: 1150px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
+        .page { width: 1150px; padding: 40px; display: flex; flex-direction: column; align-items: center; flex: 1; }
         h1 { color: var(--accent-color); letter-spacing: 5px; text-transform: uppercase; text-shadow: 0 0 20px rgba(0, 123, 255, 0.3); }
         
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px; width: 100%; }
@@ -29,8 +29,7 @@
         .win-row input { color: white; font-weight: bold; text-align: center; text-transform: uppercase; letter-spacing: 1px; }
         
         .admin-btn { display: none; }
-        #save-btn { color: #28a745; }
-        #logout-btn { color: #ff4d4d; }
+        footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; margin-top: 50px; }
     </style>
 </head>
 <body>
@@ -41,8 +40,8 @@
             <a href="kvalifikace.html" class="nav-link active">Kvalifikace</a>
             <a href="pravidla.html" class="nav-link">Pravidla</a>
             <a href="archiv.html" class="nav-link">Archiv</a>
-            <a id="save-btn" class="nav-link admin-btn">ULOŽIT</a>
-            <a id="logout-btn" class="nav-link admin-btn">ODHLÁSIT</a>
+            <a id="save-btn" class="nav-link admin-btn" style="color:#28a745">ULOŽIT</a>
+            <a id="logout-btn" class="nav-link admin-btn" style="color:#ff4d4d">ODHLÁSIT</a>
         </div>
     </nav>
 
@@ -55,6 +54,11 @@
             <div id="main-grid" class="grid"></div>
         </div>
     </div>
+
+    <footer>
+        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
+        <p>Kontakt: support@lightsmc.eu | Esportová divize platformy</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -110,7 +114,7 @@
                 document.querySelectorAll('.admin-btn').forEach(el => el.style.display = 'block');
                 document.querySelectorAll('input').forEach(el => {
                     el.readOnly = false;
-                    el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.background = "rgba(255,0,0,0.1)"; });
+                    el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.background = "rgba(0,123,255,0.1)"; });
                 });
             } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); }
         });
