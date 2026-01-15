@@ -5,21 +5,23 @@
     <title>Přehled Turnajů - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --danger: #ff4d4d; --success: #28a745; --nav-bg: rgba(15, 15, 15, 0.9); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --danger: #ff4d4d; --success: #28a745; --nav-bg: rgba(10, 10, 10, 0.95); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); overflow-x: hidden; width: 100%; }
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
         .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
-        .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; }
-        .nav-link:hover, .nav-link.active { color: var(--accent-color); }
+        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s all ease; letter-spacing: 1.5px; position: relative; opacity: 0.7; }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px; background: var(--accent-color); transition: 0.3s; box-shadow: 0 0 10px var(--accent-color); }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         .admin-controls { display: flex; position: absolute; right: 20px; }
-        .page { width: 900px; padding: 40px; flex: 1; }
+        .page { width: 100%; max-width: 900px; padding: 40px 20px; flex: 1; box-sizing: border-box; }
         .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid #333; margin-bottom: 20px; }
         .card.active-card { border-left-color: var(--success); }
         .admin-label { display: block; color: var(--accent-color); font-size: 11px; font-weight: 800; margin-bottom: 5px; margin-top: 15px; letter-spacing: 1px; text-transform: uppercase; }
         input, textarea { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 5px; font-family: inherit; }
         .btn-toggle { background: #444; color: white; padding: 10px 20px; border-radius: 5px; cursor: pointer; border: none; font-weight: bold; }
         .btn-toggle.on { background: var(--success); }
-        footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; margin-top: 50px; }
+        footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; }
     </style>
 </head>
 <body>
