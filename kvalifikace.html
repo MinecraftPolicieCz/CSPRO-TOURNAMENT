@@ -7,11 +7,13 @@
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --qual: #28a745; --nav-bg: rgba(15, 15, 15, 0.9); }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1150px; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); min-height: 100vh; }
+        
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
-        .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
-        .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
-        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
+        .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); }
+        .admin-controls { display: flex; position: absolute; right: 20px; }
+
         .page { width: 1150px; padding: 40px; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .msg-box { text-align: center; margin-top: 100px; padding: 50px; border: 1px solid #333; border-radius: 15px; background: var(--card-bg); width: 650px; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px; width: 100%; display: none; }
@@ -26,18 +28,22 @@
     </style>
 </head>
 <body>
-    <nav><div class="nav-container">
-        <a href="index.html" class="nav-link">Domů</a>
-        <a href="playoff.html" class="nav-link">PlayOff</a>
-        <a href="kvalifikace.html" class="nav-link active">Kvalifikace</a>
-        <a href="pravidla.html" class="nav-link">Pravidla</a>
-        <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
-        <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
-    </div></nav>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-link">Domů</a>
+            <a href="playoff.html" class="nav-link">PlayOff</a>
+            <a href="kvalifikace.html" class="nav-link active">Kvalifikace</a>
+            <a href="pravidla.html" class="nav-link">Pravidla</a>
+            <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
+            <div class="admin-controls">
+                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+            </div>
+        </div>
+    </nav>
     <div class="page">
         <div id="status-msg" class="msg-box">
-            <h2 id="msg-text" style="letter-spacing: 1px;">KONTROLA TURNAJE...</h2>
+            <h2 id="msg-text">KONTROLA TURNAJE...</h2>
         </div>
         <div id="content-area" style="display:none; width:100%;">
             <h1 id="title-display" style="color:var(--accent-color); text-align:center; letter-spacing:5px;">KVALIFIKACE</h1>
