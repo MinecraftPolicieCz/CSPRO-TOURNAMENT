@@ -7,7 +7,7 @@
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --line: #333; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; transition: 0.3s; }
         .nav-link:hover { color: var(--accent-color); background: #222; }
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
         h1 { margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
@@ -25,6 +25,10 @@
         .champion-section { margin-top: 60px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 20px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
         .champion-section h2 { color: black; margin: 0; font-size: 1.2em; font-weight: 900; }
         .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border-bottom: 2px solid rgba(0,0,0,0.1); }
+        /* Tlačítka pro admina */
+        .admin-btn { display: none; font-weight: bold; }
+        #save-btn { color: #4caf50; border-right: 1px solid #333; }
+        #logout-btn { color: #ff4d4d; }
     </style>
 </head>
 <body>
@@ -34,7 +38,8 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
-        <a id="logout-btn" class="nav-link" style="display: none; color: #ff4d4d;">Odhlásit</a>
+        <a id="save-btn" class="nav-link admin-btn">ULOŽIT</a>
+        <a id="logout-btn" class="nav-link admin-btn">ODHLÁSIT</a>
     </nav>
 
     <div class="page">
@@ -83,29 +88,42 @@
         let localChanges = {};
 
         onAuthStateChanged(auth, user => {
-            const btn = document.getElementById('logout-btn');
+            const adminElements = document.querySelectorAll('.admin-btn');
             const pAdmin = document.getElementById('period-admin');
             if (user) {
-                btn.style.display = 'block';
-                pAdmin.style.display = 'block';
+                adminElements.forEach(el => el.style.display = 'block');
+                if (pAdmin) pAdmin.style.display = 'block';
                 document.querySelectorAll('input, select').forEach(el => {
                     el.disabled = false; el.readOnly = false;
                     el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.borderLeft = "2px solid red"; });
                     el.addEventListener('change', e => { localChanges[e.target.id] = e.target.value; });
                 });
             } else {
-                btn.style.display = 'none';
-                pAdmin.style.display = 'none';
+                adminElements.forEach(el => el.style.display = 'none');
+                if (pAdmin) pAdmin.style.display = 'none';
                 document.querySelectorAll('input, select').forEach(el => { el.disabled = true; el.readOnly = true; });
             }
         });
 
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            if (Object.keys(localChanges).length > 0 && confirm("Uložit změny v Playoff?")) {
+        // Samostatné tlačítko ULOŽIT
+        document.getElementById('save-btn').addEventListener('click', async () => {
+            if (Object.keys(localChanges).length > 0) {
                 try {
                     await setDoc(doc(db, "tournament", "playoff"), localChanges, { merge: true });
-                    alert("Uloženo.");
-                } catch (e) { alert("Chyba: " + e.message); return; }
+                    alert("Změny uloženy.");
+                    localChanges = {};
+                    document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
+                } catch (e) { alert("Chyba při ukládání: " + e.message); }
+            } else {
+                alert("Žádné změny k uložení.");
+            }
+        });
+
+        // ODHLÁŠENÍ s kontrolou
+        document.getElementById('logout-btn').addEventListener('click', async () => {
+            if (Object.keys(localChanges).length > 0 && confirm("Máte neuložené změny. Uložit je před odhlášením?")) {
+                try { await setDoc(doc(db, "tournament", "playoff"), localChanges, { merge: true }); }
+                catch (e) { alert("Chyba: " + e.message); return; }
             }
             signOut(auth).then(() => window.location.reload());
         });
