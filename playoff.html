@@ -74,23 +74,46 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        let activeId = null; let localChanges = {}; let unsub = null;
-        onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()){
-                const list = d.data(); activeId = Object.keys(list).find(key => list[key].active === true);
-                if(activeId) {
-                    const s = list[activeId]; const now = new Date(); const dKval = s.dateKval ? new Date(s.dateKval) : null;
-                    if (dKval && now >= dKval) {
+        
+        let activeId = null; let localChanges = {}; let unsub = null; let isAdmin = false;
+
+        function refreshView() {
+            if (!activeId) return;
+            onSnapshot(doc(db, "tournament", "archive_list"), d => {
+                if(d.exists()){
+                    const list = d.data(); const s = list[activeId];
+                    const now = new Date(); const dKval = s.dateKval ? new Date(s.dateKval) : null;
+                    if (isAdmin || (dKval && now >= dKval)) {
                         document.getElementById('status-msg').style.display = "none";
                         document.getElementById('content-area').style.display = "block";
                         document.getElementById('title-display').innerText = s.title;
                         loadData(activeId);
-                    } else { document.getElementById('status-msg').innerHTML = "<h2>PLAYOFF DOSTUPNÉ PO KVALIFIKACI</h2>"; }
+                    } else {
+                        document.getElementById('status-msg').style.display = "block";
+                        document.getElementById('content-area').style.display = "none";
+                        document.getElementById('status-msg').innerHTML = "<h2>PLAYOFF BUDE DOSTUPNÉ PO ODEHRÁNÍ KVALIFIKACE</h2>";
+                    }
                 }
+            });
+        }
+
+        onAuthStateChanged(auth, user => { 
+            isAdmin = !!user; 
+            if(user) { 
+                document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block'; 
+                document.querySelectorAll('input').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; }; });
+            } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); }
+            refreshView();
+        });
+
+        onSnapshot(doc(db, "tournament", "archive_list"), d => {
+            if(d.exists()){
+                const list = d.data(); activeId = Object.keys(list).find(key => list[key].active === true);
+                refreshView();
             }
         });
+
         function loadData(id) { if(unsub) unsub(); unsub = onSnapshot(doc(db, "tournament", "playoff_" + id), d => { if(d.exists()){ const data = d.data(); for(const key in data){ const el = document.getElementById(key); if(el && document.activeElement !== el) el.value = data[key]; } } }); }
-        onAuthStateChanged(auth, user => { if(user) { document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block'; document.querySelectorAll('input').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; }; }); } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); } });
         document.getElementById('save-btn').onclick = async () => { if(activeId) { await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true}); alert("Uloženo!"); location.reload(); } };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
