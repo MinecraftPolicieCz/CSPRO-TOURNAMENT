@@ -9,19 +9,19 @@
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        #season-switcher { background: #000; color: var(--accent-color); border: 2px solid var(--accent-color); padding: 10px; font-weight: bold; border-radius: 5px; margin-bottom: 20px; }
+        #no-tournament { display:none; text-align: center; margin-top: 100px; }
+        #no-tournament h2 { color: #555; font-size: 2em; }
+        #content-area { display: none; width: 100%; flex-direction: column; align-items: center; }
         .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 30px; }
         .column { display: flex; flex-direction: column; justify-content: space-around; width: 280px; }
         .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; margin: 15px 0; position: relative; }
         .match-box::after { content: '➜'; position: absolute; right: -30px; top: 35%; color: var(--line); font-size: 18px; }
         .column:last-child .match-box::after { display: none; }
-        .format-badge { position: absolute; top: -12px; left: 10px; background: #222; color: var(--accent-color); font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
         .team-row { display: flex; border-bottom: 1px solid #222; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 13px; }
         input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
         .champion-section { margin-top: 50px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 15px; width: 400px; text-align: center; }
-        .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border:none; border-bottom: 2px solid rgba(0,0,0,0.1); }
-        #not-played { display:none; color: #ff4d4d; font-weight: bold; margin: 20px; border: 2px dashed #ff4d4d; padding: 20px; }
+        .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border:none; }
     </style>
 </head>
 <body>
@@ -36,25 +36,30 @@
     </nav>
 
     <div class="page">
-        <select id="season-switcher"><option value="active">Aktuální sezóna</option></select>
-        <div id="not-played">Tato sezóna ještě nemá zadaná data v PlayOff.</div>
-        
-        <div class="bracket">
-            <div class="column">
-                <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number" value="0"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number" value="0"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number" value="0"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number" value="0"></div></div>
-            </div>
-            <div class="column">
-                <div class="match-box" style="margin-top: 50px;"><div class="format-badge">Bo3</div><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number" value="0"></div></div>
-                <div class="match-box" style="margin-top: 100px;"><div class="format-badge">Bo3</div><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number" value="0"></div></div>
-            </div>
-            <div class="column">
-                <div class="match-box" style="border: 2px solid gold; margin-top: 20px;"><div class="format-badge" style="color: gold;">Bo5</div><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
-            </div>
+        <div id="no-tournament">
+            <h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2>
+            <p>Sledujte Archiv pro výsledky minulých sezón.</p>
         </div>
-        <div class="champion-section"><input id="champ_name" placeholder="ŠAMPION"></div>
+
+        <div id="content-area">
+            <h1 id="title-display">PLAYOFF</h1>
+            <div class="bracket">
+                <div class="column">
+                    <div class="match-box"><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div></div>
+                    <div class="match-box"><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number" value="0"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number" value="0"></div></div>
+                    <div class="match-box"><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number" value="0"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number" value="0"></div></div>
+                    <div class="match-box"><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number" value="0"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number" value="0"></div></div>
+                </div>
+                <div class="column">
+                    <div class="match-box" style="margin-top: 50px;"><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number" value="0"></div></div>
+                    <div class="match-box" style="margin-top: 100px;"><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number" value="0"></div></div>
+                </div>
+                <div class="column">
+                    <div class="match-box" style="border: 2px solid gold; margin-top: 20px;"><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
+                </div>
+            </div>
+            <div class="champion-section"><input id="champ_name" placeholder="ŠAMPION"></div>
+        </div>
     </div>
 
     <script type="module">
@@ -67,38 +72,35 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
         
-        let selectedSeason = "active";
+        let activeId = null;
         let localChanges = {};
         let unsub = null;
 
-        // Načtení menu sezón
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()) {
+            if(d.exists()){
                 const list = d.data();
-                const switcher = document.getElementById('season-switcher');
-                switcher.innerHTML = '<option value="active">Aktuální sezóna</option>';
-                Object.keys(list).forEach(id => {
-                    switcher.innerHTML += `<option value="${id}">${list[id].title}</option>`;
-                });
-                switcher.value = selectedSeason;
+                activeId = Object.keys(list).find(key => list[key].active === true);
+                if(activeId) {
+                    document.getElementById('no-tournament').style.display = "none";
+                    document.getElementById('content-area').style.display = "flex";
+                    document.getElementById('title-display').innerText = "PLAYOFF - " + list[activeId].title;
+                    loadData(activeId);
+                } else {
+                    document.getElementById('no-tournament').style.display = "block";
+                    document.getElementById('content-area').style.display = "none";
+                }
             }
         });
 
-        function loadData() {
+        function loadData(id) {
             if(unsub) unsub();
-            const path = selectedSeason === "active" ? "playoff_active" : `playoff_${selectedSeason}`;
-            unsub = onSnapshot(doc(db, "tournament", path), d => {
-                const notPlayed = document.getElementById('not-played');
-                if(d.exists()) {
-                    notPlayed.style.display = "none";
+            unsub = onSnapshot(doc(db, "tournament", "playoff_" + id), d => {
+                if(d.exists()){
                     const data = d.data();
-                    for(const key in data) {
+                    for(const key in data){
                         const el = document.getElementById(key);
-                        if(el && document.activeElement !== el) { el.value = data[key]; el.style.borderLeft = "none"; }
+                        if(el && document.activeElement !== el) el.value = data[key];
                     }
-                } else {
-                    document.querySelectorAll('input').forEach(i => i.value = "");
-                    notPlayed.style.display = selectedSeason === "active" ? "none" : "block";
                 }
             });
         }
@@ -109,28 +111,20 @@
             document.getElementById('logout-btn').style.display = isAuth ? 'block' : 'none';
             document.querySelectorAll('input').forEach(el => {
                 el.readOnly = !isAuth;
-                if(isAuth) el.addEventListener('input', e => {
-                    localChanges[e.target.id] = e.target.value;
-                    el.style.borderLeft = "2px solid red";
-                });
+                if(isAuth) el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.borderLeft = "2px solid red"; });
             });
         });
 
-        document.getElementById('season-switcher').addEventListener('change', e => {
-            selectedSeason = e.target.value;
-            localChanges = {};
-            loadData();
-        });
-
         document.getElementById('save-btn').addEventListener('click', async () => {
-            const path = selectedSeason === "active" ? "playoff_active" : `playoff_${selectedSeason}`;
-            await setDoc(doc(db, "tournament", path), localChanges, {merge:true});
-            alert("Uloženo pro sezónu: " + document.getElementById('season-switcher').selectedOptions[0].text);
-            localChanges = {};
+            if(activeId) {
+                await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true});
+                alert("Uloženo!");
+                localChanges = {};
+                document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
+            }
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
-        loadData();
     </script>
 </body>
 </html>
