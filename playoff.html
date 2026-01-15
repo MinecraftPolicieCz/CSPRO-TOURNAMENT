@@ -7,19 +7,17 @@
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(15, 15, 15, 0.9); }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1200px; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); min-height: 100vh; }
-        
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
         .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; }
         .nav-link:hover, .nav-link.active { color: var(--accent-color); }
         .admin-controls { display: flex; position: absolute; right: 20px; }
-
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; flex: 1; }
         .msg-box { text-align: center; margin-top: 100px; padding: 50px; border: 1px solid #333; border-radius: 15px; background: var(--card-bg); width: 650px; }
         .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 60px; gap: 20px; display: none; }
         .column { display: flex; flex-direction: column; justify-content: space-around; width: 320px; }
         .match-box { background: var(--card-bg); border: 1px solid #222; border-radius: 8px; position: relative; margin: 25px 0; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
-        .format-badge { position: absolute; top: -20px; left: 10px; background: var(--bg-color); color: var(--accent-color); font-size: 10px; padding: 2px 10px; border-radius: 4px; font-weight: 800; border: 1px solid #222; }
+        .format-badge { position: absolute; top: -22px; left: 10px; background: var(--bg-color); color: var(--accent-color); font-size: 10px; padding: 2px 10px; border-radius: 4px; font-weight: 800; border: 1px solid #222; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 14px; outline: none; }
         input[type="number"] { width: 60px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; background: rgba(0, 123, 255, 0.05); }
         .champion-section { margin-top: 80px; background: linear-gradient(135deg, #007bff 0%, #00d4ff 100%); padding: 40px; border-radius: 20px; width: 500px; text-align: center; display: none; }
