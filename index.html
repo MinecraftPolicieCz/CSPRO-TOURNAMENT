@@ -6,13 +6,34 @@
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; transition: 0.3s; }
         .nav-link:hover { color: var(--accent-color); background: #222; }
+
         .hero { text-align: center; padding: 60px 20px; }
-        h1 { font-size: 3em; color: var(--accent-color); letter-spacing: 5px; }
-        .admin-btn { display: none; font-weight: bold; }
-        #logout-btn { color: #ff4d4d; }
+        h1 { font-size: 4em; color: var(--accent-color); letter-spacing: 5px; margin-bottom: 10px; }
+        
+        /* Box pro aktivní turnaj */
+        .active-tournament-box {
+            margin-top: 40px;
+            padding: 30px;
+            background: #1a1a1a;
+            border: 1px solid var(--accent-color);
+            border-radius: 15px;
+            max-width: 600px;
+            display: none; /* Skryto, dokud JS nenajde aktivní turnaj */
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        .live-indicator { color: #4caf50; font-weight: bold; font-size: 0.9em; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .live-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
+        
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
+
+        .btn-link { display: inline-block; margin-top: 20px; padding: 10px 25px; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .btn-link:hover { background: var(--accent-color); color: black; }
+
+        #logout-btn { color: #ff4d4d; display: none; }
     </style>
 </head>
 <body>
@@ -22,16 +43,24 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
-        <a id="logout-btn" class="nav-link admin-btn">ODHLÁSIT</a>
+        <a id="logout-btn" class="nav-link">ODHLÁSIT</a>
     </nav>
 
     <div class="hero">
         <h1>CSPRO.CZ</h1>
-        <p>Vítejte na oficiální stránce turnaje.</p>
+        <p>Oficiální platforma pro naše turnaje.</p>
+        
+        <div id="active-info" class="active-tournament-box">
+            <div class="live-indicator"><span class="live-dot"></span> PRÁVĚ PROBÍHÁ</div>
+            <h2 id="active-title" style="margin:10px 0; font-size: 2em;"></h2>
+            <p id="active-desc" style="color: #bbb; line-height: 1.6;"></p>
+            <a href="playoff.html" class="btn-link">ZOBRAZIT PLAYOFF</a>
+        </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
 
         const firebaseConfig = { 
@@ -44,16 +73,31 @@
         };
 
         const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Zobrazení tlačítka odhlásit pouze přihlášeným
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                document.getElementById('logout-btn').style.display = 'block';
+        // Sledování aktivního turnaje
+        onSnapshot(doc(db, "tournament", "archive_list"), d => {
+            if(d.exists()){
+                const data = d.data();
+                const activeId = Object.keys(data).find(key => data[key].active === true);
+                const infoBox = document.getElementById('active-info');
+                
+                if(activeId) {
+                    infoBox.style.display = "inline-block";
+                    document.getElementById('active-title').innerText = data[activeId].title;
+                    document.getElementById('active-desc').innerText = data[activeId].desc;
+                } else {
+                    infoBox.style.display = "none";
+                }
             }
         });
 
-        // Funkce pro odhlášení
+        // Správa přihlášení
+        onAuthStateChanged(auth, user => {
+            if (user) document.getElementById('logout-btn').style.display = 'block';
+        });
+
         document.getElementById('logout-btn').addEventListener('click', () => {
             signOut(auth).then(() => window.location.reload());
         });
