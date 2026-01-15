@@ -24,7 +24,7 @@
         <a href="playoff.html" class="nav-link">PlayOff</a>
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link active">Pravidla</a>
-        <a href="archiv.html" class="nav-link">Archiv</a>
+        <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
         <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
         <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
     </div></nav>
@@ -39,10 +39,7 @@
             <div class="rule-item"><textarea id="r3">Tým musí nastoupit v 5 hráčích. Povolen max. 1 host.</textarea></div>
         </div>
     </div>
-    <footer>
-        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
-        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
-    </footer>
+    <footer><p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p></footer>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -50,12 +47,7 @@
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let localChanges = {};
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block';
-                document.querySelectorAll('textarea').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.parentElement.style.borderColor = "red"; }; });
-            } else { document.querySelectorAll('textarea').forEach(el => el.readOnly = true); }
-        });
+        onAuthStateChanged(auth, user => { if (user) { document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block'; document.querySelectorAll('textarea').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.parentElement.style.borderColor = "red"; }; }); } else { document.querySelectorAll('textarea').forEach(el => el.readOnly = true); } });
         document.getElementById('save-btn').onclick = async () => { await setDoc(doc(db, "tournament", "rules"), localChanges, { merge: true }); alert("Uloženo!"); location.reload(); };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
         onSnapshot(doc(db, "tournament", "rules"), d => { if (d.exists()) { const data = d.data(); for (const key in data) { const el = document.getElementById(key); if (el && document.activeElement !== el) el.value = data[key]; } } });
