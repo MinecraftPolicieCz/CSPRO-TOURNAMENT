@@ -5,21 +5,25 @@
     <title>Kvalifikace - CSPRO.CZ</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --qual: #4caf50; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
-        .page { width: 1150px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        #no-tournament { display:none; text-align: center; margin-top: 100px; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1150px; }
+        
+        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; min-width: 1150px; }
+        
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; white-space: nowrap; }
+        .nav-link:hover { color: var(--accent-color); background: #222; }
+
+        .page { width: 1150px; padding: 40px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
+        #no-tournament { display:none; text-align: center; margin-top: 100px; border: 1px solid #333; padding: 40px; border-radius: 15px; }
         #content-area { display: none; width: 100%; flex-direction: column; align-items: center; }
+        
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; margin-top: 30px; }
-        .slot { background: var(--card-bg); border: 1px solid #333; padding: 25px 20px 20px 20px; border-radius: 12px; }
+        .slot { background: var(--card-bg); border: 1px solid #333; padding: 25px; border-radius: 12px; }
         .match { background: #000; border: 1px solid #222; margin: 12px 0; border-radius: 4px; position: relative; }
-        /* Bo1 / Bo3 Štítky */
         .format-badge { position: absolute; left: -45px; top: 25%; font-size: 10px; color: #555; font-weight: bold; text-transform: uppercase; }
         .row { display: flex; border-bottom: 1px solid #111; }
-        input { background: transparent; border: none; color: white; padding: 8px; width: 100%; font-size: 13px; }
-        input[type="number"] { width: 40px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); font-weight: bold; }
-        .win-row { background: var(--qual); border-radius: 4px; margin-top: 10px; }
+        input { background: transparent; border: none; color: white; padding: 10px; width: 100%; font-size: 13px; outline: none; }
+        input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); font-weight: bold; }
+        .win-row { background: var(--qual); border-radius: 4px; margin-top: 15px; }
         .win-row input { color: black; font-weight: bold; text-align: center; }
     </style>
 </head>
@@ -35,7 +39,7 @@
     </nav>
 
     <div class="page">
-        <div id="no-tournament"><h2 style="color:#555">TURNAJ PRÁVĚ NEPROBÍHÁ</h2></div>
+        <div id="no-tournament"><h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2></div>
         <div id="content-area">
             <h1 id="title-display">KVALIFIKACE</h1>
             <div id="main-grid" class="grid"></div>
@@ -48,19 +52,11 @@
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        
         let activeId = null; let localChanges = {}; let unsub = null;
 
         const grid = document.getElementById('main-grid');
         for (let i = 1; i <= 8; i++) {
-            grid.innerHTML += `
-            <div class="slot">
-                <div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div>
-                <div class="match"><span class="format-badge">Bo1</span><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number"></div></div>
-                <div class="match"><span class="format-badge">Bo1</span><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number"></div></div>
-                <div class="match" style="border-color:var(--qual)"><span class="format-badge" style="color:var(--qual)">Bo3</span><div class="row"><input id="s${i}_f1" placeholder="Vítěz A"><input id="s${i}_fs1" type="number"></div><div class="row"><input id="s${i}_f2" placeholder="Vítěz B"><input id="s${i}_fs2" type="number"></div></div>
-                <div class="win-row"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div>
-            </div>`;
+            grid.innerHTML += `<div class="slot"><div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div><div class="match"><span class="format-badge">Bo1</span><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number"></div></div><div class="match"><span class="format-badge">Bo1</span><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number"></div></div><div class="match" style="border-color:var(--qual)"><span class="format-badge" style="color:var(--qual)">Bo3</span><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number"></div></div><div class="win-row"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div></div>`;
         }
 
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
