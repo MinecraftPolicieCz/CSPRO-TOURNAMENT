@@ -83,218 +83,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
-
-        let activeId = null;
-        let localChanges = {};
+        let activeId = null; 
+        let localChanges = {}; 
         let unsub = null;
 
-        // 1. Kontrola aktivního turnaje
-        onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()){
-                const list = d.data();
-                activeId = Object.keys(list).find(key => list[key].active === true);
-                if(activeId) {
-                    document.getElementById('no-tournament').style.display = "none";
-                    document.getElementById('content-area').style.display = "flex";
-                    document.getElementById('title-display').innerText = "PLAYOFF - " + list[activeId].title;
-                    loadData(activeId);
-                } else {
-                    document.getElementById('no-tournament').style.display = "block";
-                    document.getElementById('content-area').style.display = "none";
-                }
-            }
-        });
-
-        // 2. Načítání dat playoff pro konkrétní turnaj
-        function loadData(id) {
-            if(unsub) unsub();
-            unsub = onSnapshot(doc(db, "tournament", "playoff_" + id), d => {
-                if(d.exists()){
-                    const data = d.data();
-                    for(const key in data){
-                        const el = document.getElementById(key);
-                        // Aktualizujeme jen pokud na poli zrovna uživatel nepíše
-                        if(el && document.activeElement !== el) el.value = data[key];
-                    }
-                }
-            });
-        }
-
-        // 3. Správa přihlášení a oprávnění k zápisu
-        onAuthStateChanged(auth, user => {
-            const isAuth = !!user;
-            document.getElementById('save-btn').style.display = isAuth ? 'block' : 'none';
-            document.getElementById('logout-btn').style.display = isAuth ? 'block' : 'none';
-            
-            document.querySelectorAll('input').forEach(el => {
-                el.readOnly = !isAuth;
-                if(isAuth) {
-                    el.addEventListener('input', e => {
-                        localChanges[e.target.id] = e.target.value;
-                        el.style.borderLeft = "2px solid red"; // Indikace neuložené změny
-                    });
-                }
-            });
-        });
-
-        // 4. Uložení změn
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            if(activeId && Object.keys(localChanges).length > 0) {
-                try {
-                    await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true});
-                    alert("Změny uloženy!");
-                    localChanges = {};
-                    document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
-                } catch (e) {
-                    alert("Chyba při ukládání: " + e.message);
-                }
-            }
-        });
-
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
-    </script>
-</body>
-</html>
-            document.getElementById('logout-btn').style.display = isAuth ? 'block' : 'none';
-            document.querySelectorAll('input').forEach(el => {
-                el.readOnly = !isAuth;
-                if(isAuth) el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.borderLeft = "2px solid red"; });
-            });
-        });
-
-        document.getElementById('save-btn').addEventListener('click', async () => {
-            if(activeId) {
-                await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true});
-                alert("Uloženo!"); localChanges = {}; document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
-            }
-        });
-        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
-    </script>
-</body>
-</html>    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        window.saveData = async () => {
-            const data = {};
-            document.querySelectorAll('input').forEach(i => { if(i.id) data[i.id] = i.value; });
-            await setDoc(doc(db, "tournament", "playoff"), data);
-            alert("Data uložena!");
-        };
-
-        onSnapshot(doc(db, "tournament", "playoff"), (snap) => {
-            if(snap.exists()){
-                const d = snap.data();
-                Object.keys(d).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = d[key]; });
-            }
-        });
-    </script>
-</body>
-</html>
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, setDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Funkce pro uložení
-        window.saveData = async () => {
-            const data = {};
-            document.querySelectorAll('input').forEach(i => data[i.id] = i.value);
-            await setDoc(doc(db, "tournament", "playoff"), data);
-            alert("Vše uloženo!");
-        };
-
-        // Funkce pro načtení (aby to viděli i ostatní)
-        onSnapshot(doc(db, "tournament", "playoff"), (snap) => {
-            if(snap.exists()) {
-                const d = snap.data();
-                Object.keys(d).forEach(key => { if(document.getElementById(key)) document.getElementById(key).value = d[key]; });
-            }
-        });
-    </script>
-</body>
-</html>
-
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // SLEDOVÁNÍ STAVU TURNAJE V REÁLNÉM ČASE
-        onSnapshot(doc(db, "settings", "currentTournament"), (doc) => {
-            if (doc.exists() && doc.data().isActive === true) {
-                document.getElementById('bracket-ui').style.display = 'block';
-                document.getElementById('no-active').style.display = 'none';
-            } else {
-                document.getElementById('bracket-ui').style.display = 'none';
-                document.getElementById('no-active').style.display = 'block';
-            }
-        });
-    </script>
-</body>
-</html>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        const firebaseConfig = { /* TVÁ KONFIGURACE */ };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userDoc = await getDoc(doc(db, "users", user.uid));
-                if (userDoc.exists() && userDoc.data().role === 'admin') {
-                    document.getElementById('save-btn').style.display = 'block';
-                    document.querySelectorAll('input').forEach(i => i.readOnly = false);
-                } else {
-                    document.querySelectorAll('input').forEach(i => i.readOnly = true);
-                }
-            }
-        });
-    </script>
-</body>
-</html>
-
-    <div class="page">
-        <div id="no-tournament"><h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2></div>
-        <div id="content-area">
-            <h1 id="title-display">PLAYOFF</h1>
-            <div class="bracket">
-                <div class="column">
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number"></div></div></div>
-                </div>
-                <div class="column">
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number"></div></div></div>
-                    <div class="match-container"><div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number"></div></div></div>
-                </div>
-                <div class="column">
-                    <div class="match-container"><div class="match-box" style="border: 2px solid gold;"><div class="format-badge" style="color: gold; border-color: gold;">Bo5</div><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number"></div></div></div>
-                </div>
-            </div>
-            <div class="champion-section"><h2>🏆 ŠAMPION 🏆</h2><input id="champ_name" placeholder="JMÉNO TÝMU"></div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        let activeId = null; let localChanges = {}; let unsub = null;
-
+        // Načtení aktivního turnaje
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const list = d.data();
@@ -330,24 +123,24 @@
             document.getElementById('logout-btn').style.display = isAuth ? 'block' : 'none';
             document.querySelectorAll('input').forEach(el => {
                 el.readOnly = !isAuth;
-                if(isAuth) el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.borderLeft = "2px solid red"; });
+                if(isAuth) el.addEventListener('input', e => { 
+                    localChanges[e.target.id] = e.target.value; 
+                    el.style.borderLeft = "2px solid red"; 
+                });
             });
         });
 
         document.getElementById('save-btn').addEventListener('click', async () => {
             if(activeId) {
                 await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true});
-                alert("Uloženo!"); localChanges = {}; document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
+                alert("Uloženo!"); 
+                localChanges = {}; 
+                document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
             }
         });
+
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
     </script>
 </body>
 </html>
-
-
-
-
-
-
 
