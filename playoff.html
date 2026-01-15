@@ -10,18 +10,19 @@
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
         #no-tournament { display:none; text-align: center; margin-top: 100px; }
-        #no-tournament h2 { color: #555; font-size: 2em; }
         #content-area { display: none; width: 100%; flex-direction: column; align-items: center; }
         .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 30px; }
         .column { display: flex; flex-direction: column; justify-content: space-around; width: 280px; }
         .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; margin: 15px 0; position: relative; }
         .match-box::after { content: '➜'; position: absolute; right: -30px; top: 35%; color: var(--line); font-size: 18px; }
         .column:last-child .match-box::after { display: none; }
+        /* Štítky Bo3/Bo5 */
+        .format-badge { position: absolute; top: -12px; left: 10px; background: #222; color: var(--accent-color); font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid var(--line); }
         .team-row { display: flex; border-bottom: 1px solid #222; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 13px; }
         input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
         .champion-section { margin-top: 50px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 15px; width: 400px; text-align: center; }
-        .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border:none; }
+        .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border:none; width: 100%; }
     </style>
 </head>
 <body>
@@ -36,26 +37,23 @@
     </nav>
 
     <div class="page">
-        <div id="no-tournament">
-            <h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2>
-            <p>Sledujte Archiv pro výsledky minulých sezón.</p>
-        </div>
+        <div id="no-tournament"><h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2></div>
 
         <div id="content-area">
             <h1 id="title-display">PLAYOFF</h1>
             <div class="bracket">
                 <div class="column">
-                    <div class="match-box"><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div></div>
-                    <div class="match-box"><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number" value="0"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number" value="0"></div></div>
-                    <div class="match-box"><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number" value="0"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number" value="0"></div></div>
-                    <div class="match-box"><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number" value="0"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number" value="0"></div></div>
+                    <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number"></div></div>
+                    <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number"></div></div>
+                    <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number"></div></div>
+                    <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number"></div></div>
                 </div>
                 <div class="column">
-                    <div class="match-box" style="margin-top: 50px;"><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number" value="0"></div></div>
-                    <div class="match-box" style="margin-top: 100px;"><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number" value="0"></div></div>
+                    <div class="match-box" style="margin-top: 50px;"><div class="format-badge">Bo3</div><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number"></div></div>
+                    <div class="match-box" style="margin-top: 100px;"><div class="format-badge">Bo3</div><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number"></div></div>
                 </div>
                 <div class="column">
-                    <div class="match-box" style="border: 2px solid gold; margin-top: 20px;"><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
+                    <div class="match-box" style="border: 2px solid gold; margin-top: 20px;"><div class="format-badge" style="color: gold; border-color: gold;">Bo5</div><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number"></div></div>
                 </div>
             </div>
             <div class="champion-section"><input id="champ_name" placeholder="ŠAMPION"></div>
@@ -66,15 +64,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-        
-        let activeId = null;
-        let localChanges = {};
-        let unsub = null;
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+        let activeId = null; let localChanges = {}; let unsub = null;
 
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
@@ -118,12 +110,9 @@
         document.getElementById('save-btn').addEventListener('click', async () => {
             if(activeId) {
                 await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true});
-                alert("Uloženo!");
-                localChanges = {};
-                document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
+                alert("Uloženo!"); localChanges = {}; document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
             }
         });
-
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
     </script>
 </body>
