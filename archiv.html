@@ -4,17 +4,20 @@
     <meta charset="UTF-8">
     <title>Archiv - CSPRO.CZ</title>
     <style>
-        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --danger: #ff4d4d; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; transition: 0.3s; }
-        .nav-link:hover { color: var(--accent-color); background: #222; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
         .page { width: 900px; padding: 40px; }
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid var(--accent-color); margin-bottom: 20px; position: relative; }
-        input { background: transparent; border: none; color: white; width: 80%; font-size: 1.4em; font-weight: bold; outline: none; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid var(--accent-color); margin-bottom: 20px; position: relative; transition: 0.3s; }
+        .active-badge { position: absolute; top: 10px; right: 10px; display: flex; align-items: center; gap: 5px; font-size: 0.8em; color: var(--accent-color); }
+        .delete-btn { position: absolute; bottom: 10px; right: 10px; background: none; border: 1px solid var(--danger); color: var(--danger); cursor: pointer; padding: 2px 8px; border-radius: 4px; font-size: 0.7em; display: none; }
+        .delete-btn:hover { background: var(--danger); color: white; }
+        input[type="text"] { background: transparent; border: none; color: white; width: 70%; font-size: 1.4em; font-weight: bold; outline: none; border-bottom: 1px solid transparent; }
+        input[type="text"]:focus { border-bottom-color: var(--accent-color); }
         textarea { background: transparent; border: none; color: #888; width: 100%; height: 60px; resize: none; margin-top: 10px; font-family: inherit; outline: none; }
-        .admin-controls { display: none; margin-bottom: 20px; }
-        .btn { padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; margin-right: 10px; }
+        .admin-controls { display: none; margin-bottom: 20px; text-align: center; }
+        .btn { padding: 10px 20px; border-radius: 5px; font-weight: bold; cursor: pointer; border: none; text-transform: uppercase; }
         .btn-add { background: var(--accent-color); color: black; }
         #save-btn { color: #4caf50; font-weight: bold; }
         #logout-btn { color: #ff4d4d; font-weight: bold; }
@@ -27,13 +30,13 @@
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link" style="color:var(--accent-color)">Archiv</a>
-        <a id="save-btn" class="nav-link" style="display:none">ULOŽIT</a>
+        <a id="save-btn" class="nav-link" style="display:none">ULOŽIT ZMĚNY</a>
         <a id="logout-btn" class="nav-link" style="display:none">ODHLÁSIT</a>
     </nav>
     <div class="page">
         <h1>Správa Sezón</h1>
         <div id="admin-ui" class="admin-controls">
-            <button id="add-season" class="btn btn-add">+ Přidat novou sezónu</button>
+            <button id="add-season" class="btn btn-add">+ Vytvořit novou sezónu</button>
         </div>
         <div id="seasons-container"></div>
     </div>
@@ -71,33 +74,48 @@
                 const s = seasonsData[id];
                 const card = document.createElement('div');
                 card.className = "card";
+                if(s.active) card.style.borderLeftColor = "#4caf50";
+                
                 card.innerHTML = `
-                    <input id="t_${id}" value="${s.title}" placeholder="Název" ${!auth.currentUser ? 'readonly' : ''}>
-                    <textarea id="d_${id}" placeholder="Popis..." ${!auth.currentUser ? 'readonly' : ''}>${s.desc}</textarea>
+                    <div class="active-badge">
+                        ${auth.currentUser ? `<input type="checkbox" id="chk_${id}" ${s.active ? 'checked' : ''}> Aktivní turnaj` : (s.active ? '● Právě probíhá' : '')}
+                    </div>
+                    <input type="text" id="t_${id}" value="${s.title}" placeholder="Název sezóny" ${!auth.currentUser ? 'readonly' : ''}>
+                    <textarea id="d_${id}" placeholder="Popis vítězů..." ${!auth.currentUser ? 'readonly' : ''}>${s.desc}</textarea>
+                    <button class="delete-btn" id="del_${id}" style="${auth.currentUser ? 'display:block' : 'none'}">Odstranit sezónu</button>
                 `;
                 container.appendChild(card);
+
                 if(auth.currentUser) {
-                    card.querySelectorAll('input, textarea').forEach(el => {
-                        el.addEventListener('input', () => {
-                            seasonsData[id].title = document.getElementById(`t_${id}`).value;
-                            seasonsData[id].desc = document.getElementById(`d_${id}`).value;
-                            card.style.borderLeftColor = "red";
-                        });
+                    // Aktivace
+                    card.querySelector(`#chk_${id}`).addEventListener('change', (e) => {
+                        Object.keys(seasonsData).forEach(key => seasonsData[key].active = false);
+                        seasonsData[id].active = e.target.checked;
+                        render();
                     });
+                    // Mazání
+                    card.querySelector(`#del_${id}`).addEventListener('click', () => {
+                        if(confirm("Opravdu chcete tuto sezónu smazat z archivu?")) {
+                            delete seasonsData[id];
+                            render();
+                        }
+                    });
+                    // Přejmenování a popis
+                    card.querySelector(`#t_${id}`).addEventListener('input', (e) => seasonsData[id].title = e.target.value);
+                    card.querySelector(`#d_${id}`).addEventListener('input', (e) => seasonsData[id].desc = e.target.value);
                 }
             });
         }
 
         document.getElementById('add-season').addEventListener('click', () => {
             const id = "s" + Date.now();
-            seasonsData[id] = { title: "Nová sezóna 2026", desc: "" };
+            seasonsData[id] = { title: "Nová sezóna", desc: "", active: false };
             render();
         });
 
         document.getElementById('save-btn').addEventListener('click', async () => {
             await setDoc(doc(db, "tournament", "archive_list"), seasonsData);
-            alert("Seznam sezón uložen!");
-            window.location.reload();
+            alert("Všechny změny byly uloženy!");
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
