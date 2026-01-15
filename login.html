@@ -4,29 +4,143 @@
     <meta charset="UTF-8">
     <title>Admin Login - LIGHTSMC.EU</title>
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); margin: 0; }
-        .card { background: #161616; padding: 50px; border-radius: 15px; border: 1px solid #222; width: 350px; text-align: center; margin-top: 100px; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
-        input { width: 100%; padding: 14px; margin: 10px 0; background: #000; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; background: var(--accent-color); border: none; font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; color: white; transition: 0.3s; }
-        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+        :root { 
+            --bg-color: #0a0a0a; 
+            --accent-color: #007bff; 
+            --card-bg: #161616; 
+        }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: var(--bg-color); 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            min-height: 100vh; 
+            background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); 
+            margin: 0; 
+        }
+        
+        /* Navigace pro návrat zpět */
+        nav { 
+            background: rgba(15, 15, 15, 0.9); 
+            width: 100%; 
+            display: flex; 
+            justify-content: center; 
+            border-bottom: 1px solid rgba(0, 123, 255, 0.3); 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            backdrop-filter: blur(10px); 
+        }
+        .nav-link { 
+            color: #bbb; 
+            text-decoration: none; 
+            padding: 22px 25px; 
+            font-weight: 600; 
+            text-transform: uppercase; 
+            font-size: 0.85em; 
+            transition: 0.3s; 
+            letter-spacing: 1.5px; 
+        }
+        .nav-link:hover { color: var(--accent-color); }
+
+        /* Login karta */
+        .card { 
+            background: var(--card-bg); 
+            padding: 50px; 
+            border-radius: 15px; 
+            border: 1px solid #222; 
+            width: 350px; 
+            text-align: center; 
+            margin-top: 100px; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+            flex-grow: 0;
+        }
+        
+        h2 { color: var(--accent-color); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 30px; }
+        
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            margin: 10px 0; 
+            background: #000; 
+            border: 1px solid #333; 
+            color: white; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-family: inherit;
+        }
+        input:focus { border-color: var(--accent-color); outline: none; }
+        
+        button { 
+            width: 100%; 
+            padding: 15px; 
+            background: var(--accent-color); 
+            border: none; 
+            font-weight: bold; 
+            cursor: pointer; 
+            border-radius: 6px; 
+            text-transform: uppercase; 
+            color: white; 
+            transition: 0.3s; 
+            margin-top: 10px;
+        }
+        button:hover { filter: brightness(1.2); transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3); }
+
+        /* Zápatí */
+        footer { 
+            margin-top: auto; 
+            padding: 40px; 
+            width: 100%; 
+            background: #050505; 
+            border-top: 1px solid #222; 
+            text-align: center; 
+            color: #555; 
+            font-size: 0.9em; 
+        }
     </style>
 </head>
 <body>
+    <nav>
+        <a href="index.html" class="nav-link">Zpět na hlavní stránku</a>
+    </nav>
+
     <div class="card">
-        <h2 style="color:var(--accent-color); letter-spacing: 2px;">ADMIN PANEL</h2>
+        <h2>ADMIN PANEL</h2>
         <input type="email" id="email" placeholder="Email">
         <input type="password" id="pass" placeholder="Heslo">
         <button id="loginBtn">PŘIHLÁSIT SE</button>
     </div>
+
+    <footer>
+        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
+        <p>Kontakt: support@lightsmc.eu | Administrace platformy</p>
+    </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig); const auth = getAuth(app);
+
+        const firebaseConfig = { 
+            apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", 
+            authDomain: "cspro-web.firebaseapp.com", 
+            projectId: "cspro-web", 
+            storageBucket: "cspro-web.firebasestorage.app", 
+            appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" 
+        };
+
+        const app = initializeApp(firebaseConfig); 
+        const auth = getAuth(app);
+
         document.getElementById('loginBtn').onclick = () => {
-            const email = document.getElementById('email').value; const pass = document.getElementById('pass').value;
-            signInWithEmailAndPassword(auth, email, pass).then(() => { window.location.href = "index.html"; }).catch(e => alert("Chyba!"));
+            const email = document.getElementById('email').value; 
+            const pass = document.getElementById('pass').value;
+            signInWithEmailAndPassword(auth, email, pass)
+                .then(() => { 
+                    window.location.href = "index.html"; 
+                })
+                .catch(e => alert("Přihlášení selhalo! Zkontrolujte údaje."));
         };
     </script>
 </body>
