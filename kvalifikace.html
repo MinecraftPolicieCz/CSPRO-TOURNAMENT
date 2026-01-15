@@ -2,28 +2,24 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>CSPRO.CZ - Kvalifikace</title>
+    <title>Kvalifikace - CSPRO.CZ</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --qual: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; transition: 0.3s; }
-        .page { width: 1100px; padding: 40px; }
-        h1 { text-align: center; text-transform: uppercase; letter-spacing: 2px; }
-        #period-admin-qual { background: #1a1a1a; padding: 15px; border-radius: 8px; border: 1px solid var(--accent-color); margin: 0 auto 30px auto; width: fit-content; display: none; }
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        .page { width: 1150px; padding: 40px; }
+        #season-switcher { background: #000; color: var(--accent-color); border: 2px solid var(--accent-color); padding: 10px; font-weight: bold; margin-bottom: 30px; }
         .grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 30px; }
-        .slot { background: var(--card-bg); border: 2px solid #333; padding: 20px; border-radius: 12px; }
+        .slot { background: var(--card-bg); border: 1px solid #333; padding: 20px; border-radius: 12px; position: relative; }
         .match { background: #000; border: 1px solid #222; margin: 8px 0; border-radius: 4px; position: relative; }
         .format { position: absolute; left: -45px; top: 30%; font-size: 10px; color: #555; font-weight: bold; }
         .row { display: flex; border-bottom: 1px solid #111; }
         input { background: transparent; border: none; color: white; padding: 8px; width: 100%; font-size: 13px; }
         input[type="number"] { width: 40px; text-align: center; border-left: 1px solid #111; color: var(--accent-color); font-weight: bold; }
-        .win-row { background: var(--qual); border-radius: 4px; margin-top: 10px; }
-        .win-row input { color: black; font-weight: bold; text-align: center; }
-        /* Admin tlačítka */
-        .admin-btn { display: none; font-weight: bold; }
-        #save-btn { color: #4caf50; border-right: 1px solid #333; }
-        #logout-btn { color: #ff4d4d; }
+        .winner-row { background: var(--qual); border-radius: 4px; margin-top: 10px; }
+        .winner-row input { color: black; font-weight: bold; text-align: center; }
+        #not-played { display:none; color: #ff4d4d; font-weight: bold; text-align: center; padding: 20px; border: 2px dashed #ff4d4d; margin-bottom: 20px; }
     </style>
 </head>
 <body>
@@ -33,25 +29,14 @@
         <a href="kvalifikace.html" class="nav-link" style="color:var(--accent-color)">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
-        <a id="save-btn" class="nav-link admin-btn">ULOŽIT</a>
-        <a id="logout-btn" class="nav-link admin-btn">ODHLÁSIT</a>
+        <a id="save-btn" class="nav-link" style="display:none; color:#4caf50">ULOŽIT</a>
+        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
     </nav>
-
     <div class="page">
-        <h1>KVALIFIKACE - <span id="period-display-qual">SEZÓNA 2026</span></h1>
-        
-        <div id="period-admin-qual">
-            <label>Období: </label>
-            <select id="period_select_qual" style="background:#000; color:white; border:1px solid #444; padding:5px;">
-                <option value="Zima 2026">Zima 2026</option>
-                <option value="Jaro 2026">Jaro 2026</option>
-                <option value="Léto 2026">Léto 2026</option>
-                <option value="Podzim 2026">Podzim 2026</option>
-            </select>
-        </div>
+        <select id="season-switcher"><option value="active">Aktuální sezóna</option></select>
+        <div id="not-played">Tato sezóna ještě nemá zadaná data v Kvalifikaci.</div>
         <div id="main-grid" class="grid"></div>
     </div>
-
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -60,58 +45,73 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
+        
+        let selectedSeason = "active";
         let localChanges = {};
+        let unsub = null;
 
         const grid = document.getElementById('main-grid');
         for (let i = 1; i <= 8; i++) {
-            grid.innerHTML += `<div class="slot"><div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div><div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div><div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div><div class="match" style="border-color:var(--qual)"><span class="format" style="color:var(--qual)">Bo3</span><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number" value="0"></div></div><div class="win-row"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div></div>`;
+            grid.innerHTML += `<div class="slot"><div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SLOT #${i}</div><div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_a1" placeholder="Tým 1"><input id="s${i}_as1" type="number" value="0"></div><div class="row"><input id="s${i}_a2" placeholder="Tým 2"><input id="s${i}_as2" type="number" value="0"></div></div><div class="match"><span class="format">Bo1</span><div class="row"><input id="s${i}_b1" placeholder="Tým 3"><input id="s${i}_bs1" type="number" value="0"></div><div class="row"><input id="s${i}_b2" placeholder="Tým 4"><input id="s${i}_bs2" type="number" value="0"></div></div><div class="match" style="border-color:var(--qual)"><span class="format" style="color:var(--qual)">Bo3</span><div class="row"><input id="s${i}_f1" placeholder="Finále A"><input id="s${i}_fs1" type="number" value="0"></div><div class="row"><input id="s${i}_f2" placeholder="Finále B"><input id="s${i}_fs2" type="number" value="0"></div></div><div class="winner-row"><input id="s${i}_w" placeholder="POSTUPUJÍCÍ"></div></div>`;
+        }
+
+        onSnapshot(doc(db, "tournament", "archive_list"), d => {
+            if(d.exists()) {
+                const switcher = document.getElementById('season-switcher');
+                switcher.innerHTML = '<option value="active">Aktuální sezóna</option>';
+                const list = d.data();
+                Object.keys(list).forEach(id => switcher.innerHTML += `<option value="${id}">${list[id].title}</option>`);
+                switcher.value = selectedSeason;
+            }
+        });
+
+        function loadData() {
+            if(unsub) unsub();
+            const path = selectedSeason === "active" ? "qual_active" : `qual_${selectedSeason}`;
+            unsub = onSnapshot(doc(db, "tournament", path), d => {
+                const notPlayed = document.getElementById('not-played');
+                if(d.exists()){
+                    notPlayed.style.display = "none";
+                    const data = d.data();
+                    for(const key in data){
+                        const el = document.getElementById(key);
+                        if(el && document.activeElement !== el) { el.value = data[key]; el.style.borderLeft = "none"; }
+                    }
+                } else {
+                    document.querySelectorAll('input').forEach(i => i.value = "");
+                    notPlayed.style.display = selectedSeason === "active" ? "none" : "block";
+                }
+            });
         }
 
         onAuthStateChanged(auth, user => {
-            const adminElements = document.querySelectorAll('.admin-btn');
-            if (user) {
-                adminElements.forEach(el => el.style.display = 'block');
-                document.getElementById('period-admin-qual').style.display = 'block';
-                document.querySelectorAll('input, select').forEach(el => {
-                    el.readOnly = false; el.disabled = false;
-                    el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.borderLeft = "2px solid red"; });
-                    el.addEventListener('change', e => { localChanges[e.target.id] = e.target.value; });
+            const isAuth = !!user;
+            document.getElementById('save-btn').style.display = isAuth ? 'block' : 'none';
+            document.getElementById('logout-btn').style.display = isAuth ? 'block' : 'none';
+            document.querySelectorAll('input').forEach(el => {
+                el.readOnly = !isAuth;
+                if(isAuth) el.addEventListener('input', e => {
+                    localChanges[e.target.id] = e.target.value;
+                    el.style.borderLeft = "2px solid red";
                 });
-            } else {
-                adminElements.forEach(el => el.style.display = 'none');
-                document.querySelectorAll('input, select').forEach(el => { el.readOnly = true; el.disabled = true; });
-            }
+            });
+        });
+
+        document.getElementById('season-switcher').addEventListener('change', e => {
+            selectedSeason = e.target.value;
+            localChanges = {};
+            loadData();
         });
 
         document.getElementById('save-btn').addEventListener('click', async () => {
-            if (Object.keys(localChanges).length > 0) {
-                try {
-                    await setDoc(doc(db, "tournament", "qual"), localChanges, { merge: true });
-                    alert("Kvalifikace uložena.");
-                    localChanges = {};
-                    document.querySelectorAll('input').forEach(el => el.style.borderLeft = "none");
-                } catch (e) { alert("Chyba: " + e.message); }
-            }
+            const path = selectedSeason === "active" ? "qual_active" : `qual_${selectedSeason}`;
+            await setDoc(doc(db, "tournament", path), localChanges, {merge:true});
+            alert("Kvalifikace uložena!");
+            localChanges = {};
         });
 
-        document.getElementById('logout-btn').addEventListener('click', async () => {
-            if (Object.keys(localChanges).length > 0 && confirm("Uložit kvalifikaci?")) {
-                try { await setDoc(doc(db, "tournament", "qual"), localChanges, { merge: true }); }
-                catch (e) { alert("Chyba: " + e.message); return; }
-            }
-            signOut(auth).then(() => window.location.reload());
-        });
-
-        onSnapshot(doc(db, "tournament", "qual"), d => {
-            if (d.exists()) {
-                const data = d.data();
-                if (data.period_select_qual) document.getElementById('period-display-qual').innerText = data.period_select_qual;
-                for (const key in data) {
-                    const el = document.getElementById(key);
-                    if (el && document.activeElement !== el) { el.value = data[key]; el.style.borderLeft = "none"; }
-                }
-            }
-        });
+        document.getElementById('logout-btn').addEventListener('click', () => signOut(auth).then(() => window.location.reload()));
+        loadData();
     </script>
 </body>
 </html>
