@@ -5,41 +5,34 @@
     <title>Správa - LIGHTSMC.EU</title>
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --danger: #ff4d4d; --success: #28a745; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
         nav { background: rgba(15, 15, 15, 0.9); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; cursor: pointer; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
-        .nav-link:hover, .nav-link.active { color: var(--accent-color); }
-        
         .page { width: 900px; padding: 40px; }
-        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid #333; margin-bottom: 20px; position: relative; }
+        .card { background: var(--card-bg); padding: 25px; border-radius: 12px; border-left: 5px solid #333; margin-bottom: 20px; }
         .card.active-card { border-left-color: var(--success); }
         input, textarea { background: #000; border: 1px solid #333; color: white; padding: 12px; border-radius: 5px; width: 100%; box-sizing: border-box; margin-bottom: 10px; font-family: inherit; }
-        .date-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin: 10px 0; background: #080808; padding: 15px; border-radius: 8px; }
-        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; font-size: 0.8em; transition: 0.2s; }
-        .btn-add { background: var(--accent-color); color: white; margin-bottom: 30px; width: 100%; font-size: 1em; }
-        .btn-del { background: var(--danger); color: white; }
-        .btn-toggle { background: #444; color: white; }
-        .btn-toggle.on { background: var(--success); }
-        #save-btn { color: var(--success); }
-        #logout-btn { color: var(--danger); }
+        .btn { padding: 10px 20px; border: none; border-radius: 5px; font-weight: bold; cursor: pointer; text-transform: uppercase; }
+        .btn-add { background: var(--accent-color); color: white; margin-bottom: 30px; width: 100%; }
+        footer { margin-top: auto; padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; }
     </style>
 </head>
 <body>
-    <nav>
+    <nav><div style="display:flex; max-width:1200px; width:100%; justify-content:center;">
         <a href="index.html" class="nav-link">Domů</a>
         <a href="playoff.html" class="nav-link">PlayOff</a>
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link active">Archiv</a>
-        <a id="save-btn" class="nav-link" style="display:none">ULOŽIT</a>
-        <a id="logout-btn" class="nav-link" style="display:none">ODHLÁSIT</a>
-    </nav>
+        <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+    </div></nav>
     <div class="page">
         <h1 style="color:var(--accent-color); text-align:center;">SPRÁVA TURNAJŮ</h1>
         <div id="admin-add-area" style="display:none"><button class="btn btn-add" id="add-btn">+ NOVÝ TURNAJ</button></div>
         <div id="seasons-container"></div>
     </div>
-
+    <footer><p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p></footer>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -47,28 +40,21 @@
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let seasonsData = {}; let isAdmin = false;
-
         onAuthStateChanged(auth, user => {
             isAdmin = !!user; document.getElementById('save-btn').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('logout-btn').style.display = isAdmin ? 'block' : 'none';
             document.getElementById('admin-add-area').style.display = isAdmin ? 'block' : 'none'; render();
         });
         onSnapshot(doc(db, "tournament", "archive_list"), d => { if(d.exists()) { seasonsData = d.data(); render(); } });
-
         function render() {
             const container = document.getElementById('seasons-container'); container.innerHTML = "";
             Object.keys(seasonsData).forEach(id => {
                 const s = seasonsData[id]; const card = document.createElement('div'); card.className = "card" + (s.active ? " active-card" : "");
-                if(!isAdmin) {
-                    card.innerHTML = `<h2>${s.title}</h2><p>${s.desc}</p>`;
-                } else {
+                if(!isAdmin) { card.innerHTML = `<h2>${s.title}</h2><p>${s.desc}</p>`; }
+                else {
                     card.innerHTML = `<button class="btn btn-toggle ${s.active ? 'on' : ''}" id="toggle_${id}">${s.active ? 'AKTIVNÍ' : 'VYPNUTO'}</button>
                     <input type="text" value="${s.title}" id="t_${id}"><textarea id="d_${id}">${s.desc}</textarea>
-                    <div class="date-grid">
-                        <input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}">
-                        <input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}">
-                        <input type="datetime-local" value="${s.datePlay || ''}" id="play_${id}" style="grid-column: span 2">
-                    </div><button class="btn btn-del" id="del_${id}">SMAZAT</button>`;
+                    <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;"><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"><input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}"></div><button class="btn btn-del" id="del_${id}" style="background:#ff4d4d; color:white; margin-top:10px;">SMAZAT</button>`;
                     setTimeout(() => {
                         document.getElementById(`toggle_${id}`).onclick = () => { Object.keys(seasonsData).forEach(k => seasonsData[k].active = false); seasonsData[id].active = true; render(); };
                         document.getElementById(`del_${id}`).onclick = () => { delete seasonsData[id]; render(); };
@@ -76,7 +62,6 @@
                         document.getElementById(`d_${id}`).oninput = (e) => seasonsData[id].desc = e.target.value;
                         document.getElementById(`reg_${id}`).oninput = (e) => seasonsData[id].dateReg = e.target.value;
                         document.getElementById(`kval_${id}`).oninput = (e) => seasonsData[id].dateKval = e.target.value;
-                        document.getElementById(`play_${id}`).oninput = (e) => seasonsData[id].datePlay = e.target.value;
                     }, 0);
                 }
                 container.appendChild(card);
