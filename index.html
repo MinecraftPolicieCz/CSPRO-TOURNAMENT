@@ -16,12 +16,12 @@
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
         .main-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding: 80px 20px; box-sizing: border-box; }
         h1 { font-size: 5em; color: var(--accent-color); margin-bottom: 30px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); text-align: center; }
-        .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
-        .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; }
+        .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
+        .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; box-sizing: border-box; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.6); text-align: center; }
         #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
-        label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; }
+        label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
         input, textarea { width: 100%; padding: 14px; background: #080808; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
-        .btn-main { display: inline-block; padding: 18px 30px; background: var(--accent-color); color: white; border-radius: 6px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 25px; transition: 0.3s; }
+        .btn-main { display: inline-block; padding: 18px 30px; background: var(--accent-color); color: white; border-radius: 6px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 25px; transition: 0.3s; letter-spacing: 1px; }
         footer { margin-top: auto; padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; }
     </style>
 </head>
@@ -36,8 +36,10 @@
     <div class="main-container">
         <h1>LIGHTSMC.EU</h1>
         <div class="content-text">
-            <h2 style="color:var(--accent-color); text-transform:uppercase;">Profesionální CS2 Turnaje</h2>
-            <p>Vítejte na platformě <span style="color:white; font-weight:bold;">LIGHTSMC.EU</span>, vašem organizátorovi kompetitivních turnajů v Counter-Strike 2. Naším posláním je pozvednout scénu skrze profesionálně organizované eventy s férovým přístupem.</p>
+            <h2 style="color:var(--accent-color); text-transform:uppercase; letter-spacing:2px;">Profesionální CS2 Turnaje</h2>
+            <p>Vítejte na platformě <span style="color:white; font-weight:bold;">LIGHTSMC.EU</span>, vašem předním organizátorovi kompetitivních turnajů v Counter-Strike 2. Naším posláním je pozvednout česko-slovenskou esportovou scénu skrze profesionálně organizované eventy, které staví férovost a hráčský zážitek na první místo.</p>
+            <p>Věříme, že každý tým, bez ohledu na úroveň, si zaslouží šanci ukázat své kvality v prostředí, které simuluje atmosféru velkých světových turnajů. Právě proto jsme vyvinuli tento unikátní portál, který v reálném čase propojuje správu kvalifikací, playoff pavouků a registraci týmů do jednoho plynulého celku.</p>
+            <p>Naším cílem není jen jednorázový turnaj, ale budování dlouhodobé komunity hráčů, kteří sdílejí vášeň pro CS2. Každá sezóna přináší nové výzvy a my jsme tu, abychom vám zajistili to nejlepší technické i organizační zázemí. Připojte se k nám, ukažte své dovednosti na mapě a napište svůj příběh v historii LIGHTSMC.EU.</p>
         </div>
         <div id="active-info" class="active-tournament-box">
             <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
@@ -78,13 +80,13 @@
                         document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT TÝM</button>';
                         document.getElementById('open-form-btn').onclick = function() { this.style.display = 'none'; document.getElementById('registration-form').style.display = 'block'; };
                     } else { document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE"; }
-                }
+                } else { infoBox.style.display = "none"; }
             }
         });
         document.getElementById('registration-form').onsubmit = function(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
             emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3>DĚKUJEME ZA REGISTRACI!</h3>";
+                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3 style='color:var(--accent-color); text-align:center;'>DĚKUJEME ZA REGISTRACI!</h3>";
             }, (err) => { alert('Chyba'); btn.disabled = false; });
         };
     </script>
