@@ -8,19 +8,22 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        .nav-link:hover { color: var(--accent-color); background: #222; }
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 50px; }
+        h1 { margin-bottom: 10px; letter-spacing: 2px; text-transform: uppercase; }
+        #period-admin { background: #1a1a1a; padding: 10px 20px; border-radius: 8px; border: 1px solid var(--accent-color); margin-bottom: 30px; display: none; }
+        .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 20px; }
         .column { display: flex; flex-direction: column; justify-content: space-around; width: 280px; }
-        .round-name { text-align: center; color: #666; font-size: 0.8em; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; }
+        .round-name { text-align: center; color: #666; font-size: 0.8em; text-transform: uppercase; margin-bottom: 10px; }
         .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; margin: 15px 0; position: relative; }
         .match-box::after { content: '➜'; position: absolute; right: -30px; top: 35%; color: var(--line); font-size: 18px; }
         .column:last-child .match-box::after { display: none; }
         .format-badge { position: absolute; top: -12px; left: 10px; background: #222; color: var(--accent-color); font-size: 9px; padding: 2px 6px; border-radius: 4px; border: 1px solid #333; font-weight: bold; }
         .team-row { display: flex; border-bottom: 1px solid #222; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 13px; }
-        input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; background: #0a0a0a; }
-        .champion-section { margin-top: 60px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 20px; width: 400px; text-align: center; }
-        .champion-section h2 { color: black; margin: 0; font-size: 1.2em; text-transform: uppercase; font-weight: 900; }
+        input[type="number"] { width: 45px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
+        .champion-section { margin-top: 60px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 20px; width: 400px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .champion-section h2 { color: black; margin: 0; font-size: 1.2em; font-weight: 900; }
         .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border-bottom: 2px solid rgba(0,0,0,0.1); }
     </style>
 </head>
@@ -35,7 +38,18 @@
     </nav>
 
     <div class="page">
-        <h1>🏆 PLAYOFF (Bo3 & Bo5)</h1>
+        <h1 id="main-title">PLAYOFF - <span id="period-display">SEZÓNA 2026</span></h1>
+        
+        <div id="period-admin">
+            <label>Období: </label>
+            <select id="period_select" style="background:#000; color:white; border:1px solid #444; padding:5px;">
+                <option value="Zima 2026">Zima 2026</option>
+                <option value="Jaro 2026">Jaro 2026</option>
+                <option value="Léto 2026">Léto 2026</option>
+                <option value="Podzim 2026">Podzim 2026</option>
+            </select>
+        </div>
+
         <div class="bracket">
             <div class="column">
                 <div class="round-name">Čtvrtfinále</div>
@@ -46,12 +60,12 @@
             </div>
             <div class="column">
                 <div class="round-name">Semifinále</div>
-                <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="format-badge">Bo3</div><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number" value="0"></div></div>
+                <div class="match-box" style="margin-top: 50px;"><div class="format-badge">Bo3</div><div class="team-row"><input id="s1_t1" placeholder="Vítěz Q1/2"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Vítěz Q1/2"><input id="s1_s2" type="number" value="0"></div></div>
+                <div class="match-box" style="margin-top: 100px;"><div class="format-badge">Bo3</div><div class="team-row"><input id="s2_t1" placeholder="Vítěz Q3/4"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Vítěz Q3/4"><input id="s2_s2" type="number" value="0"></div></div>
             </div>
             <div class="column">
                 <div class="round-name">Finále</div>
-                <div class="match-box" style="border: 2px solid gold;"><div class="format-badge" style="color: gold;">Bo5</div><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
+                <div class="match-box" style="border: 2px solid gold; margin-top: 20px;"><div class="format-badge" style="color: gold;">Bo5</div><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
             </div>
         </div>
         <div class="champion-section"><h2>🏆 ŠAMPION 🏆</h2><input id="champ_name" placeholder="JMÉNO TÝMU"></div>
@@ -61,6 +75,7 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", messagingSenderId: "412820092666", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
@@ -68,32 +83,40 @@
         let localChanges = {};
 
         onAuthStateChanged(auth, user => {
+            const btn = document.getElementById('logout-btn');
+            const pAdmin = document.getElementById('period-admin');
             if (user) {
-                document.getElementById('logout-btn').style.display = 'block';
-                document.querySelectorAll('input').forEach(el => {
-                    el.readOnly = false;
-                    el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.backgroundColor = "rgba(255,255,255,0.05)"; });
+                btn.style.display = 'block';
+                pAdmin.style.display = 'block';
+                document.querySelectorAll('input, select').forEach(el => {
+                    el.disabled = false; el.readOnly = false;
+                    el.addEventListener('input', e => { localChanges[e.target.id] = e.target.value; el.style.borderLeft = "2px solid red"; });
+                    el.addEventListener('change', e => { localChanges[e.target.id] = e.target.value; });
                 });
             } else {
-                document.querySelectorAll('input').forEach(el => el.readOnly = true);
+                btn.style.display = 'none';
+                pAdmin.style.display = 'none';
+                document.querySelectorAll('input, select').forEach(el => { el.disabled = true; el.readOnly = true; });
             }
         });
 
         document.getElementById('logout-btn').addEventListener('click', async () => {
-            if (Object.keys(localChanges).length > 0 && confirm("Uložit změny v PlayOff?")) {
+            if (Object.keys(localChanges).length > 0 && confirm("Uložit změny v Playoff?")) {
                 try {
-                    await setDoc(doc(db, "tournament", "playoff_data"), localChanges, { merge: true });
-                } catch (e) { alert("Chyba při ukládání: " + e.message); return; }
+                    await setDoc(doc(db, "tournament", "playoff"), localChanges, { merge: true });
+                    alert("Uloženo.");
+                } catch (e) { alert("Chyba: " + e.message); return; }
             }
             signOut(auth).then(() => window.location.reload());
         });
 
-        onSnapshot(doc(db, "tournament", "playoff_data"), d => {
+        onSnapshot(doc(db, "tournament", "playoff"), d => {
             if (d.exists()) {
                 const data = d.data();
+                if (data.period_select) document.getElementById('period-display').innerText = data.period_select;
                 for (const key in data) {
                     const el = document.getElementById(key);
-                    if (el && document.activeElement !== el) el.value = data[key];
+                    if (el && document.activeElement !== el) { el.value = data[key]; el.style.borderLeft = "none"; }
                 }
             }
         });
