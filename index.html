@@ -2,32 +2,69 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>LIGHTSMC.EU - Gaming & Esport</title>
+    <title>LIGHTSMC.EU - Esport & CS2 Turnaje</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(15, 15, 15, 0.9); }
+        :root { 
+            --bg-color: #0a0a0a; 
+            --accent-color: #007bff; 
+            --card-bg: #161616; 
+            --nav-bg: rgba(15, 15, 15, 0.9);
+        }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
+        
+        /* Navigace */
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
         .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
         .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
         .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .hero { text-align: center; padding: 60px 20px; max-width: 900px; animation: fadeIn 1s ease-out; }
+
+        /* Hlavní kontejner pro vycentrování všeho pod sebou */
+        .main-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 900px;
+            padding: 80px 20px;
+            box-sizing: border-box;
+            animation: fadeIn 1s ease-out;
+        }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        h1 { font-size: 5em; color: var(--accent-color); margin-bottom: 5px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); }
-        .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 15px; border: 1px solid #222; margin: 40px 0; }
+        
+        h1 { font-size: 5em; color: var(--accent-color); margin-bottom: 30px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); text-align: center; }
+
+        .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 30px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
         .content-text h2 { color: var(--accent-color); text-transform: uppercase; letter-spacing: 2px; }
         .highlight { color: white; font-weight: bold; }
-        .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; max-width: 600px; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+
+        /* Zarovnaný registrační box */
+        .active-tournament-box { 
+            margin: 40px 0; 
+            padding: 40px; 
+            background: var(--card-bg); 
+            border: 1px solid #222; 
+            border-top: 4px solid var(--accent-color); 
+            border-radius: 12px; 
+            width: 100%; 
+            box-sizing: border-box;
+            display: none; 
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6); 
+            text-align: center;
+        }
+
         #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
         label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
         input, textarea { width: 100%; padding: 14px; background: #080808; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
         input:focus, textarea:focus { border-color: var(--accent-color); outline: none; }
+        
         .btn-main { display: inline-block; padding: 18px 30px; background: var(--accent-color); color: white; border-radius: 6px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 25px; transition: 0.3s; letter-spacing: 1px; }
-        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3); }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3); filter: brightness(1.2); }
+        
         footer { margin-top: auto; padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; }
-        footer b { color: #888; }
     </style>
 </head>
 <body>
@@ -38,18 +75,22 @@
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
     </div></nav>
-    <div class="hero">
+
+    <div class="main-container">
         <h1>LIGHTSMC.EU</h1>
+        
         <div class="content-text">
-            <h2>Kdo jsme a co děláme?</h2>
-            <p>Vítejte na platformě <span class="highlight">LIGHTSMC.EU</span>. Naše kořeny sahají k <span class="highlight">Minecraft serverům</span>, kde budujeme technicky vyspělé zázemí a stabilitu pro naši komunitu.</p>
-            <p>Aktuálně expandujeme do esportu a provozujeme <span class="highlight">vlastní CS2 turnaje</span> s unikátním systémem kvalifikací. Cílem je férové prostředí a profesionální organizace pro česko-slovenskou scénu.</p>
+            <h2>Profesionální CS2 Turnaje</h2>
+            <p>Vítejte na platformě <span class="highlight">LIGHTSMC.EU</span>, vašem předním organizátorovi kompetitivních turnajů v <span class="highlight">Counter-Strike 2</span>. Naším posláním je pozvednout česko-slovenskou esportovou scénu skrze profesionálně organizované eventy s férovým přístupem ke všem hráčům.</p>
+            <p>Disponujeme moderním systémem pro správu <span class="highlight">kvalifikací a playoff</span>, který umožňuje týmům sledovat svůj postup v reálném čase. Každý turnaj na naší platformě je navržen tak, aby poskytoval napínavý zážitek nejen hráčům, ale i divákům.</p>
         </div>
+
         <div id="active-info" class="active-tournament-box">
             <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
-            <h2 id="active-title"></h2>
+            <h2 id="active-title" style="margin: 15px 0;"></h2>
             <p id="active-desc" style="color:#888"></p>
             <div id="action-area"></div>
+            
             <form id="registration-form">
                 <input type="hidden" name="active_title" id="hidden_active_title">
                 <label>NÁZEV TÝMU</label><input type="text" name="team_name" required>
@@ -59,22 +100,26 @@
             </form>
         </div>
     </div>
+
     <footer>
         <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
-        <p>Kontakt: support@lightsmc.eu | Esportová divize platformy</p>
+        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
     </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         emailjs.init("47U6jSVKzAh5kcpa4");
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app);
+        
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
+                const infoBox = document.getElementById('active-info');
                 if(activeId) {
                     const s = data[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    document.getElementById('active-info').style.display = "block";
+                    infoBox.style.display = "block";
                     document.getElementById('active-title').innerText = s.title;
                     document.getElementById('active-desc').innerText = s.desc;
                     document.getElementById('hidden_active_title').value = s.title;
@@ -83,14 +128,17 @@
                         document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT TÝM</button>';
                         document.getElementById('open-form-btn').onclick = function() { this.style.display = 'none'; document.getElementById('registration-form').style.display = 'block'; };
                     } else { document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE"; }
+                } else {
+                    infoBox.style.display = "none";
                 }
             }
         });
+
         document.getElementById('registration-form').onsubmit = function(e) {
             e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
             emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3 style='color:var(--accent-color)'>DĚKUJEME ZA REGISTRACI!</h3>";
-            }, (err) => { alert('Chyba'); btn.disabled = false; });
+                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3 style='color:var(--accent-color); text-align:center;'>DĚKUJEME ZA REGISTRACI!</h3>";
+            }, (err) => { alert('Chyba'); btn.disabled = false; btn.innerText = "Zkusit znovu"; });
         };
     </script>
 </body>
