@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>CSPRO.CZ - Home</title>
+    <title>LIGHTSMC.EU - Home</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -14,7 +14,6 @@
         .hero { text-align: center; padding: 60px 20px; }
         h1 { font-size: 4em; color: var(--accent-color); letter-spacing: 5px; margin-bottom: 10px; }
         
-        /* Box pro aktivní turnaj */
         .active-tournament-box {
             margin-top: 40px;
             padding: 30px;
@@ -22,15 +21,15 @@
             border: 1px solid var(--accent-color);
             border-radius: 15px;
             max-width: 600px;
-            display: none; /* Skryto, dokud JS nenajde aktivní turnaj */
+            display: none;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .live-indicator { color: #4caf50; font-weight: bold; font-size: 0.9em; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .live-indicator { color: var(--accent-color); font-weight: bold; font-size: 0.9em; margin-bottom: 10px; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .live-dot { width: 8px; height: 8px; background: #4caf50; border-radius: 50%; animation: pulse 1.5s infinite; }
         
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        .btn-link { display: inline-block; margin-top: 20px; padding: 10px 25px; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; }
+        .btn-link { display: inline-block; margin-top: 20px; padding: 12px 30px; border: 1px solid var(--accent-color); color: var(--accent-color); text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; text-transform: uppercase; }
         .btn-link:hover { background: var(--accent-color); color: black; }
 
         #logout-btn { color: #ff4d4d; display: none; }
@@ -48,13 +47,13 @@
 
     <div class="hero">
         <h1>CSPRO.CZ</h1>
-        <p>Oficiální platforma pro naše turnaje.</p>
+        <p>Vítejte na oficiální platformě.</p>
         
         <div id="active-info" class="active-tournament-box">
-            <div class="live-indicator"><span class="live-dot"></span> PRÁVĚ PROBÍHÁ</div>
+            <div id="phase-tag" class="live-indicator"></div>
             <h2 id="active-title" style="margin:10px 0; font-size: 2em;"></h2>
             <p id="active-desc" style="color: #bbb; line-height: 1.6;"></p>
-            <a href="playoff.html" class="btn-link">ZOBRAZIT PLAYOFF</a>
+            <div id="action-area"></div>
         </div>
     </div>
 
@@ -76,7 +75,6 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // Sledování aktivního turnaje
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const data = d.data();
@@ -84,16 +82,38 @@
                 const infoBox = document.getElementById('active-info');
                 
                 if(activeId) {
+                    const s = data[activeId];
+                    const now = new Date();
+                    const dReg = s.dateReg ? new Date(s.dateReg) : null;
+                    const dKval = s.dateKval ? new Date(s.dateKval) : null;
+                    const dPlay = s.datePlay ? new Date(s.datePlay) : null;
+
                     infoBox.style.display = "inline-block";
-                    document.getElementById('active-title').innerText = data[activeId].title;
-                    document.getElementById('active-desc').innerText = data[activeId].desc;
+                    document.getElementById('active-title').innerText = s.title;
+                    document.getElementById('active-desc').innerText = s.desc;
+
+                    let phase = "PŘIPRAVUJE SE";
+                    let btnHtml = "";
+
+                    if (dPlay && now >= dPlay) {
+                        phase = "● PLAYOFF PRÁVĚ PROBÍHÁ";
+                        btnHtml = `<a href="playoff.html" class="btn-link">SLEDOVAT PLAYOFF</a>`;
+                    } else if (dKval && now >= dKval) {
+                        phase = "● KVALIFIKACE V PLNÉM PROUDU";
+                        btnHtml = `<a href="kvalifikace.html" class="btn-link">VÝSLEDKY KVALIFIKACE</a>`;
+                    } else if (dReg && now >= dReg) {
+                        phase = "📢 NÁBOR DO KVALIFIKACE OTEVŘEN";
+                        btnHtml = `<a href="https://forms.gle/VAS_FORMULAR" target="_blank" class="btn-link" style="background:var(--accent-color); color:black;">ODESLAT PŘIHLÁŠKU</a>`;
+                    }
+
+                    document.getElementById('phase-tag').innerText = phase;
+                    document.getElementById('action-area').innerHTML = btnHtml;
                 } else {
                     infoBox.style.display = "none";
                 }
             }
         });
 
-        // Správa přihlášení
         onAuthStateChanged(auth, user => {
             if (user) document.getElementById('logout-btn').style.display = 'block';
         });
