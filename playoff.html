@@ -5,32 +5,17 @@
     <title>PlayOff - CSPRO.CZ</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --line: #333; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1200px; /* Zajišťuje, že body se nesmrskne pod šířku pavouka */ }
-        
-        /* OPRAVENÁ LIŠTA: Roztáhne se přes celou šířku obsahu a je fixní */
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-width: 1200px; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; min-width: 1200px; }
-        
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; white-space: nowrap; }
-        .nav-link:hover { color: var(--accent-color); background: #222; }
-
-        .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; box-sizing: border-box; }
-        #no-tournament { display:none; text-align: center; margin-top: 100px; border: 1px solid #333; padding: 40px; border-radius: 15px; }
-        #content-area { display: none; width: 100%; flex-direction: column; align-items: center; }
-
+        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; }
+        .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
         .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 50px; }
         .column { display: flex; flex-direction: column; justify-content: space-around; width: 300px; }
-        .match-container { display: flex; flex-direction: column; justify-content: center; min-height: 150px; }
-        .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; position: relative; }
-        .match-box::after { content: '➜'; position: absolute; right: -35px; top: 35%; color: var(--line); font-size: 20px; }
-        .column:last-child .match-box::after { display: none; }
-
-        .format-badge { position: absolute; top: -12px; left: 10px; background: #222; color: var(--accent-color); font-size: 9px; padding: 2px 6px; border-radius: 4px; font-weight: bold; border: 1px solid var(--line); }
+        .match-box { background: var(--card-bg); border: 1px solid var(--line); border-radius: 8px; margin: 20px 0; }
         .team-row { display: flex; border-bottom: 1px solid #222; }
-        input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 14px; outline: none; }
+        input { background: transparent; border: none; color: white; padding: 12px; width: 100%; outline: none; }
         input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
-
-        .champion-section { margin-top: 60px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); padding: 30px; border-radius: 20px; width: 450px; text-align: center; }
-        .champion-section input { color: black; font-size: 2.2em; font-weight: 900; text-align: center; border:none; width: 100%; background: transparent; }
+        .admin-btn { display: none; background: var(--accent-color); color: black; border: none; padding: 15px 30px; font-weight: bold; border-radius: 5px; cursor: pointer; margin-top: 40px; }
     </style>
 </head>
 <body>
@@ -39,10 +24,41 @@
         <a href="playoff.html" class="nav-link" style="color:var(--accent-color)">PlayOff</a>
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
-        <a href="archiv.html" class="nav-link">Archiv</a>
-        <a id="save-btn" class="nav-link" style="display:none; color:#4caf50">ULOŽIT</a>
-        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+        <a href="profil.html" class="nav-link">Profil / Tým</a>
     </nav>
+    <div class="page">
+        <h1>PLAYOFF PAVOUK</h1>
+        <div class="bracket">
+            <div class="column" id="col-1">
+                </div>
+        </div>
+        <button id="save-btn" class="admin-btn" onclick="saveData()">ULOŽIT ZMĚNY (ADMIN)</button>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        const firebaseConfig = { /* TVÁ KONFIGURACE */ };
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                const userDoc = await getDoc(doc(db, "users", user.uid));
+                if (userDoc.exists() && userDoc.data().role === 'admin') {
+                    document.getElementById('save-btn').style.display = 'block';
+                    document.querySelectorAll('input').forEach(i => i.readOnly = false);
+                } else {
+                    document.querySelectorAll('input').forEach(i => i.readOnly = true);
+                }
+            }
+        });
+    </script>
+</body>
+</html>
 
     <div class="page">
         <div id="no-tournament"><h2>ŽÁDNÝ TURNAJ PRÁVĚ NEPROBÍHÁ</h2></div>
@@ -124,3 +140,4 @@
     </script>
 </body>
 </html>
+
