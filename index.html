@@ -2,86 +2,62 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>LIGHTSMC.EU - Registrace</title>
+    <title>LIGHTSMC.EU - Esport</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
-        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
-        .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        :root { 
+            --bg-color: #0a0a0a; 
+            --accent-color: #007bff; /* Modrá místo oranžové */
+            --card-bg: #161616; 
+            --nav-bg: rgba(15, 15, 15, 0.9);
+        }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
         
-        .hero { text-align: center; padding: 50px 20px; max-width: 800px; }
-        h1 { font-size: 4em; color: var(--accent-color); margin-bottom: 10px; }
+        /* --- NAVIGACE --- */
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; }
+        .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
+        .nav-link:hover, .nav-link.active { color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
+        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: var(--accent-color); transition: 0.3s; transform: translateX(-50%); }
+        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
 
-        .active-tournament-box {
-            margin: 20px 0;
-            padding: 30px;
-            background: var(--card-bg);
-            border: 2px solid var(--accent-color);
-            border-radius: 15px;
-            width: 100%;
-            max-width: 600px;
-            display: none;
-        }
+        /* --- HERO --- */
+        .hero { text-align: center; padding: 80px 20px; max-width: 800px; animation: fadeIn 1s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        h1 { font-size: 5em; color: var(--accent-color); margin-bottom: 5px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); }
 
-        #registration-form { 
-            display: none; 
-            text-align: left; 
-            margin-top: 20px; 
-            background: rgba(0,0,0,0.3); 
-            padding: 20px; 
-            border-radius: 10px; 
-        }
-        label { display: block; margin: 10px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.9em; }
-        input, textarea { 
-            width: 100%; padding: 12px; background: #000; border: 1px solid #444; 
-            color: white; border-radius: 5px; box-sizing: border-box; font-family: inherit;
-        }
-        textarea { height: 120px; resize: none; }
-
-        .btn-main { 
-            display: inline-block; padding: 15px 30px; background: var(--accent-color); 
-            color: black; text-decoration: none; border-radius: 8px; font-weight: bold; 
-            text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 20px;
-        }
-        .btn-main:hover { opacity: 0.9; box-shadow: 0 0 15px var(--accent-color); }
-        
-        #phase-tag { color: var(--accent-color); font-weight: bold; letter-spacing: 2px; }
+        .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; max-width: 600px; display: none; box-shadow: 0 20px 50px rgba(0,0,0,0.6); }
+        #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
+        label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
+        input, textarea { width: 100%; padding: 14px; background: #080808; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
+        input:focus, textarea:focus { border-color: var(--accent-color); outline: none; }
+        .btn-main { display: inline-block; padding: 18px 30px; background: var(--accent-color); color: white; border-radius: 6px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 25px; transition: 0.3s; letter-spacing: 1px; }
+        .btn-main:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0, 123, 255, 0.3); filter: brightness(1.2); }
+        #phase-tag { color: var(--accent-color); font-weight: 800; letter-spacing: 3px; font-size: 0.9em; margin-bottom: 10px; display: block; }
     </style>
 </head>
 <body>
-
-    <nav>
-        <a href="index.html" class="nav-link">Domů</a>
+    <nav><div class="nav-container">
+        <a href="index.html" class="nav-link active">Domů</a>
         <a href="playoff.html" class="nav-link">PlayOff</a>
         <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
         <a href="pravidla.html" class="nav-link">Pravidla</a>
         <a href="archiv.html" class="nav-link">Archiv</a>
-    </nav>
+    </div></nav>
 
     <div class="hero">
         <h1>LIGHTSMC.EU</h1>
-        
         <div id="active-info" class="active-tournament-box">
-            <div id="phase-tag"></div>
+            <span id="phase-tag"></span>
             <h2 id="active-title"></h2>
-            <p id="active-desc" style="color: #ccc;"></p>
-            
+            <p id="active-desc" style="color:#888"></p>
             <div id="action-area"></div>
-
             <form id="registration-form">
                 <input type="hidden" name="active_title" id="hidden_active_title">
-                
-                <label>NÁZEV TÝMU</label>
-                <input type="text" name="team_name" placeholder="Zadejte název týmu" required>
-                
-                <label>DISCORD ID JEDNATELE</label>
-                <input type="text" name="discord_id" placeholder="např. uzivatel#1234" required>
-                
-                <label>STEAM URL VŠECH HRÁČŮ</label>
-                <textarea name="steam_urls" placeholder="Vložte Steam odkazy na všech 5 hráčů..." required></textarea>
-                
-                <button type="submit" id="submit-btn" class="btn-main">Odeslat závaznou přihlášku</button>
+                <label>NÁZEV TÝMU</label><input type="text" name="team_name" required>
+                <label>DISCORD ID JEDNATELE</label><input type="text" name="discord_id" required>
+                <label>STEAM URL VŠECH HRÁČŮ</label><textarea name="steam_urls" required></textarea>
+                <button type="submit" id="submit-btn" class="btn-main">Odeslat přihlášku</button>
             </form>
         </div>
     </div>
@@ -89,69 +65,31 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-
-        // Tady je tvůj Public Key
         emailjs.init("47U6jSVKzAh5kcpa4");
-
-        const firebaseConfig = { 
-            apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", 
-            authDomain: "cspro-web.firebaseapp.com", 
-            projectId: "cspro-web", 
-            storageBucket: "cspro-web.firebasestorage.app", 
-            appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" 
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
+        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+        const app = initializeApp(firebaseConfig); const db = getFirestore(app);
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
-                const data = d.data();
-                const activeId = Object.keys(data).find(key => data[key].active === true);
-                const infoBox = document.getElementById('active-info');
-                
+                const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
                 if(activeId) {
-                    const s = data[activeId];
-                    const now = new Date();
-                    const dReg = s.dateReg ? new Date(s.dateReg) : null;
-
-                    infoBox.style.display = "block";
+                    const s = data[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
+                    document.getElementById('active-info').style.display = "block";
                     document.getElementById('active-title').innerText = s.title;
                     document.getElementById('active-desc').innerText = s.desc;
                     document.getElementById('hidden_active_title').value = s.title;
-
                     if (dReg && now >= dReg) {
                         document.getElementById('phase-tag').innerText = "📢 REGISTRACE OTEVŘENA";
                         document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT TÝM</button>';
-                        
-                        document.getElementById('open-form-btn').onclick = function() {
-                            this.style.display = 'none'; 
-                            document.getElementById('registration-form').style.display = 'block'; 
-                        };
-                    } else {
-                        document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE";
-                        document.getElementById('action-area').innerHTML = "<p>Registrace zatím nejsou spuštěny.</p>";
-                    }
+                        document.getElementById('open-form-btn').onclick = function() { this.style.display = 'none'; document.getElementById('registration-form').style.display = 'block'; };
+                    } else { document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE"; }
                 }
             }
         });
-
         document.getElementById('registration-form').onsubmit = function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn');
-            btn.innerText = "ODESÍLÁM...";
-            btn.disabled = true;
-
-            // Použito tvoje Service ID a nové Template ID
-            emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this)
-                .then(() => {
-                    alert('HOTOVO! Přihláška byla odeslána.');
-                    document.getElementById('registration-form').innerHTML = "<h3 style='color:var(--accent-color)'>DĚKUJEME ZA REGISTRACI!</h3><p>Potvrzení najdete ve svém e-mailu.</p>";
-                }, (err) => {
-                    alert('Chyba: ' + JSON.stringify(err));
-                    btn.innerText = "Zkusit znovu";
-                    btn.disabled = false;
-                });
+            e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
+            emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
+                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3 style='color:var(--accent-color)'>DĚKUJEME ZA REGISTRACI!</h3>";
+            }, (err) => { alert('Chyba'); btn.disabled = false; });
         };
     </script>
 </body>
