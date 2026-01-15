@@ -3,66 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>PlayOff - LIGHTSMC.EU</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(15, 15, 15, 0.9); }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; min-width: 1200px; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); min-height: 100vh; }
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.3); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(10px); }
         .nav-link { color: #bbb; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.85em; transition: 0.3s; letter-spacing: 1.5px; position: relative; }
-        .nav-link:hover, .nav-link.active { color: var(--accent-color); }
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; flex: 1; }
-        .msg-box { text-align: center; margin-top: 100px; padding: 50px; border: 1px solid #333; border-radius: 15px; background: var(--card-bg); width: 600px; }
-        .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 60px; display: none; }
-        .column { display: flex; flex-direction: column; justify-content: space-around; width: 300px; }
-        .match-box { background: var(--card-bg); border: 1px solid #222; border-radius: 8px; position: relative; margin: 30px 0; }
+        .match-box { background: var(--card-bg); border: 1px solid #222; border-radius: 8px; position: relative; margin: 30px 0; width: 300px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); }
         .match-box::after { content: '➔'; position: absolute; right: -30px; top: 35%; color: #333; font-size: 20px; }
-        .column:last-child .match-box::after { display: none; }
         .format-badge { position: absolute; top: -20px; left: 10px; background: var(--bg-color); color: var(--accent-color); font-size: 10px; padding: 2px 10px; border-radius: 4px; font-weight: 800; border: 1px solid #222; }
-        .team-row { display: flex; border-bottom: 1px solid #222; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 14px; outline: none; }
         input[type="number"] { width: 60px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
-        .champion-section { margin-top: 80px; background: linear-gradient(135deg, #007bff 0%, #00d4ff 100%); padding: 40px; border-radius: 20px; width: 500px; text-align: center; display: none; }
-        .champion-section input { color: white; font-size: 2.5em; font-weight: 900; text-align: center; border:none; width: 100%; background: transparent; }
+        .champion-section { margin-top: 80px; background: linear-gradient(135deg, #007bff 0%, #00d4ff 100%); padding: 40px; border-radius: 20px; width: 500px; text-align: center; box-shadow: 0 0 40px rgba(0, 123, 255, 0.4); }
+        .champion-section input { color: white; font-size: 2.5em; font-weight: 900; text-align: center; border:none; width: 100%; background: transparent; text-transform: uppercase; }
         footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; margin-top: 50px; }
     </style>
 </head>
 <body>
-    <nav>
-        <div style="display:flex; max-width:1200px; width:100%; justify-content:center;">
-            <a href="index.html" class="nav-link">Domů</a>
-            <a href="playoff.html" class="nav-link active">PlayOff</a>
-            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-            <a href="pravidla.html" class="nav-link">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Archiv</a>
-            <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-            <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
-        </div>
-    </nav>
+    <nav><div style="display:flex; max-width:1200px; width:100%; justify-content:center;">
+        <a href="index.html" class="nav-link">Domů</a>
+        <a href="playoff.html" class="nav-link active">PlayOff</a>
+        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+        <a href="pravidla.html" class="nav-link">Pravidla</a>
+        <a href="archiv.html" class="nav-link">Archiv</a>
+        <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+        <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+    </div></nav>
     <div class="page">
-        <div id="status-msg" class="msg-box"><h2 id="msg-text">NAČÍTÁNÍ...</h2></div>
+        <div id="status-msg" style="text-align:center; margin-top:100px; padding:50px; border:1px solid #333; border-radius:15px; background: var(--card-bg); width: 600px;"><h2>NAČÍTÁNÍ...</h2></div>
         <div id="content-area" style="display:none; width:100%;">
-            <h1 id="title-display" style="color:var(--accent-color); text-align:center; letter-spacing:5px;">PLAYOFF</h1>
-            <div id="main-bracket" class="bracket" style="display:flex">
-                <div class="column">
-                    <div class="match-box"><div class="format-badge">Bo3 Q1</div><div class="team-row"><input id="q1_t1"><input id="q1_s1" type="number"></div><div class="team-row"><input id="q1_t2"><input id="q1_s2" type="number"></div></div>
-                    <div class="match-box"><div class="format-badge">Bo3 Q2</div><div class="team-row"><input id="q2_t1"><input id="q2_s1" type="number"></div><div class="team-row"><input id="q2_t2"><input id="q2_s2" type="number"></div></div>
-                    <div class="match-box"><div class="format-badge">Bo3 Q3</div><div class="team-row"><input id="q3_t1"><input id="q3_s1" type="number"></div><div class="team-row"><input id="q3_t2"><input id="q3_s2" type="number"></div></div>
-                    <div class="match-box"><div class="format-badge">Bo3 Q4</div><div class="team-row"><input id="q4_t1"><input id="q4_s1" type="number"></div><div class="team-row"><input id="q4_t2"><input id="q4_s2" type="number"></div></div>
+            <h1 id="title-display" style="color:var(--accent-color); text-align:center;">PLAYOFF</h1>
+            <div style="display:flex; justify-content:space-between; margin-top:50px;">
+                <div style="display:flex; flex-direction:column; justify-content:space-around;">
+                    <div class="match-box"><div class="format-badge">Bo3 Q1</div><div style="display:flex; border-bottom:1px solid #222;"><input id="q1_t1"><input id="q1_s1" type="number"></div><div style="display:flex;"><input id="q1_t2"><input id="q1_s2" type="number"></div></div>
+                    <div class="match-box"><div class="format-badge">Bo3 Q2</div><div style="display:flex; border-bottom:1px solid #222;"><input id="q2_t1"><input id="q2_s1" type="number"></div><div style="display:flex;"><input id="q2_t2"><input id="q2_s2" type="number"></div></div>
                 </div>
-                <div class="column">
-                    <div class="match-box"><div class="format-badge">Bo3 Semi 1</div><div class="team-row"><input id="s1_t1"><input id="s1_s1" type="number"></div><div class="team-row"><input id="s1_t2"><input id="s1_s2" type="number"></div></div>
-                    <div class="match-box"><div class="format-badge">Bo3 Semi 2</div><div class="team-row"><input id="s2_t1"><input id="s2_s1" type="number"></div><div class="team-row"><input id="s2_t2"><input id="s2_s2" type="number"></div></div>
+                <div style="display:flex; flex-direction:column; justify-content:space-around;">
+                    <div class="match-box"><div class="format-badge">Bo3 Semi 1</div><div style="display:flex; border-bottom:1px solid #222;"><input id="s1_t1"><input id="s1_s1" type="number"></div><div style="display:flex;"><input id="s1_t2"><input id="s1_s2" type="number"></div></div>
                 </div>
-                <div class="column">
-                    <div class="match-box" style="border-color:var(--accent-color); border-width:2px;"><div class="format-badge" style="background:var(--accent-color); color:white; border:none;">GRAND FINÁLE Bo5</div><div class="team-row"><input id="f_t1"><input id="f_s1" type="number"></div><div class="team-row"><input id="f_t2"><input id="f_s2" type="number"></div></div>
+                <div style="display:flex; flex-direction:column; justify-content:center;">
+                    <div class="match-box" style="border-color:var(--accent-color); border-width:2px; margin-right:0;"><div class="format-badge" style="background:var(--accent-color); color:white; border:none;">GRAND FINÁLE Bo5</div><div style="display:flex; border-bottom:1px solid #222;"><input id="f_t1"><input id="f_s1" type="number"></div><div style="display:flex;"><input id="f_t2"><input id="f_s2" type="number"></div></div>
                 </div>
             </div>
-            <div id="champ-section" class="champion-section" style="display:inline-block"><h3>🏆 ŠAMPION 🏆</h3><input id="champ_name"></div>
+            <div class="champion-section" style="margin:80px auto 0 auto;"><h3>🏆 ŠAMPION 🏆</h3><input id="champ_name"></div>
         </div>
     </div>
-    <footer>
-        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
-        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
-    </footer>
+    <footer><p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p></footer>
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -70,37 +57,20 @@
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let activeId = null; let localChanges = {}; let unsub = null;
-
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
-                const list = d.data();
-                activeId = Object.keys(list).find(key => list[key].active === true);
+                const list = d.data(); activeId = Object.keys(list).find(key => list[key].active === true);
                 const msg = document.getElementById('status-msg'); const content = document.getElementById('content-area');
-                if(!activeId) {
-                    msg.style.display = "block"; content.style.display = "none";
-                    document.getElementById('msg-text').innerText = "MOMENTÁLNĚ SE ŽÁDNÝ TURNAJ NEPŘIPRAVUJE";
-                } else {
+                if(!activeId) { msg.style.display = "block"; content.style.display = "none"; document.querySelector('#status-msg h2').innerText = "ŽÁDNÝ AKTIVNÍ TURNAJ"; }
+                else {
                     const s = list[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    if(dReg && now < dReg) {
-                        msg.style.display = "block"; content.style.display = "none";
-                        document.getElementById('msg-text').innerText = "TURNAJ SE PŘIPRAVUJE. PLAYOFF ZATÍM NENÍ DOSTUPNÉ.";
-                    } else {
-                        msg.style.display = "none"; content.style.display = "block";
-                        document.getElementById('title-display').innerText = s.title; loadData(activeId);
-                    }
+                    if(dReg && now < dReg) { msg.style.display = "block"; content.style.display = "none"; document.querySelector('#status-msg h2').innerText = "TURNAJ SE PŘIPRAVUJE"; }
+                    else { msg.style.display = "none"; content.style.display = "block"; document.getElementById('title-display').innerText = s.title; loadData(activeId); }
                 }
             }
         });
-        function loadData(id) {
-            if(unsub) unsub();
-            unsub = onSnapshot(doc(db, "tournament", "playoff_" + id), d => { if(d.exists()){ const data = d.data(); for(const key in data){ const el = document.getElementById(key); if(el && document.activeElement !== el) el.value = data[key]; } } });
-        }
-        onAuthStateChanged(auth, user => {
-            if(user) {
-                document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block';
-                document.querySelectorAll('input').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.style.background = "rgba(0,123,255,0.1)"; }; });
-            } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); }
-        });
+        function loadData(id) { if(unsub) unsub(); unsub = onSnapshot(doc(db, "tournament", "playoff_" + id), d => { if(d.exists()){ const data = d.data(); for(const key in data){ const el = document.getElementById(key); if(el && document.activeElement !== el) el.value = data[key]; } } }); }
+        onAuthStateChanged(auth, user => { if(user) { document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block'; document.querySelectorAll('input').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.style.background = "rgba(0,123,255,0.1)"; }; }); } else { document.querySelectorAll('input').forEach(el => el.readOnly = true); } });
         document.getElementById('save-btn').onclick = async () => { if(activeId) { await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, {merge:true}); alert("Uloženo!"); location.reload(); } };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
