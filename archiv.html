@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Správa turnajů - LIGHTSMC.EU</title>
+    <title>Správa turnajů - CSPRO.CZ</title>
     <style>
         :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --danger: #ff4d4d; --success: #4caf50; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
@@ -112,7 +112,7 @@
                         <textarea id="d_${id}" placeholder="Popis turnaje">${s.desc}</textarea>
                         
                         <div class="date-grid">
-                            <div><label>START NÁBORU</label><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"></div>
+                            <div><label>START REGISTRACE</label><input type="datetime-local" value="${s.dateReg || ''}" id="reg_${id}"></div>
                             <div><label>START KVALIFIKACE</label><input type="datetime-local" value="${s.dateKval || ''}" id="kval_${id}"></div>
                             <div style="grid-column: span 2;"><label>START PLAYOFF</label><input type="datetime-local" value="${s.datePlay || ''}" id="play_${id}"></div>
                         </div>
