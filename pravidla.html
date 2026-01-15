@@ -11,9 +11,9 @@
         .nav-link:hover, .nav-link.active { color: var(--accent-color); }
         .page { width: 1000px; padding: 60px 80px; box-sizing: border-box; flex: 1; }
         h1 { color: var(--accent-color); text-transform: uppercase; letter-spacing: 3px; text-align: center; border-bottom: 3px solid var(--accent-color); padding-bottom: 20px; margin-bottom: 50px; }
-        .rules-section h2 { color: var(--accent-color); text-transform: uppercase; margin-top: 40px; border-left: 5px solid var(--accent-color); padding-left: 15px; }
+        .rules-section h2 { color: var(--accent-color); text-transform: uppercase; margin-top: 40px; border-left: 5px solid var(--accent-color); padding-left: 15px; font-size: 1.2em; }
         .rule-item { background: var(--card-bg); margin-bottom: 12px; padding: 20px; border-radius: 8px; border: 1px solid #222; }
-        textarea { background: transparent; border: none; color: white; width: 100%; font-family: inherit; font-size: 1.1em; resize: none; outline: none; }
+        textarea { background: transparent; border: none; color: white; width: 100%; font-family: inherit; font-size: 1em; resize: none; outline: none; line-height: 1.5; }
         footer { padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; margin-top: 50px; }
     </style>
 </head>
@@ -32,16 +32,32 @@
     <div class="page">
         <h1>Oficiální Pravidla Turnaje</h1>
         <div class="rules-section" id="rules-container">
+            
             <h2>1. Formát zápasů</h2>
-            <div class="rule-item"><textarea id="r1">Kvalifikace: BO1. PlayOff: BO3. Finále: BO5.</textarea></div>
-            <h2>2. Fair Play</h2>
-            <div class="rule-item"><textarea id="r2">Jakýkoliv cheating vede k okamžitému banu.</textarea></div>
+            <div class="rule-item"><textarea id="r1">Kvalifikace probíhají formátem BO1 (Best of 1). Rozhodující finále skupin jsou BO3. PlayOff čtvrtfinále a semifinále jsou BO3, Velké Finále je BO5.</textarea></div>
+
+            <h2>2. Fair Play a Cheatování</h2>
+            <div class="rule-item"><textarea id="r2">Jakákoliv forma podvádění (cheatování) je přísně zakázána. Zakládáme si na vzájemné důvěře mezi hráči, nicméně potvrzené případy podvodů vedou k okamžitému banu celého týmu.</textarea></div>
+
+            <h2>3. Soupiska a Hostování</h2>
+            <div class="rule-item"><textarea id="r3">Tým musí nastoupit v 5 hráčích uvedených při registraci. Je povolen maximálně 1 host (stand-in), který nesmí být na soupisce jiného týmu v tomtéž turnaji.</textarea></div>
+
+            <h2>4. Technická ustanovení</h2>
+            <div class="rule-item"><textarea id="r4">Čekací doba na soupeře je 15 minut. Poté může být zápas kontumován. Každý tým má nárok na 5 minut technické pauzy v případě problémů s připojením.</textarea></div>
+
+            <h2>5. Map Veto</h2>
+            <div class="rule-item"><textarea id="r5">Vybírání map probíhá v herní lobby nebo na Discordu. Týmy střídavě banují mapy z aktuálního Active Duty map poolu (Mirage, Inferno, Nuke, Ancient, Anubis, Vertigo, Dust II).</textarea></div>
+
+            <h2>6. Chování a Toxicita</h2>
+            <div class="rule-item"><textarea id="r6">Respektujte své soupeře. Nadměrná toxicita, urážky nebo nesportovní chování mohou vést k diskvalifikaci z turnaje.</textarea></div>
+
         </div>
     </div>
     <footer>
         <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
         <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
     </footer>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
@@ -49,15 +65,40 @@
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let localChanges = {};
+
         onAuthStateChanged(auth, user => {
             if (user) {
-                document.getElementById('save-btn').style.display = 'block'; document.getElementById('logout-btn').style.display = 'block';
-                document.querySelectorAll('textarea').forEach(el => { el.readOnly = false; el.oninput = e => { localChanges[e.target.id] = e.target.value; el.parentElement.style.borderColor = "red"; }; });
-            } else { document.querySelectorAll('textarea').forEach(el => el.readOnly = true); }
+                document.getElementById('save-btn').style.display = 'block'; 
+                document.getElementById('logout-btn').style.display = 'block';
+                document.querySelectorAll('textarea').forEach(el => { 
+                    el.readOnly = false; 
+                    el.oninput = e => { 
+                        localChanges[e.target.id] = e.target.value; 
+                        el.parentElement.style.borderColor = "red"; 
+                    }; 
+                });
+            } else { 
+                document.querySelectorAll('textarea').forEach(el => el.readOnly = true); 
+            }
         });
-        document.getElementById('save-btn').onclick = async () => { await setDoc(doc(db, "tournament", "rules"), localChanges, { merge: true }); alert("Uloženo!"); location.reload(); };
+
+        document.getElementById('save-btn').onclick = async () => { 
+            await setDoc(doc(db, "tournament", "rules"), localChanges, { merge: true }); 
+            alert("Pravidla byla úspěšně uložena!"); 
+            location.reload(); 
+        };
+
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
-        onSnapshot(doc(db, "tournament", "rules"), d => { if (d.exists()) { const data = d.data(); for (const key in data) { const el = document.getElementById(key); if (el && document.activeElement !== el) el.value = data[key]; } } });
+
+        onSnapshot(doc(db, "tournament", "rules"), d => { 
+            if (d.exists()) { 
+                const data = d.data(); 
+                for (const key in data) { 
+                    const el = document.getElementById(key); 
+                    if (el && document.activeElement !== el) el.value = data[key]; 
+                } 
+            } 
+        });
     </script>
 </body>
 </html>
