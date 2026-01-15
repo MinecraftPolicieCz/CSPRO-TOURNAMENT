@@ -4,19 +4,35 @@
     <meta charset="UTF-8">
     <title>CSPRO.CZ - PlayOff</title>
     <style>
-        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; }
+        :root { --bg-color: #0f0f0f; --accent-color: #f3a933; --card-bg: #1a1a1a; --border: #333; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; }
         nav { background: #1a1a1a; width: 100%; display: flex; justify-content: center; border-bottom: 2px solid var(--accent-color); position: sticky; top: 0; z-index: 1000; }
         .nav-link { color: white; text-decoration: none; padding: 20px; font-weight: bold; text-transform: uppercase; font-size: 0.9em; cursor: pointer; }
+        
         .page { width: 1200px; padding: 40px; display: flex; flex-direction: column; align-items: center; }
-        .bracket { display: flex; justify-content: space-between; width: 100%; margin-top: 30px; }
-        .column { display: flex; flex-direction: column; justify-content: space-around; width: 280px; }
-        .match-box { background: var(--card-bg); border: 1px solid #333; border-radius: 8px; margin: 15px 0; overflow: hidden; }
-        .team-row { display: flex; border-bottom: 1px solid #222; }
+        .bracket { display: flex; justify-content: space-between; width: 100%; position: relative; margin-top: 50px; }
+        .column { display: flex; flex-direction: column; justify-content: space-around; width: 280px; position: relative; }
+        
+        /* Zápasový box */
+        .match-box { background: var(--card-bg); border: 1px solid var(--border); border-radius: 8px; margin: 20px 0; position: relative; z-index: 2; transition: 0.3s; }
+        .match-box:hover { border-color: var(--accent-color); box-shadow: 0 0 15px rgba(243, 169, 51, 0.2); }
+        
+        /* Formát Bo1/Bo3/Bo5 */
+        .format-tag { position: absolute; top: -18px; right: 10px; font-size: 10px; background: var(--border); padding: 2px 8px; border-radius: 10px; color: #aaa; }
+        .format-tag select { background: transparent; border: none; color: inherit; font-size: inherit; cursor: pointer; outline: none; }
+
+        .team-row { display: flex; border-bottom: 1px solid #222; align-items: center; }
+        .team-row:last-child { border-bottom: none; }
         input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 14px; }
-        input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; }
-        .champion-section { margin-top: 50px; padding: 30px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); border-radius: 15px; text-align: center; width: 400px; }
-        .champion-section input { color: black; font-size: 1.8em; font-weight: 900; text-align: center; }
+        input[type="number"] { width: 50px; text-align: center; border-left: 1px solid #222; color: var(--accent-color); font-weight: bold; background: #0a0a0a; }
+
+        /* Šipky / Propojení */
+        .connector { position: absolute; right: -40px; top: 50%; width: 40px; height: 2px; background: var(--border); }
+        .column:nth-child(1) .match-box::after { content: '➜'; position: absolute; right: -25px; top: 35%; color: var(--border); font-size: 20px; }
+        
+        .champion-section { margin-top: 60px; padding: 40px; background: linear-gradient(135deg, #f3a933 0%, #ffd700 100%); border-radius: 20px; text-align: center; width: 450px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
+        .champion-section h2 { color: black; margin: 0 0 10px 0; text-transform: uppercase; font-black: 900; }
+        .champion-section input { color: black; font-size: 2em; font-weight: 900; text-align: center; border-bottom: 3px solid rgba(0,0,0,0.1); }
     </style>
 </head>
 <body>
@@ -30,23 +46,22 @@
     </nav>
 
     <div class="page">
-        <h1>PLAYOFF PAVOUK</h1>
+        <h1>🏆 PLAYOFF PAVOUK</h1>
         <div class="bracket">
             <div class="column">
-                <div class="match-box"><div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div><div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number" value="0"></div><div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="q3_t1" placeholder="Tým 5"><input id="q3_s1" type="number" value="0"></div><div class="team-row"><input id="q3_t2" placeholder="Tým 6"><input id="q3_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="q4_t1" placeholder="Tým 7"><input id="q4_s1" type="number" value="0"></div><div class="team-row"><input id="q4_t2" placeholder="Tým 8"><input id="q4_s2" type="number" value="0"></div></div>
+                <div class="match-box">
+                    <div class="format-tag"><select id="q1_f"><option>Bo1</option><option>Bo3</option><option>Bo5</option></select></div>
+                    <div class="team-row"><input id="q1_t1" placeholder="Tým 1"><input id="q1_s1" type="number" value="0"></div>
+                    <div class="team-row"><input id="q1_t2" placeholder="Tým 2"><input id="q1_s2" type="number" value="0"></div>
+                </div>
+                <div class="match-box">
+                    <div class="format-tag"><select id="q2_f"><option>Bo1</option><option>Bo3</option><option>Bo5</option></select></div>
+                    <div class="team-row"><input id="q2_t1" placeholder="Tým 3"><input id="q2_s1" type="number" value="0"></div>
+                    <div class="team-row"><input id="q2_t2" placeholder="Tým 4"><input id="q2_s2" type="number" value="0"></div>
+                </div>
             </div>
-            <div class="column">
-                <div class="match-box"><div class="team-row"><input id="s1_t1" placeholder="Semifinále A"><input id="s1_s1" type="number" value="0"></div><div class="team-row"><input id="s1_t2" placeholder="Semifinále A"><input id="s1_s2" type="number" value="0"></div></div>
-                <div class="match-box"><div class="team-row"><input id="s2_t1" placeholder="Semifinále B"><input id="s2_s1" type="number" value="0"></div><div class="team-row"><input id="s2_t2" placeholder="Semifinále B"><input id="s2_s2" type="number" value="0"></div></div>
             </div>
-            <div class="column">
-                <div class="match-box" style="border: 2px solid gold;"><div class="team-row"><input id="f_t1" placeholder="Finalista 1"><input id="f_s1" type="number" value="0"></div><div class="team-row"><input id="f_t2" placeholder="Finalista 2"><input id="f_s2" type="number" value="0"></div></div>
-            </div>
-        </div>
-        <div class="champion-section"><input id="champ_name" placeholder="ŠAMPION"></div>
+        <div class="champion-section"><h2>Vítěz Turnaje</h2><input id="champ_name" placeholder="NÁZEV TÝMU"></div>
     </div>
 
     <script type="module">
@@ -61,21 +76,20 @@
         let unsavedChanges = {};
 
         onAuthStateChanged(auth, user => {
-            const btn = document.getElementById('logout-btn');
             if (user) {
-                btn.style.display = 'block';
-                document.querySelectorAll('input').forEach(el => {
-                    el.readOnly = false;
-                    el.addEventListener('input', e => { unsavedChanges[e.target.id] = e.target.value; el.style.boxShadow = "inset 0 0 5px red"; });
+                document.getElementById('logout-btn').style.display = 'block';
+                document.querySelectorAll('input, select').forEach(el => {
+                    el.disabled = false; el.readOnly = false;
+                    el.addEventListener('change', e => { unsavedChanges[e.target.id] = e.target.value; e.target.style.color = "red"; });
+                    el.addEventListener('input', e => { unsavedChanges[e.target.id] = e.target.value; e.target.style.color = "red"; });
                 });
             } else {
-                btn.style.display = 'none';
-                document.querySelectorAll('input').forEach(el => el.readOnly = true);
+                document.querySelectorAll('input, select').forEach(el => { el.disabled = true; el.readOnly = true; });
             }
         });
 
         document.getElementById('logout-btn').addEventListener('click', async () => {
-            if (Object.keys(unsavedChanges).length > 0 && confirm("Uložit změny v Playoff?")) {
+            if (Object.keys(unsavedChanges).length > 0 && confirm("Uložit změny před odhlášením?")) {
                 await setDoc(doc(db, "tournament", "playoff"), unsavedChanges, { merge: true });
             }
             signOut(auth).then(() => window.location.reload());
