@@ -8,36 +8,21 @@
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); overflow-x: hidden; width: 100%; }
-        
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; }
-        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s all ease; letter-spacing: 1.5px; position: relative; opacity: 0.7; }
-        .nav-link:hover { opacity: 1; background: rgba(0, 123, 255, 0.1); color: var(--accent-color); }
-        .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(255, 255, 255, 0.03); }
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); left: 0; }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; }
+        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s all ease; letter-spacing: 1.5px; position: relative; opacity: 0.7; white-space: nowrap; }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
         .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px; background: var(--accent-color); transition: 0.3s; box-shadow: 0 0 10px var(--accent-color); }
         .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        
+        .user-controls { display: flex; align-items: center; gap: 15px; position: absolute; left: 20px; }
+        .profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-color); cursor: pointer; transition: 0.3s; }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; border: 1px solid #0a0a0a; }
+        #google-login-btn { background: #fff; color: #000; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.75em; text-transform: uppercase; }
         .admin-controls { display: flex; position: absolute; right: 20px; }
         .main-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding: 80px 20px; box-sizing: border-box; }
         h1 { font-size: clamp(3em, 10vw, 5em); color: var(--accent-color); margin-bottom: 30px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); text-align: center; }
-        
-        /* Editační pole - roztahuje se podle obsahu */
         .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
-        textarea#intro-text { 
-            width: 100%; 
-            background: transparent; 
-            border: none; 
-            color: #ccc; 
-            font-family: inherit; 
-            font-size: 1.1em; 
-            line-height: 1.8; 
-            resize: none; 
-            outline: none; 
-            height: auto; 
-            overflow: hidden; 
-            min-height: 200px;
-        }
-        
+        textarea#intro-text { width: 100%; background: transparent; border: none; color: #ccc; font-family: inherit; font-size: 1.1em; line-height: 1.8; resize: none; outline: none; height: auto; overflow: hidden; min-height: 200px; }
         .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; box-sizing: border-box; display: none; text-align: center; }
         #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
         label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
@@ -47,92 +32,118 @@
     </style>
 </head>
 <body>
-    <nav><div class="nav-container">
-        <a href="index.html" class="nav-link active">Domů</a>
-        <a href="playoff.html" class="nav-link">PlayOff</a>
-        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-        <a href="pravidla.html" class="nav-link">Pravidla</a>
-        <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
-        <div class="admin-controls">
-            <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-            <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+    <nav>
+        <div class="nav-container">
+            <div class="user-controls">
+                <div id="google-login-btn">PŘIHLÁSIT GOOGLE</div>
+                <div id="user-area" style="display:none; align-items: center; gap:15px;">
+                    <a href="profil.html" style="position:relative; text-decoration:none; font-size:1.4em;">🔔<span id="notif-count" class="notif-badge" style="display:none;">0</span></a>
+                    <a href="profil.html"><img id="user-photo" class="profile-img" src=""></a>
+                </div>
+            </div>
+            <a href="index.html" class="nav-link active">Domů</a>
+            <a href="playoff.html" class="nav-link">PlayOff</a>
+            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+            <a href="pravidla.html" class="nav-link">Pravidla</a>
+            <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
+            <div class="admin-controls">
+                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+            </div>
         </div>
-    </div></nav>
+    </nav>
     <div class="main-container">
         <h1>LIGHTSMC.EU</h1>
-        <div class="content-text">
-            <textarea id="intro-text" placeholder="Zde napište úvodní text o turnaji..." readonly>Načítání úvodu...</textarea>
-        </div>
+        <div class="content-text"><textarea id="intro-text" placeholder="Zde napište úvodní text..." readonly>Načítání...</textarea></div>
         <div id="active-info" class="active-tournament-box">
             <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
-            <h2 id="active-title" style="margin: 15px 0;"></h2>
+            <h2 id="active-title"></h2>
             <p id="active-desc" style="color:#888"></p>
             <div id="action-area"></div>
             <form id="registration-form">
                 <input type="hidden" name="active_title" id="hidden_active_title">
-                <label>NÁZEV TÝMU</label><input type="text" name="team_name" required>
+                <label>NÁZEV TÝMU</label><input type="text" name="team_name" id="reg-team-name" required>
                 <label>DISCORD ID JEDNATELE</label><input type="text" name="discord_id" required>
-                <label>STEAM URL VŠECH HRÁČŮ</label><textarea name="steam_urls" required></textarea>
+                <label>STEAM URL VŠECH HRÁČŮ</label><textarea name="steam_urls" id="reg-team-urls" required></textarea>
                 <button type="submit" id="submit-btn" class="btn-main">Odeslat přihlášku</button>
             </form>
         </div>
     </div>
-    <footer>
-        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
-        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc, collection, addDoc, query, where } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         
         emailjs.init("47U6jSVKzAh5kcpa4");
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        
+        const provider = new GoogleAuthProvider();
+
         let localChanges = {};
+        function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
 
-        function autoResize(el) {
-            el.style.height = 'auto';
-            el.style.height = el.scrollHeight + 'px';
-        }
+        // Google Login
+        document.getElementById('google-login-btn').onclick = () => {
+            signInWithPopup(auth, provider).then(async (result) => {
+                const user = result.user;
+                await setDoc(doc(db, "players", user.uid), { name: user.displayName, email: user.email, photo: user.photoURL }, { merge: true });
+            });
+        };
 
-        onSnapshot(doc(db, "tournament", "content"), d => {
-            if(d.exists()) {
-                const data = d.data();
-                const el = document.getElementById('intro-text');
-                if (document.activeElement !== el) {
-                    el.value = data.intro || "";
-                    autoResize(el);
+        onAuthStateChanged(auth, async (user) => {
+            if(user) {
+                if (user.providerData[0].providerId === 'password') {
+                    document.getElementById('save-btn').style.display='block';
+                    document.getElementById('logout-btn').style.display='block';
+                } else {
+                    document.getElementById('google-login-btn').style.display = 'none';
+                    document.getElementById('user-area').style.display = 'flex';
+                    document.getElementById('user-photo').src = user.photoURL;
+                    document.getElementById('logout-btn').style.display = 'block';
+
+                    // Předvyplnění týmu
+                    const pDoc = await getDoc(doc(db, "players", user.uid));
+                    if(pDoc.exists() && pDoc.data().teamId) {
+                        const tDoc = await getDoc(doc(db, "teams", pDoc.data().teamId));
+                        if(tDoc.exists()) {
+                            document.getElementById('reg-team-name').value = tDoc.data().name;
+                            document.getElementById('reg-team-urls').value = "Tým načten: " + tDoc.data().name;
+                        }
+                    }
                 }
             }
         });
 
-        onAuthStateChanged(auth, user => { 
-            const introEl = document.getElementById('intro-text');
-            if(user) { 
-                document.getElementById('save-btn').style.display='block'; 
-                document.getElementById('logout-btn').style.display='block';
-                introEl.readOnly = false;
-                introEl.oninput = e => { 
-                    localChanges.intro = e.target.value; 
-                    introEl.parentElement.style.borderColor = "red"; 
-                    autoResize(introEl);
-                };
-            } else {
-                introEl.readOnly = true;
+        // Úvodní text
+        onSnapshot(doc(db, "tournament", "content"), d => {
+            if(d.exists()) {
+                const el = document.getElementById('intro-text');
+                if (document.activeElement !== el) { el.value = d.data().intro || ""; autoResize(el); }
             }
         });
 
-        document.getElementById('save-btn').onclick = async () => { 
-            await setDoc(doc(db, "tournament", "content"), localChanges, { merge: true }); 
-            alert("Uloženo!"); 
-            location.reload(); 
+        // Odeslání přihlášky
+        document.getElementById('registration-form').onsubmit = async function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
+            const formData = new FormData(this);
+
+            await addDoc(collection(db, "registrations"), {
+                teamName: formData.get('team_name'),
+                discord: formData.get('discord_id'),
+                members: formData.get('steam_urls'),
+                status: "pending",
+                createdAt: new Date()
+            });
+
+            emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
+                alert('Žádost odeslána! Admin ji musí schválit.');
+                location.reload();
+            });
         };
 
-        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
-
+        // Zobrazení aktivního turnaje
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
@@ -151,12 +162,7 @@
             }
         });
 
-        document.getElementById('registration-form').onsubmit = function(e) {
-            e.preventDefault(); const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
-            emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Odesláno!'); document.getElementById('registration-form').innerHTML = "<h3>DĚKUJEME!</h3>";
-            }, () => { alert('Chyba'); btn.disabled = false; });
-        };
+        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
 </body>
 </html>
