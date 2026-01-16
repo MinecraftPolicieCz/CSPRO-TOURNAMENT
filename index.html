@@ -38,6 +38,8 @@
                 <div id="google-login-btn">PŘIHLÁSIT GOOGLE</div>
                 <div id="user-area" style="display:none; align-items: center; gap:15px;">
                     <a href="profil.html" style="position:relative; text-decoration:none; font-size:1.4em;">🔔<span id="notif-count" class="notif-badge" style="display:none;">0</span></a>
+                    <a href="profil.html" class="nav-link" style="padding:10px 5px">Profil</a>
+                    <a href="tym.html" class="nav-link" style="padding:10px 5px">Tým</a>
                     <a href="profil.html"><img id="user-photo" class="profile-img" src=""></a>
                 </div>
             </div>
@@ -45,7 +47,7 @@
             <a href="playoff.html" class="nav-link">PlayOff</a>
             <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
             <a href="pravidla.html" class="nav-link">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
+            <a href="archiv.html" class="nav-link">Turnaje</a>
             <div class="admin-controls">
                 <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
                 <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
@@ -69,6 +71,10 @@
             </form>
         </div>
     </div>
+    <footer>
+        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
+        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
+    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
@@ -80,10 +86,8 @@
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        let localChanges = {};
         function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
 
-        // Google Login
         document.getElementById('google-login-btn').onclick = () => {
             signInWithPopup(auth, provider).then(async (result) => {
                 const user = result.user;
@@ -93,16 +97,17 @@
 
         onAuthStateChanged(auth, async (user) => {
             if(user) {
-                if (user.providerData[0].providerId === 'password') {
+                const isPass = user.providerData[0].providerId === 'password';
+                if (isPass) {
                     document.getElementById('save-btn').style.display='block';
                     document.getElementById('logout-btn').style.display='block';
+                    document.getElementById('intro-text').readOnly = false;
                 } else {
                     document.getElementById('google-login-btn').style.display = 'none';
                     document.getElementById('user-area').style.display = 'flex';
                     document.getElementById('user-photo').src = user.photoURL;
                     document.getElementById('logout-btn').style.display = 'block';
 
-                    // Předvyplnění týmu
                     const pDoc = await getDoc(doc(db, "players", user.uid));
                     if(pDoc.exists() && pDoc.data().teamId) {
                         const tDoc = await getDoc(doc(db, "teams", pDoc.data().teamId));
@@ -111,24 +116,28 @@
                             document.getElementById('reg-team-urls').value = "Tým načten: " + tDoc.data().name;
                         }
                     }
+                    const qNotif = query(collection(db, "invites"), where("toEmail", "==", user.email));
+                    onSnapshot(qNotif, (snap) => {
+                        const badge = document.getElementById('notif-count');
+                        if(snap.size > 0) { badge.innerText = snap.size; badge.style.display = 'block'; }
+                        else { badge.style.display = 'none'; }
+                    });
                 }
             }
         });
 
-        // Úvodní text
         onSnapshot(doc(db, "tournament", "content"), d => {
             if(d.exists()) {
                 const el = document.getElementById('intro-text');
-                if (document.activeElement !== el) { el.value = d.data().intro || ""; autoResize(el); }
+                el.value = d.data().intro || "";
+                autoResize(el);
             }
         });
 
-        // Odeslání přihlášky
         document.getElementById('registration-form').onsubmit = async function(e) {
             e.preventDefault();
             const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
             const formData = new FormData(this);
-
             await addDoc(collection(db, "registrations"), {
                 teamName: formData.get('team_name'),
                 discord: formData.get('discord_id'),
@@ -136,14 +145,12 @@
                 status: "pending",
                 createdAt: new Date()
             });
-
             emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Žádost odeslána! Admin ji musí schválit.');
+                alert('Žádost odeslána k posouzení adminem!');
                 location.reload();
             });
         };
 
-        // Zobrazení aktivního turnaje
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()){
                 const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
@@ -162,6 +169,11 @@
             }
         });
 
+        document.getElementById('save-btn').onclick = async () => {
+            const intro = document.getElementById('intro-text').value;
+            await setDoc(doc(db, "tournament", "content"), { intro }, { merge: true });
+            alert("Uloženo!");
+        };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
 </body>
