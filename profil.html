@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Můj Profil - LIGHTSMC.EU</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <style>
+        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; }
+        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s; letter-spacing: 1.5px; opacity: 0.7; }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
+        .user-controls { display: flex; align-items: center; gap: 15px; position: absolute; left: 20px; }
+        .profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-color); }
+        .notif-badge { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; border: 1px solid #0a0a0a; }
+        .page { width: 100%; max-width: 600px; padding: 60px 20px; text-align: center; flex: 1; }
+        .card { background: var(--card-bg); padding: 40px; border-radius: 15px; border: 1px solid #222; margin-bottom: 20px; }
+        .invite-box { background: #1a1a1a; padding: 15px; border-radius: 8px; margin-top: 10px; display: flex; justify-content: space-between; align-items: center; border-left: 4px solid var(--accent-color); }
+        .btn-acc { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .btn-main { display: block; background: var(--accent-color); color: white; text-decoration: none; padding: 15px; border-radius: 8px; font-weight: bold; margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="user-controls">
+                <div id="user-area" style="display:flex; align-items: center; gap:15px;">
+                    <a href="profil.html" style="position:relative; text-decoration:none; font-size:1.4em;">🔔<span id="notif-count" class="notif-badge" style="display:none;">0</span></a>
+                    <a href="profil.html"><img id="nav-photo" class="profile-img" src=""></a>
+                </div>
+            </div>
+            <a href="index.html" class="nav-link">Domů</a>
+            <a href="playoff.html" class="nav-link">PlayOff</a>
+            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+            <a href="pravidla.html" class="nav-link">Pravidla</a>
+            <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
+        </div>
+    </nav>
+    <div class="page">
+        <div class="card">
+            <img id="p-img" src="" style="width:100px; border-radius:50%; border:3px solid var(--accent-color);">
+            <h2 id="p-name">Jméno</h2>
+            <p id="p-email" style="color:#777"></p>
+            <div id="p-team-status" style="margin-top:20px; font-weight:bold;">Tým: <span id="p-team-name">Žádný</span></div>
+            <a href="tym.html" class="btn-main">SPRÁVA TÝMU</a>
+            <button id="logout-btn" style="background:transparent; color:#ff4d4d; border:none; margin-top:20px; cursor:pointer; font-weight:bold; text-transform:uppercase;">Odhlásit se</button>
+        </div>
+
+        <div id="invites-container">
+            <h3>PŘIJATÉ POZVÁNKY</h3>
+            <div id="invites-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, onSnapshot, collection, query, where, updateDoc, arrayUnion, deleteDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+
+        onAuthStateChanged(auth, async (user) => {
+            if (!user) { location.href = "index.html"; return; }
+            document.getElementById('p-img').src = user.photoURL;
+            document.getElementById('nav-photo').src = user.photoURL;
+            document.getElementById('p-name').innerText = user.displayName;
+            document.getElementById('p-email').innerText = user.email;
+
+            onSnapshot(doc(db, "players", user.uid), async (d) => {
+                if(d.exists() && d.data().teamId) {
+                    const teamDoc = await getDoc(doc(db, "teams", d.data().teamId));
+                    if(teamDoc.exists()) document.getElementById('p-team-name').innerText = teamDoc.data().name;
+                }
+            });
+
+            const qInv = query(collection(db, "invites"), where("toEmail", "==", user.email));
+            onSnapshot(qInv, (snap) => {
+                const list = document.getElementById('invites-list');
+                const badge = document.getElementById('notif-count');
+                list.innerHTML = snap.empty ? "<p style='color:#555'>Žádné nové pozvánky</p>" : "";
+                if(!snap.empty) { badge.innerText = snap.size; badge.style.display = 'block'; }
+                else { badge.style.display = 'none'; }
+                
+                snap.forEach(docSnap => {
+                    const inv = docSnap.data();
+                    const div = document.createElement('div');
+                    div.className = "invite-box";
+                    div.innerHTML = `<span>Tým: <b>${inv.teamName}</b></span> <button class="btn-acc" id="acc_${docSnap.id}">PŘIJMOUT</button>`;
+                    list.appendChild(div);
+                    document.getElementById(`acc_${docSnap.id}`).onclick = () => acceptInvite(docSnap.id, inv.teamId, user.uid);
+                });
+            });
+        });
+
+        async function acceptInvite(invId, teamId, uid) {
+            await updateDoc(doc(db, "teams", teamId), { members: arrayUnion(uid) });
+            await updateDoc(doc(db, "players", uid), { teamId: teamId });
+            await deleteDoc(doc(db, "invites", invId));
+            alert("Vítej v týmu!");
+            location.reload();
+        }
+
+        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.href = "index.html");
+    </script>
+</body>
+</html>
