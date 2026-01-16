@@ -9,26 +9,30 @@
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
         nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
         .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; }
-        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s; letter-spacing: 1.5px; }
-        .page { width: 100%; max-width: 900px; padding: 40px 20px; box-sizing: border-box; }
+        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s; letter-spacing: 1.5px; opacity: 0.7; }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
+        .page { width: 100%; max-width: 900px; padding: 40px 20px; box-sizing: border-box; flex: 1; }
         .card { background: var(--card-bg); border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #222; }
-        input, textarea { width: 100%; background: #080808; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; margin: 10px 0; }
         .btn-acc { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+        .admin-label { display: block; color: var(--accent-color); font-size: 11px; font-weight: 800; margin-bottom: 5px; margin-top: 15px; letter-spacing: 1px; text-transform: uppercase; }
+        input, textarea { width: 100%; background: #080808; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; margin: 5px 0; outline: none; }
     </style>
 </head>
 <body>
-    <nav><div class="nav-container">
-        <a href="index.html" class="nav-link">Domů</a>
-        <a href="playoff.html" class="nav-link">PlayOff</a>
-        <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-        <a href="pravidla.html" class="nav-link">Pravidla</a>
-        <a href="archiv.html" class="nav-link active">Správa</a>
-        <div class="admin-controls"><a id="save-btn" class="nav-link" style="color:#28a745">ULOŽIT</a><a id="logout-btn" class="nav-link" style="color:#ff4d4d">ODHLÁSIT</a></div>
-    </div></nav>
+    <nav>
+        <div class="nav-container">
+            <a href="index.html" class="nav-link">Domů</a>
+            <a href="playoff.html" class="nav-link">PlayOff</a>
+            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+            <a href="pravidla.html" class="nav-link">Pravidla</a>
+            <a href="archiv.html" class="nav-link active">Správa</a>
+            <div class="admin-controls"><a id="save-btn" class="nav-link" style="color:#28a745; display:none;">ULOŽIT</a><a id="logout-btn" class="nav-link" style="color:#ff4d4d; display:none;">ODHLÁSIT</a></div>
+        </div>
+    </nav>
     <div class="page">
         <h1 style="color:var(--accent-color); text-align:center;">SPRÁVA TURNAJŮ</h1>
         <div id="seasons-container"></div>
-        <h2 style="color:var(--accent-color); margin-top:50px;">ČEKAJÍCÍ PŘIHLÁŠKY</h2>
+        <h2 style="color:var(--accent-color); margin-top:50px; text-transform: uppercase;">ČEKAJÍCÍ PŘIHLÁŠKY</h2>
         <div id="registrations-container"></div>
     </div>
 
@@ -36,24 +40,27 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc, getDocs, collection, query, where, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         let seasonsData = {};
 
-        onAuthStateChanged(auth, user => { if(!user || user.providerData[0].providerId !== 'password') window.location.href="login.html"; });
+        onAuthStateChanged(auth, user => { 
+            if(!user || user.providerData[0].providerId !== 'password') window.location.href="login.html"; 
+            else { document.getElementById('save-btn').style.display='block'; document.getElementById('logout-btn').style.display='block'; }
+        });
 
-        // Načtení turnajů
         onSnapshot(doc(db, "tournament", "archive_list"), d => { if(d.exists()){ seasonsData = d.data(); renderSeasons(); } });
 
-        // Načtení přihlášek
         onSnapshot(query(collection(db, "registrations"), where("status", "==", "pending")), (snap) => {
             const container = document.getElementById('registrations-container');
             container.innerHTML = snap.empty ? "<p>Žádné nové přihlášky</p>" : "";
             snap.forEach(d => {
                 const data = d.data();
                 const div = document.createElement('div'); div.className = "card";
-                div.innerHTML = `<h3>${data.teamName}</h3><p>Discord: ${data.discord}</p><button class="btn-acc" onclick="approveTeam('${d.id}', '${data.teamName}')">SCHVÁLIT</button>`;
+                div.innerHTML = `<h3>${data.teamName}</h3><p>Discord: ${data.discord}</p><button class="btn-acc" id="btn_approve_${d.id}">SCHVÁLIT</button>`;
                 container.appendChild(div);
+                document.getElementById(`btn_approve_${d.id}`).onclick = () => approveTeam(d.id, data.teamName);
             });
         });
 
@@ -77,25 +84,38 @@
             if (assigned) {
                 await setDoc(qualRef, qualData, { merge: true });
                 await updateDoc(doc(db, "registrations", id), { status: "approved" });
-                alert("Schváleno!");
-            }
+                alert("Tým schválen a zapsán do kvalifikace!");
+            } else { alert("Není místo v kvalifikaci!"); }
         };
 
         function renderSeasons() {
             const container = document.getElementById('seasons-container'); container.innerHTML = "";
             Object.keys(seasonsData).forEach(id => {
                 const s = seasonsData[id]; const div = document.createElement('div'); div.className = "card";
-                div.innerHTML = `<h3>${s.title}</h3><button onclick="toggleActive('${id}')">${s.active ? 'AKTIVNÍ' : 'NASTAVIT AKTIVNÍ'}</button>`;
+                div.innerHTML = `<label class="admin-label">Název</label><input id="t_${id}" value="${s.title}">
+                    <label class="admin-label">Popis</label><textarea id="d_${id}">${s.desc}</textarea>
+                    <label class="admin-label">Registrace</label><input type="datetime-local" id="reg_${id}" value="${s.dateReg || ''}">
+                    <label class="admin-label">Kvalifikace</label><input type="datetime-local" id="kval_${id}" value="${s.dateKval || ''}">
+                    <button id="toggle_${id}" style="background:${s.active ? '#28a745' : '#444'}; color:white; border:none; padding:10px; border-radius:5px; margin-top:10px; cursor:pointer;">${s.active ? 'AKTIVNÍ' : 'NASTAVIT AKTIVNÍ'}</button>`;
                 container.appendChild(div);
+                document.getElementById(`toggle_${id}`).onclick = () => {
+                    Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
+                    seasonsData[id].active = true;
+                    setDoc(doc(db, "tournament", "archive_list"), seasonsData);
+                };
             });
         }
 
-        window.toggleActive = (id) => {
-            Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
-            seasonsData[id].active = true;
-            setDoc(doc(db, "tournament", "archive_list"), seasonsData);
+        document.getElementById('save-btn').onclick = async () => {
+            Object.keys(seasonsData).forEach(id => {
+                seasonsData[id].title = document.getElementById(`t_${id}`).value;
+                seasonsData[id].desc = document.getElementById(`d_${id}`).value;
+                seasonsData[id].dateReg = document.getElementById(`reg_${id}`).value;
+                seasonsData[id].dateKval = document.getElementById(`kval_${id}`).value;
+            });
+            await setDoc(doc(db, "tournament", "archive_list"), seasonsData); 
+            alert("Uloženo!"); 
         };
-
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
 </body>
