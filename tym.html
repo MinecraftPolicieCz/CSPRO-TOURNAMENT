@@ -1,1 +1,127 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Správa Týmu - LIGHTSMC.EU</title>
+    <link rel="icon" type="image/jpeg" href="logo.jpeg">
+    <style>
+        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); }
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; }
+        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s; letter-spacing: 1.5px; opacity: 0.7; }
+        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
+        .user-controls { display: flex; align-items: center; gap: 15px; position: absolute; left: 20px; }
+        .profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-color); }
+        .page { width: 100%; max-width: 700px; padding: 60px 20px; flex: 1; }
+        .card { background: var(--card-bg); padding: 30px; border-radius: 15px; border: 1px solid #222; margin-bottom: 20px; }
+        input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 6px; margin: 10px 0; box-sizing: border-box; outline: none; }
+        .btn-main { width: 100%; padding: 15px; background: var(--accent-color); border: none; color: white; font-weight: bold; border-radius: 6px; cursor: pointer; text-transform: uppercase; transition: 0.3s; }
+        .btn-main:hover { background: #0056b3; }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="user-controls">
+                <div id="user-area" style="display:flex; align-items: center; gap:15px;">
+                    <a href="profil.html" style="text-decoration:none; font-size:1.4em;">🔔</a>
+                    <a href="profil.html"><img id="nav-photo" class="profile-img" src=""></a>
+                </div>
+            </div>
+            <a href="index.html" class="nav-link">Domů</a>
+            <a href="playoff.html" class="nav-link">PlayOff</a>
+            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+            <a href="pravidla.html" class="nav-link">Pravidla</a>
+            <a href="archiv.html" class="nav-link">Přehled Turnajů</a>
+        </div>
+    </nav>
+    <div class="page">
+        <div id="create-team-area" class="card" style="display:none;">
+            <h2>ZALOŽIT NOVÝ TÝM</h2>
+            <input type="text" id="new-team-name" placeholder="Název týmu">
+            <button id="btn-create" class="btn-main">VYTVOŘIT TÝM</button>
+        </div>
 
+        <div id="manage-team-area" class="card" style="display:none;">
+            <h1 id="display-team-name" style="color:var(--accent-color); text-transform: uppercase;">Tým</h1>
+            <hr border="0.1" color="#222">
+            <div id="members-list" style="margin: 20px 0;"></div>
+            
+            <div style="margin-top:30px; border-top:1px solid #222; padding-top:20px;">
+                <h3>POZVAT HRÁČE</h3>
+                <input type="email" id="invite-email" placeholder="Email hráče (přihlášený v Google)">
+                <button id="btn-invite" class="btn-main" style="background:#444">ODESLAT POZVÁNKU</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+
+        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+
+        let currentUser = null;
+        let myTeamId = null;
+        let myTeamData = null;
+
+        onAuthStateChanged(auth, user => {
+            if (!user) { location.href = "index.html"; return; }
+            currentUser = user;
+            document.getElementById('nav-photo').src = user.photoURL;
+            checkPlayerStatus();
+        });
+
+        async function checkPlayerStatus() {
+            const pDoc = await getDoc(doc(db, "players", currentUser.uid));
+            if (pDoc.exists() && pDoc.data().teamId) {
+                myTeamId = pDoc.data().teamId;
+                showTeam(myTeamId);
+            } else {
+                document.getElementById('create-team-area').style.display = 'block';
+            }
+        }
+
+        async function showTeam(teamId) {
+            document.getElementById('create-team-area').style.display = 'none';
+            document.getElementById('manage-team-area').style.display = 'block';
+            
+            onSnapshot(doc(db, "teams", teamId), (d) => {
+                if(d.exists()) {
+                    myTeamData = d.data();
+                    document.getElementById('display-team-name').innerText = myTeamData.name;
+                    document.getElementById('members-list').innerHTML = `<h3>ČLENOVÉ (${myTeamData.members.length}/5)</h3>`;
+                }
+            });
+        }
+
+        document.getElementById('btn-create').onclick = async () => {
+            const name = document.getElementById('new-team-name').value;
+            if(!name) return;
+            const teamRef = await addDoc(collection(db, "teams"), {
+                name: name,
+                owner: currentUser.uid,
+                members: [currentUser.uid]
+            });
+            await updateDoc(doc(db, "players", currentUser.uid), { teamId: teamRef.id });
+            location.reload();
+        };
+
+        document.getElementById('btn-invite').onclick = async () => {
+            const email = document.getElementById('invite-email').value;
+            if(!email || !myTeamId) return;
+            await addDoc(collection(db, "invites"), {
+                toEmail: email,
+                teamId: myTeamId,
+                teamName: myTeamData.name,
+                from: currentUser.displayName
+            });
+            alert("Pozvánka odeslána!");
+            document.getElementById('invite-email').value = "";
+        };
+    </script>
+</body>
+</html>
