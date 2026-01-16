@@ -2,33 +2,30 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>LIGHTSMC.EU - Gaming & Esport</title>
+    <title>LIGHTSMC.EU - Turnaje</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
-    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
     <style>
         :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); overflow-x: hidden; width: 100%; }
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); left: 0; }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; }
-        .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s all ease; letter-spacing: 1.5px; position: relative; opacity: 0.7; white-space: nowrap; }
-        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
-        .nav-link::after { content: ''; position: absolute; bottom: 0; left: 0; width: 0; height: 3px; background: var(--accent-color); transition: 0.3s; box-shadow: 0 0 10px var(--accent-color); }
-        .nav-link:hover::after, .nav-link.active::after { width: 100%; }
-        .user-controls { display: flex; align-items: center; gap: 15px; position: absolute; left: 20px; }
-        .profile-img { width: 35px; height: 35px; border-radius: 50%; border: 2px solid var(--accent-color); cursor: pointer; transition: 0.3s; }
-        .notif-badge { position: absolute; top: -5px; right: -5px; background: #ff4d4d; color: white; font-size: 10px; padding: 2px 5px; border-radius: 50%; font-weight: bold; border: 1px solid #0a0a0a; }
-        #google-login-btn { background: #fff; color: #000; padding: 8px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 0.75em; text-transform: uppercase; }
-        .admin-controls { display: flex; position: absolute; right: 20px; }
-        .main-container { display: flex; flex-direction: column; align-items: center; width: 100%; max-width: 900px; padding: 80px 20px; box-sizing: border-box; }
-        h1 { font-size: clamp(3em, 10vw, 5em); color: var(--accent-color); margin-bottom: 30px; letter-spacing: 10px; text-shadow: 0 0 30px rgba(0, 123, 255, 0.3); text-align: center; }
-        .content-text { text-align: left; line-height: 1.8; color: #ccc; background: rgba(255,255,255,0.02); padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; box-sizing: border-box; }
-        textarea#intro-text { width: 100%; background: transparent; border: none; color: #ccc; font-family: inherit; font-size: 1.1em; line-height: 1.8; resize: none; outline: none; height: auto; overflow: hidden; min-height: 200px; }
-        .active-tournament-box { margin: 40px 0; padding: 40px; background: var(--card-bg); border: 1px solid #222; border-top: 4px solid var(--accent-color); border-radius: 12px; width: 100%; box-sizing: border-box; display: none; text-align: center; }
-        #registration-form { display: none; text-align: left; margin-top: 30px; background: rgba(0,0,0,0.2); padding: 25px; border-radius: 8px; border: 1px solid #333; }
-        label { display: block; margin: 15px 0 5px; color: var(--accent-color); font-weight: bold; font-size: 0.8em; letter-spacing: 1px; }
-        input, textarea { width: 100%; padding: 14px; background: #080808; border: 1px solid #333; color: white; border-radius: 6px; box-sizing: border-box; font-family: inherit; }
-        .btn-main { display: inline-block; padding: 18px 30px; background: var(--accent-color); color: white; border-radius: 6px; font-weight: 800; text-transform: uppercase; cursor: pointer; border: none; width: 100%; margin-top: 25px; transition: 0.3s; letter-spacing: 1px; }
-        footer { margin-top: auto; padding: 40px; width: 100%; background: #050505; border-top: 1px solid #222; text-align: center; color: #555; font-size: 0.9em; }
+        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
+        
+        /* Sjednocená navigace */
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); width: 100%; }
+        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; height: 70px; }
+        .nav-link { color: #fff; text-decoration: none; padding: 10px 15px; font-weight: 600; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; opacity: 0.7; letter-spacing: 1px; }
+        .nav-link.active { opacity: 1; color: var(--accent-color); }
+        .user-controls { position: absolute; left: 20px; display: flex; align-items: center; gap: 10px; }
+        .admin-controls { position: absolute; right: 20px; display: flex; }
+        #google-login-btn { background: #fff; color: #000; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.7em; }
+
+        /* Hero sekce */
+        .hero { text-align: center; padding: 100px 20px; max-width: 800px; }
+        .hero h1 { font-size: 3.5em; margin-bottom: 10px; letter-spacing: 8px; color: var(--accent-color); }
+        .hero p { font-size: 1.2em; color: #ccc; margin-bottom: 30px; }
+        
+        .reg-card { background: var(--card-bg); padding: 40px; border-radius: 15px; border: 1px solid #222; width: 100%; max-width: 500px; margin-top: 20px; }
+        .btn-reg { background: var(--accent-color); color: white; border: none; padding: 18px 30px; border-radius: 8px; font-size: 1.1em; font-weight: bold; cursor: pointer; width: 100%; transition: 0.3s; }
+        .btn-reg:disabled { background: #333; cursor: not-allowed; }
+        .status-msg { margin-top: 15px; font-size: 0.9em; color: #777; }
     </style>
 </head>
 <body>
@@ -36,11 +33,9 @@
         <div class="nav-container">
             <div class="user-controls">
                 <div id="google-login-btn">PŘIHLÁSIT GOOGLE</div>
-                <div id="user-area" style="display:none; align-items: center; gap:15px;">
-                    <a href="profil.html" style="position:relative; text-decoration:none; font-size:1.4em;">🔔<span id="notif-count" class="notif-badge" style="display:none;">0</span></a>
-                    <a href="profil.html" class="nav-link" style="padding:10px 5px">Profil</a>
-                    <a href="tym.html" class="nav-link" style="padding:10px 5px">Tým</a>
-                    <a href="profil.html"><img id="user-photo" class="profile-img" src=""></a>
+                <div id="user-area" style="display:none; gap:10px;">
+                    <a href="profil.html" class="nav-link">Profil</a>
+                    <a href="tym.html" class="nav-link">Tým</a>
                 </div>
             </div>
             <a href="index.html" class="nav-link active">Domů</a>
@@ -49,132 +44,117 @@
             <a href="pravidla.html" class="nav-link">Pravidla</a>
             <a href="archiv.html" class="nav-link">Turnaje</a>
             <div class="admin-controls">
-                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
                 <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
             </div>
         </div>
     </nav>
-    <div class="main-container">
-        <h1>LIGHTSMC.EU</h1>
-        <div class="content-text"><textarea id="intro-text" placeholder="Zde napište úvodní text..." readonly>Načítání...</textarea></div>
-        <div id="active-info" class="active-tournament-box">
-            <span id="phase-tag" style="color:var(--accent-color); font-weight:800; letter-spacing:3px;"></span>
-            <h2 id="active-title"></h2>
-            <p id="active-desc" style="color:#888"></p>
-            <div id="action-area"></div>
-            <form id="registration-form">
-                <input type="hidden" name="active_title" id="hidden_active_title">
-                <label>NÁZEV TÝMU</label><input type="text" name="team_name" id="reg-team-name" required>
-                <label>DISCORD ID JEDNATELE</label><input type="text" name="discord_id" required>
-                <label>STEAM URL VŠECH HRÁČŮ</label><textarea name="steam_urls" id="reg-team-urls" required></textarea>
-                <button type="submit" id="submit-btn" class="btn-main">Odeslat přihlášku</button>
-            </form>
+
+    <div class="hero">
+        <img src="logo.jpeg" style="width: 150px; border-radius: 50%; margin-bottom: 20px; border: 2px solid var(--accent-color);">
+        <h1 id="tourney-title">LIGHTSMC</h1>
+        <p id="tourney-desc">Vítejte na oficiálním turnajovém portálu.</p>
+        
+        <div id="registration-zone" class="reg-card">
+            <h3>REGISTRACE DO TURNAJE</h3>
+            <div id="reg-status-content">
+                <p>Pro přihlášení do turnaje se musíte nejdříve přihlásit přes Google.</p>
+            </div>
+            <button id="reg-action-btn" class="btn-reg" disabled>PŘIHLÁSIT TÝM</button>
+            <div id="reg-info" class="status-msg"></div>
         </div>
     </div>
-    <footer>
-        <p><b>LIGHTSMC.EU</b> - Vytvořeno v roce 2026</p>
-        <p>Kontakt: support@lightsmc.eu | Esportová platforma pro CS2</p>
-    </footer>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc, getDoc, collection, addDoc, query, where } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, getDoc, setDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         
-        emailjs.init("47U6jSVKzAh5kcpa4");
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
 
-        function autoResize(el) { el.style.height = 'auto'; el.style.height = el.scrollHeight + 'px'; }
+        let activeTourneyId = null;
+        let userTeamId = null;
 
-        document.getElementById('google-login-btn').onclick = () => {
-            signInWithPopup(auth, provider).then(async (result) => {
-                const user = result.user;
-                await setDoc(doc(db, "players", user.uid), { name: user.displayName, email: user.email, photo: user.photoURL }, { merge: true });
-            });
-        };
+        document.getElementById('google-login-btn').onclick = () => signInWithPopup(auth, provider);
 
+        // 1. Načtení aktivního turnaje
+        onSnapshot(doc(db, "tournament", "archive_list"), d => {
+            if(d.exists()) {
+                const data = d.data();
+                activeTourneyId = Object.keys(data).find(k => data[k].active === true);
+                if(activeTourneyId) {
+                    document.getElementById('tourney-title').innerText = data[activeTourneyId].title;
+                    document.getElementById('tourney-desc').innerText = data[activeTourneyId].desc;
+                    checkRegistrationStatus();
+                } else {
+                    document.getElementById('tourney-title').innerText = "ŽÁDNÝ TURNAJ";
+                    document.getElementById('tourney-desc').innerText = "Momentálně neprobíhá žádný aktivní turnaj.";
+                    document.getElementById('registration-zone').style.display = "none";
+                }
+            }
+        });
+
+        // 2. Sledování uživatele
         onAuthStateChanged(auth, async (user) => {
             if(user) {
-                const isPass = user.providerData[0].providerId === 'password';
-                if (isPass) {
-                    document.getElementById('save-btn').style.display='block';
-                    document.getElementById('logout-btn').style.display='block';
-                    document.getElementById('intro-text').readOnly = false;
-                } else {
-                    document.getElementById('google-login-btn').style.display = 'none';
-                    document.getElementById('user-area').style.display = 'flex';
-                    document.getElementById('user-photo').src = user.photoURL;
-                    document.getElementById('logout-btn').style.display = 'block';
-
-                    const pDoc = await getDoc(doc(db, "players", user.uid));
-                    if(pDoc.exists() && pDoc.data().teamId) {
-                        const tDoc = await getDoc(doc(db, "teams", pDoc.data().teamId));
-                        if(tDoc.exists()) {
-                            document.getElementById('reg-team-name').value = tDoc.data().name;
-                            document.getElementById('reg-team-urls').value = "Tým načten: " + tDoc.data().name;
-                        }
-                    }
-                    const qNotif = query(collection(db, "invites"), where("toEmail", "==", user.email));
-                    onSnapshot(qNotif, (snap) => {
-                        const badge = document.getElementById('notif-count');
-                        if(snap.size > 0) { badge.innerText = snap.size; badge.style.display = 'block'; }
-                        else { badge.style.display = 'none'; }
-                    });
+                document.getElementById('google-login-btn').style.display = 'none';
+                document.getElementById('user-area').style.display = 'flex';
+                document.getElementById('logout-btn').style.display = 'block';
+                
+                // Zjistit, jestli má uživatel tým
+                const pDoc = await getDoc(doc(db, "players", user.uid));
+                if(pDoc.exists() && pDoc.data().teamId) {
+                    userTeamId = pDoc.data().teamId;
                 }
+                checkRegistrationStatus();
             }
         });
 
-        onSnapshot(doc(db, "tournament", "content"), d => {
-            if(d.exists()) {
-                const el = document.getElementById('intro-text');
-                el.value = d.data().intro || "";
-                autoResize(el);
+        async function checkRegistrationStatus() {
+            const btn = document.getElementById('reg-action-btn');
+            const info = document.getElementById('reg-info');
+            const content = document.getElementById('reg-status-content');
+
+            if(!auth.currentUser) {
+                btn.disabled = true;
+                return;
             }
-        });
 
-        document.getElementById('registration-form').onsubmit = async function(e) {
-            e.preventDefault();
-            const btn = document.getElementById('submit-btn'); btn.innerText = "ODESÍLÁM..."; btn.disabled = true;
-            const formData = new FormData(this);
-            await addDoc(collection(db, "registrations"), {
-                teamName: formData.get('team_name'),
-                discord: formData.get('discord_id'),
-                members: formData.get('steam_urls'),
-                status: "pending",
-                createdAt: new Date()
-            });
-            emailjs.sendForm('service_f1x9tvr', 'template_ngn7djc', this).then(() => {
-                alert('Žádost odeslána k posouzení adminem!');
-                location.reload();
-            });
-        };
-
-        onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()){
-                const data = d.data(); const activeId = Object.keys(data).find(key => data[key].active === true);
-                if(activeId) {
-                    const s = data[activeId]; const now = new Date(); const dReg = s.dateReg ? new Date(s.dateReg) : null;
-                    document.getElementById('active-info').style.display = "block";
-                    document.getElementById('active-title').innerText = s.title;
-                    document.getElementById('active-desc').innerText = s.desc;
-                    document.getElementById('hidden_active_title').value = s.title;
-                    if (dReg && now >= dReg) {
-                        document.getElementById('phase-tag').innerText = "📢 REGISTRACE OTEVŘENA";
-                        document.getElementById('action-area').innerHTML = '<button id="open-form-btn" class="btn-main">PŘIHLÁSIT TÝM</button>';
-                        document.getElementById('open-form-btn').onclick = function() { this.style.display = 'none'; document.getElementById('registration-form').style.display = 'block'; };
-                    } else { document.getElementById('phase-tag').innerText = "⏳ PŘIPRAVUJE SE"; }
-                }
+            if(!userTeamId) {
+                content.innerHTML = "<p>Nejste v žádném týmu. Pro registraci musíte tým založit nebo do nějakého vstoupit.</p>";
+                btn.innerText = "ZALOŽIT TÝM";
+                btn.disabled = false;
+                btn.onclick = () => location.href = "tym.html";
+                return;
             }
-        });
 
-        document.getElementById('save-btn').onclick = async () => {
-            const intro = document.getElementById('intro-text').value;
-            await setDoc(doc(db, "tournament", "content"), { intro }, { merge: true });
-            alert("Uloženo!");
-        };
-        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
+            // Kontrola, zda je tým už přihlášen v aktivním turnaji
+            const tDoc = await getDoc(doc(db, "teams", userTeamId));
+            const teamData = tDoc.data();
+            
+            if(teamData.registeredIn === activeTourneyId) {
+                content.innerHTML = `<p>Váš tým <b>${teamData.name}</b> je úspěšně přihlášen!</p>`;
+                btn.innerText = "REGISTROVÁNO";
+                btn.disabled = true;
+                info.innerText = "Nyní vyčkejte na rozlosování v sekci Kvalifikace.";
+            } else {
+                content.innerHTML = `<p>Jste kapitánem/členem týmu <b>${teamData.name}</b>. Chcete se přihlásit do tohoto turnaje?</p>`;
+                btn.innerText = "POTVRDIT PŘIHLÁŠKU";
+                btn.disabled = false;
+                btn.onclick = async () => {
+                    await updateDoc(doc(db, "teams", userTeamId), { registeredIn: activeTourneyId });
+                    // Přidání do seznamu pro admina (archiv.html)
+                    await updateDoc(doc(db, "tournament", "registrations"), {
+                        [userTeamId]: { teamName: teamData.name, leader: auth.currentUser.displayName, date: new Date().toISOString() }
+                    }, { merge: true });
+                    alert("Tým byl úspěšně přihlášen!");
+                    location.reload();
+                };
+            }
+        }
+
+        document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
 </html>
