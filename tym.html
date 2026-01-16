@@ -2,130 +2,81 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Správa Týmu - LIGHTSMC.EU</title>
+    <title>Tým - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
-        
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); width: 100%; }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; height: 70px; }
-        .nav-link { color: #fff; text-decoration: none; padding: 10px 15px; font-weight: 600; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; opacity: 0.7; }
-        .nav-link.active { opacity: 1; color: var(--accent-color); }
-        .user-controls { position: absolute; left: 20px; display: flex; align-items: center; gap: 10px; }
-        
+        :root { --bg: #05070a; --accent: #007bff; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.07); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; margin: 0; background-image: radial-gradient(circle at 50% -20%, #001f3f, var(--bg)); min-height: 100vh; display: flex; flex-direction: column; align-items: center; }
+        nav { background: rgba(5,7,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); height: 80px; width: 100%; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; }
+        .nav-container { display: flex; width: 100%; max-width: 1200px; align-items: center; justify-content: center; position: relative; }
+        .nav-link { color: rgba(255,255,255,0.6); text-decoration: none; padding: 10px 18px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
         .page { width: 100%; max-width: 700px; padding: 60px 20px; }
-        .card { background: var(--card-bg); padding: 30px; border-radius: 15px; border: 1px solid #222; margin-bottom: 20px; }
-        input { width: 100%; padding: 12px; background: #000; border: 1px solid #333; color: white; border-radius: 6px; margin: 10px 0; outline: none; font-family: inherit; }
-        .btn-main { background: var(--accent-color); color: white; border: none; padding: 15px; border-radius: 6px; font-weight: bold; width: 100%; cursor: pointer; }
-        .member-row { display: flex; align-items: center; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #222; }
+        .card { background: var(--glass); border: 1px solid var(--glass-border); padding: 30px; border-radius: 20px; backdrop-filter: blur(10px); margin-bottom: 20px; }
+        input { width: 100%; background: rgba(0,0,0,0.2); border: 1px solid #333; color: white; padding: 12px; border-radius: 10px; margin: 10px 0; outline: none; }
+        .btn-main { background: var(--accent); color: white; border: none; padding: 15px; border-radius: 12px; font-weight: bold; width: 100%; cursor: pointer; }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="user-controls">
-                <div id="user-area" style="display:flex; align-items: center; gap:10px;">
-                    <a href="profil.html" class="nav-link">Profil</a>
-                    <a href="tym.html" class="nav-link active">Tým</a>
-                </div>
-            </div>
-            <a href="index.html" class="nav-link">Domů</a>
-            <a href="playoff.html" class="nav-link">PlayOff</a>
-            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-            <a href="pravidla.html" class="nav-link">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Turnaje</a>
-        </div>
-    </nav>
-
+    <nav><div class="nav-container"><a href="index.html" class="nav-link">Domů</a><a href="playoff.html" class="nav-link">PlayOff</a><a href="kvalifikace.html" class="nav-link">Kvalifikace</a><a href="pravidla.html" class="nav-link">Pravidla</a><a href="archiv.html" class="nav-link">Turnaje</a></div></nav>
     <div class="page">
-        <div id="no-team" style="display:none;" class="card">
-            <h2 style="color:var(--accent-color)">ZALOŽIT NOVÝ TÝM</h2>
-            <p>Zadejte název svého týmu a staňte se kapitánem.</p>
-            <input type="text" id="team-name-input" placeholder="Název týmu">
-            <button id="create-team-btn" class="btn-main">VYTVOŘIT TÝM</button>
+        <div id="no-team" class="card" style="display:none; text-align:center;">
+            <h2>ZALOŽIT TÝM</h2>
+            <input type="text" id="t-name" placeholder="Název týmu">
+            <button id="create-btn" class="btn-main">VYTVOŘIT</button>
         </div>
-
         <div id="has-team" style="display:none;">
             <div class="card">
-                <h1 id="team-title" style="color:var(--accent-color); margin:0;">NÁZEV TÝMU</h1>
-                <p style="color:#777">Správa členů a pozvánky</p>
-                <div id="members-list" style="margin-top:20px;"></div>
+                <h1 id="team-display" style="color:var(--accent); margin:0;">TÝM</h1>
+                <p id="members-count" style="color:#555">Počet členů: 0/5</p>
             </div>
-
             <div class="card">
                 <h3>POZVAT HRÁČE</h3>
-                <p>Zadejte e-mail hráče (kterým se hlásí do Google).</p>
-                <input type="email" id="invite-email" placeholder="email@gmail.com">
-                <button id="send-invite-btn" class="btn-main" style="background:#444">ODESLAT POZVÁNKU</button>
+                <input type="email" id="inv-email" placeholder="Email hráče (Google)">
+                <button id="inv-btn" class="btn-main" style="background:#333">ODESLAT POZVÁNKU</button>
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
-        
-        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
-        const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+        import { getFirestore, doc, getDoc, setDoc, onSnapshot, collection, addDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
 
-        let currentUser = null;
-        let myTeamId = null;
+        const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
+        const app = initializeApp(firebaseConfig); const auth = getAuth(app); const db = getFirestore(app);
+
+        let curUser = null; let myTeamId = null;
 
         onAuthStateChanged(auth, async (user) => {
             if (!user) { location.href = "index.html"; return; }
-            currentUser = user;
-            
-            // Kontrola hráče v DB
-            onSnapshot(doc(db, "players", user.uid), (d) => {
+            curUser = user;
+            onSnapshot(doc(db, "players", user.uid), d => {
                 if(d.exists() && d.data().teamId) {
                     myTeamId = d.data().teamId;
-                    loadTeamInfo(myTeamId);
+                    document.getElementById('has-team').style.display = "block";
+                    document.getElementById('no-team').style.display = "none";
+                    onSnapshot(doc(db, "teams", myTeamId), t => {
+                        document.getElementById('team-display').innerText = t.data().name;
+                        document.getElementById('members-count').innerText = `Počet členů: ${t.data().members.length}/5`;
+                    });
                 } else {
                     document.getElementById('no-team').style.display = "block";
-                    document.getElementById('has-team').style.display = "none";
                 }
             });
         });
 
-        async function loadTeamInfo(teamId) {
-            document.getElementById('no-team').style.display = "none";
-            document.getElementById('has-team').style.display = "block";
-            
-            onSnapshot(doc(db, "teams", teamId), (d) => {
-                const team = d.data();
-                document.getElementById('team-title').innerText = team.name;
-                document.getElementById('members-list').innerHTML = `<b>Počet členů: ${team.members.length} / 5</b>`;
-            });
-        }
-
-        document.getElementById('create-team-btn').onclick = async () => {
-            const name = document.getElementById('team-name-input').value;
-            if(!name) return alert("Zadejte název!");
-            
-            const teamRef = await addDoc(collection(db, "teams"), {
-                name: name,
-                owner: currentUser.uid,
-                members: [currentUser.uid]
-            });
-            await updateDoc(doc(db, "players", currentUser.uid), { teamId: teamRef.id });
-            location.reload();
+        document.getElementById('create-btn').onclick = async () => {
+            const name = document.getElementById('t-name').value;
+            if(!name) return;
+            const tRef = await addDoc(collection(db, "teams"), { name, owner: curUser.uid, members: [curUser.uid] });
+            await updateDoc(doc(db, "players", curUser.uid), { teamId: tRef.id });
         };
 
-        document.getElementById('send-invite-btn').onclick = async () => {
-            const email = document.getElementById('invite-email').value;
-            const teamSnap = await getDoc(doc(db, "teams", myTeamId));
-            if(!email) return alert("Zadejte email!");
-            
-            await addDoc(collection(db, "invites"), {
-                toEmail: email,
-                teamId: myTeamId,
-                teamName: teamSnap.data().name,
-                from: currentUser.displayName
-            });
+        document.getElementById('inv-btn').onclick = async () => {
+            const email = document.getElementById('inv-email').value;
+            const tSnap = await getDoc(doc(db, "teams", myTeamId));
+            await addDoc(collection(db, "invites"), { toEmail: email, teamId: myTeamId, teamName: tSnap.data().name });
             alert("Pozvánka odeslána!");
-            document.getElementById('invite-email').value = "";
         };
     </script>
 </body>
