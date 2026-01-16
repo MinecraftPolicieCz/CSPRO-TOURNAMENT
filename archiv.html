@@ -5,17 +5,20 @@
     <title>Správa - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
+        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); --success: #28a745; --danger: #ff4d4d; }
         body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); }
+        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); left: 0; }
         .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; }
         .nav-link { color: #fff; text-decoration: none; padding: 22px 25px; font-weight: 600; text-transform: uppercase; font-size: 0.8em; transition: 0.3s; letter-spacing: 1.5px; opacity: 0.7; }
         .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); background: rgba(0, 123, 255, 0.1); }
+        .admin-controls { display: flex; position: absolute; right: 20px; }
         .page { width: 100%; max-width: 900px; padding: 40px 20px; box-sizing: border-box; flex: 1; }
         .card { background: var(--card-bg); border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #222; }
-        .btn-acc { background: #28a745; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-weight: bold; }
         .admin-label { display: block; color: var(--accent-color); font-size: 11px; font-weight: 800; margin-bottom: 5px; margin-top: 15px; letter-spacing: 1px; text-transform: uppercase; }
-        input, textarea { width: 100%; background: #080808; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; margin: 5px 0; outline: none; }
+        input, textarea { width: 100%; background: #080808; border: 1px solid #333; color: white; padding: 12px; border-radius: 6px; margin: 5px 0; outline: none; font-family: inherit; }
+        .btn { padding: 12px 20px; border-radius: 6px; cursor: pointer; border: none; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
+        .btn-acc { background: var(--success); color: white; }
+        .btn-add { background: var(--accent-color); color: white; width: 100%; margin-bottom: 30px; }
     </style>
 </head>
 <body>
@@ -26,14 +29,27 @@
             <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
             <a href="pravidla.html" class="nav-link">Pravidla</a>
             <a href="archiv.html" class="nav-link active">Správa</a>
-            <div class="admin-controls"><a id="save-btn" class="nav-link" style="color:#28a745; display:none;">ULOŽIT</a><a id="logout-btn" class="nav-link" style="color:#ff4d4d; display:none;">ODHLÁSIT</a></div>
+            <div class="admin-controls">
+                <a id="save-btn" class="nav-link" style="display:none; color:var(--success)">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:var(--danger)">ODHLÁSIT</a>
+            </div>
         </div>
     </nav>
     <div class="page">
-        <h1 style="color:var(--accent-color); text-align:center;">SPRÁVA TURNAJŮ</h1>
-        <div id="seasons-container"></div>
-        <h2 style="color:var(--accent-color); margin-top:50px; text-transform: uppercase;">ČEKAJÍCÍ PŘIHLÁŠKY</h2>
-        <div id="registrations-container"></div>
+        <h1 style="color:var(--accent-color); text-align:center; letter-spacing: 5px;">ADMIN PANEL</h1>
+        
+        <div id="admin-only-content" style="display:none;">
+            <button id="add-btn" class="btn btn-add">+ PŘIDAT NOVÝ TURNAJ</button>
+            <div id="seasons-container"></div>
+            
+            <h2 style="color:var(--accent-color); margin-top:50px; text-transform: uppercase; letter-spacing: 2px;">Čekající přihlášky</h2>
+            <div id="registrations-container"></div>
+        </div>
+
+        <div id="guest-msg" style="text-align:center; margin-top:100px;">
+            <h2>PŘIHLÁSIT SE DO ADMIN PANELU</h2>
+            <a href="login.html" class="btn btn-add" style="display:inline-block; width:auto; text-decoration:none;">Přejít na Login</a>
+        </div>
     </div>
 
     <script type="module">
@@ -43,30 +59,122 @@
         
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
+        
         let seasonsData = {};
 
         onAuthStateChanged(auth, user => { 
-            if(!user || user.providerData[0].providerId !== 'password') window.location.href="login.html"; 
-            else { document.getElementById('save-btn').style.display='block'; document.getElementById('logout-btn').style.display='block'; }
+            const isAdmin = user && user.providerData[0].providerId === 'password';
+            
+            if (isAdmin) {
+                document.getElementById('save-btn').style.display = 'block';
+                document.getElementById('logout-btn').style.display = 'block';
+                document.getElementById('admin-only-content').style.display = 'block';
+                document.getElementById('guest-msg').style.display = 'none';
+            } else {
+                document.getElementById('save-btn').style.display = 'none';
+                document.getElementById('logout-btn').style.display = 'none';
+                document.getElementById('admin-only-content').style.display = 'none';
+                document.getElementById('guest-msg').style.display = 'block';
+            }
         });
 
-        onSnapshot(doc(db, "tournament", "archive_list"), d => { if(d.exists()){ seasonsData = d.data(); renderSeasons(); } });
+        // Sledování seznamu turnajů
+        onSnapshot(doc(db, "tournament", "archive_list"), d => {
+            if(d.exists()){
+                seasonsData = d.data();
+                renderSeasons();
+            }
+        });
 
+        // Sledování přihlášek (zobrazí se jen adminovi)
         onSnapshot(query(collection(db, "registrations"), where("status", "==", "pending")), (snap) => {
             const container = document.getElementById('registrations-container');
-            container.innerHTML = snap.empty ? "<p>Žádné nové přihlášky</p>" : "";
+            container.innerHTML = snap.empty ? "<p style='color:#555'>Žádné nové přihlášky k vyřízení.</p>" : "";
             snap.forEach(d => {
                 const data = d.data();
-                const div = document.createElement('div'); div.className = "card";
-                div.innerHTML = `<h3>${data.teamName}</h3><p>Discord: ${data.discord}</p><button class="btn-acc" id="btn_approve_${d.id}">SCHVÁLIT</button>`;
+                const div = document.createElement('div');
+                div.className = "card";
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <div style="text-align:left;">
+                            <h3 style="margin:0; color:var(--accent-color)">${data.teamName}</h3>
+                            <small>Discord: ${data.discord}</small>
+                        </div>
+                        <button class="btn btn-acc" id="approve_${d.id}">SCHVÁLIT</button>
+                    </div>`;
                 container.appendChild(div);
-                document.getElementById(`btn_approve_${d.id}`).onclick = () => approveTeam(d.id, data.teamName);
+                document.getElementById(`approve_${d.id}`).onclick = () => approveTeam(d.id, data.teamName);
             });
         });
 
+        function renderSeasons() {
+            const container = document.getElementById('seasons-container');
+            container.innerHTML = "";
+            Object.keys(seasonsData).reverse().forEach(id => {
+                const s = seasonsData[id];
+                const div = document.createElement('div');
+                div.className = "card";
+                div.innerHTML = `
+                    <label class="admin-label">Název turnaje</label>
+                    <input id="t_${id}" value="${s.title}">
+                    <label class="admin-label">Krátký popis</label>
+                    <textarea id="d_${id}">${s.desc}</textarea>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                        <div>
+                            <label class="admin-label">Start Registrací</label>
+                            <input type="datetime-local" id="reg_${id}" value="${s.dateReg || ''}">
+                        </div>
+                        <div>
+                            <label class="admin-label">Start Kvalifikace</label>
+                            <input type="datetime-local" id="kval_${id}" value="${s.dateKval || ''}">
+                        </div>
+                    </div>
+                    <div style="display:flex; gap:10px; margin-top:20px;">
+                        <button class="btn" style="background:${s.active ? 'var(--success)' : '#444'}; flex:1; color:white;" id="toggle_${id}">
+                            ${s.active ? 'AKTIVNÍ' : 'NASTAVIT JAKO AKTIVNÍ'}
+                        </button>
+                        <button class="btn" style="background:var(--danger); color:white;" id="del_${id}">SMAZAT</button>
+                    </div>`;
+                container.appendChild(div);
+
+                document.getElementById(`toggle_${id}`).onclick = () => {
+                    Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
+                    seasonsData[id].active = true;
+                    saveAll();
+                };
+                document.getElementById(`del_${id}`).onclick = () => {
+                    if(confirm("Opravdu smazat turnaj?")) {
+                        delete seasonsData[id];
+                        saveAll();
+                    }
+                };
+            });
+        }
+
+        async function saveAll() {
+            await setDoc(doc(db, "tournament", "archive_list"), seasonsData);
+        }
+
+        document.getElementById('add-btn').onclick = () => {
+            const id = "t" + Date.now();
+            seasonsData[id] = { title: "Nový Turnaj", desc: "Popis...", active: false };
+            renderSeasons();
+        };
+
+        document.getElementById('save-btn').onclick = async () => {
+            Object.keys(seasonsData).forEach(id => {
+                seasonsData[id].title = document.getElementById(`t_${id}`).value;
+                seasonsData[id].desc = document.getElementById(`d_${id}`).value;
+                seasonsData[id].dateReg = document.getElementById(`reg_${id}`).value;
+                seasonsData[id].dateKval = document.getElementById(`kval_${id}`).value;
+            });
+            await saveAll();
+            alert("Uloženo!");
+        };
+
         window.approveTeam = async (id, teamName) => {
             const activeId = Object.keys(seasonsData).find(key => seasonsData[key].active === true);
-            if(!activeId) return alert("Není aktivní turnaj!");
+            if(!activeId) return alert("Musíte mít aktivní turnaj pro zápis do pavouka!");
 
             const qualRef = doc(db, "tournament", "qual_" + activeId);
             const qualSnap = await getDoc(qualRef);
@@ -76,7 +184,11 @@
             for (let i = 1; i <= 8; i++) {
                 const slots = [`s${i}_a1`, `s${i}_a2`, `s${i}_b1`, `s${i}_b2` text-center];
                 for (let slot of slots) {
-                    if (!qualData[slot]) { qualData[slot] = teamName; assigned = true; break; }
+                    if (!qualData[slot]) {
+                        qualData[slot] = teamName;
+                        assigned = true;
+                        break;
+                    }
                 }
                 if (assigned) break;
             }
@@ -84,38 +196,12 @@
             if (assigned) {
                 await setDoc(qualRef, qualData, { merge: true });
                 await updateDoc(doc(db, "registrations", id), { status: "approved" });
-                alert("Tým schválen a zapsán do kvalifikace!");
-            } else { alert("Není místo v kvalifikaci!"); }
+                alert(`Tým ${teamName} zapsán do kvalifikace!`);
+            } else {
+                alert("Není volné místo v kvalifikaci!");
+            }
         };
 
-        function renderSeasons() {
-            const container = document.getElementById('seasons-container'); container.innerHTML = "";
-            Object.keys(seasonsData).forEach(id => {
-                const s = seasonsData[id]; const div = document.createElement('div'); div.className = "card";
-                div.innerHTML = `<label class="admin-label">Název</label><input id="t_${id}" value="${s.title}">
-                    <label class="admin-label">Popis</label><textarea id="d_${id}">${s.desc}</textarea>
-                    <label class="admin-label">Registrace</label><input type="datetime-local" id="reg_${id}" value="${s.dateReg || ''}">
-                    <label class="admin-label">Kvalifikace</label><input type="datetime-local" id="kval_${id}" value="${s.dateKval || ''}">
-                    <button id="toggle_${id}" style="background:${s.active ? '#28a745' : '#444'}; color:white; border:none; padding:10px; border-radius:5px; margin-top:10px; cursor:pointer;">${s.active ? 'AKTIVNÍ' : 'NASTAVIT AKTIVNÍ'}</button>`;
-                container.appendChild(div);
-                document.getElementById(`toggle_${id}`).onclick = () => {
-                    Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
-                    seasonsData[id].active = true;
-                    setDoc(doc(db, "tournament", "archive_list"), seasonsData);
-                };
-            });
-        }
-
-        document.getElementById('save-btn').onclick = async () => {
-            Object.keys(seasonsData).forEach(id => {
-                seasonsData[id].title = document.getElementById(`t_${id}`).value;
-                seasonsData[id].desc = document.getElementById(`d_${id}`).value;
-                seasonsData[id].dateReg = document.getElementById(`reg_${id}`).value;
-                seasonsData[id].dateKval = document.getElementById(`kval_${id}`).value;
-            });
-            await setDoc(doc(db, "tournament", "archive_list"), seasonsData); 
-            alert("Uloženo!"); 
-        };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => window.location.reload());
     </script>
 </body>
