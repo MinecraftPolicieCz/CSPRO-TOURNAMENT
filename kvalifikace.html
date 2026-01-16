@@ -5,106 +5,109 @@
     <title>Kvalifikace - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
-        /* CSS STEJNÉ JAKO V ARCHIVU - plus grid pro kvalifikaci */
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); width: 100%; }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; height: 70px; }
-        .nav-link { color: #fff; text-decoration: none; padding: 10px 15px; font-weight: 600; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; opacity: 0.7; }
-        .nav-link.active { opacity: 1; color: var(--accent-color); }
-        .user-controls { position: absolute; left: 20px; display: flex; align-items: center; }
-        .admin-controls { position: absolute; right: 20px; display: flex; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; width: 100%; margin-top: 30px; }
-        .group-card { background: var(--card-bg); border: 1px solid #222; padding: 20px; border-radius: 8px; }
-        .match { background: #080808; margin: 10px 0; border: 1px solid #333; display: flex; flex-direction: column; }
-        input { background: transparent; border: none; color: white; padding: 8px; width: 100%; font-size: 0.9em; outline: none; }
-        input[type="number"] { width: 40px; text-align: center; color: var(--accent-color); border-left: 1px solid #222; }
+        :root { 
+            --bg: #05070a; --accent: #007bff; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.07); 
+        }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; margin: 0;
+            background-image: radial-gradient(circle at 50% -20%, #001f3f, var(--bg)); min-height: 100vh;
+        }
+        nav { background: rgba(5, 7, 10, 0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); position: sticky; top: 0; z-index: 1000; height: 80px; display: flex; justify-content: center; }
+        .nav-container { display: flex; width: 100%; max-width: 1200px; align-items: center; justify-content: center; position: relative; }
+        .nav-link { color: rgba(255,255,255,0.6); text-decoration: none; padding: 10px 18px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
+        .nav-link.active { color: white; border-bottom: 2px solid var(--accent); }
+        .user-zone { position: absolute; left: 20px; display: flex; align-items: center; gap: 15px; }
+        .admin-zone { position: absolute; right: 20px; }
+
+        .page { width: 100%; max-width: 1200px; margin: auto; padding: 60px 20px; text-align: center; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 25px; margin-top: 40px; }
+        .group-card { background: var(--glass); border: 1px solid var(--glass-border); padding: 25px; border-radius: 20px; backdrop-filter: blur(10px); }
+        .match { background: rgba(0,0,0,0.2); border-radius: 12px; margin: 10px 0; border: 1px solid var(--glass-border); overflow: hidden; }
+        input { background: transparent; border: none; color: white; padding: 12px; width: 100%; font-size: 0.9rem; outline: none; }
+        input[type="number"] { width: 50px; text-align: center; color: var(--accent); font-weight: 800; border-left: 1px solid var(--glass-border); background: rgba(255,255,255,0.02); }
+        .winner-input { background: var(--accent) !important; color: white !important; font-weight: 800; text-align: center; border-radius: 8px; margin-top: 15px; }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-container">
-            <div class="user-controls">
-                <div id="google-login-btn" style="background:#fff; color:#000; padding:5px 10px; border-radius:4px; font-weight:bold; cursor:pointer; font-size:0.7em;">GOOGLE LOGIN</div>
-                <div id="user-area" style="display:none; gap:10px;"><a href="profil.html" class="nav-link">Profil</a><a href="tym.html" class="nav-link">Tým</a></div>
+            <div class="user-zone">
+                <div id="login-google" style="cursor:pointer; background:white; color:black; padding:8px 15px; border-radius:8px; font-size:12px; font-weight:800;">GOOGLE LOGIN</div>
+                <div id="player-ui" style="display:none;"><a href="profil.html" class="nav-link">Profil</a><a href="tym.html" class="nav-link">Tým</a></div>
             </div>
-            <a href="index.html" class="nav-link">Domů</a>
-            <a href="playoff.html" class="nav-link">PlayOff</a>
-            <a href="kvalifikace.html" class="nav-link active">Kvalifikace</a>
-            <a href="pravidla.html" class="nav-link">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Turnaje</a>
-            <div class="admin-controls">
-                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Domů</a>
+                <a href="playoff.html" class="nav-link">PlayOff</a>
+                <a href="kvalifikace.html" class="nav-link active">Kvalifikace</a>
+                <a href="pravidla.html" class="nav-link">Pravidla</a>
+                <a href="archiv.html" class="nav-link">Turnaje</a>
+            </div>
+            <div class="admin-zone">
+                <a id="save-btn" class="nav-link" style="display:none; color:#28a745;">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d;">ODHLÁSIT</a>
             </div>
         </div>
     </nav>
-
-    <div class="page" style="width:100%; max-width:1100px; padding:40px;">
-        <h1 id="title-text" style="text-align:center;">KVALIFIKACE</h1>
-        <div id="qual-content">
-            <p style="text-align:center; color:#555;">Žádný turnaj není právě aktivní.</p>
+    <div class="page">
+        <h1 id="title-text" style="letter-spacing: 5px;">KVALIFIKACE</h1>
+        <div id="content">
+            <p style="color:#555; margin-top:100px;">Aktuálně neprobíhá žádná kvalifikace.</p>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getFirestore, doc, onSnapshot, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
         import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
-        
-        let activeId = null;
-        let isAdmin = false;
-        let localChanges = {};
 
-        document.getElementById('google-login-btn').onclick = () => signInWithPopup(auth, provider);
+        let activeId = null; let isAdmin = false; let localChanges = {};
+
+        document.getElementById('login-google').onclick = () => signInWithPopup(auth, provider);
 
         onAuthStateChanged(auth, user => {
             isAdmin = user && user.providerData.some(p => p.providerId === 'password');
             if(isAdmin) { document.getElementById('save-btn').style.display='block'; document.getElementById('logout-btn').style.display='block'; }
-            else if(user) { document.getElementById('google-login-btn').style.display='none'; document.getElementById('user-area').style.display='flex'; document.getElementById('logout-btn').style.display='block'; }
+            else if(user) { document.getElementById('login-google').style.display='none'; document.getElementById('player-ui').style.display='flex'; document.getElementById('logout-btn').style.display='block'; }
+            renderStructure();
         });
 
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()) {
-                const data = d.data();
-                activeId = Object.keys(data).find(k => data[k].active === true);
+                activeId = Object.keys(d.data()).find(k => d.data()[k].active === true);
                 if(activeId) {
-                    document.getElementById('title-text').innerText = "KVALIFIKACE: " + data[activeId].title;
-                    buildQualGrid();
-                    loadQualData();
-                } else {
-                    document.getElementById('qual-content').innerHTML = '<p style="text-align:center; color:#555;">Žádný turnaj právě neprobíhá.</p>';
+                    document.getElementById('title-text').innerText = d.data()[activeId].title;
+                    renderStructure();
                 }
             }
         });
 
-        function buildQualGrid() {
+        function renderStructure() {
+            if(!activeId) return;
             let html = '<div class="grid">';
             for(let i=1; i<=8; i++) {
-                html += `
-                <div class="group-card">
-                    <div style="color:var(--accent-color); font-weight:bold; margin-bottom:10px;">SKUPINA ${i}</div>
-                    <div class="match"><div style="display:flex; border-bottom:1px solid #222"><input id="s${i}_a1" placeholder="Tým 1" readonly><input id="s${i}_as1" type="number" readonly></div><div style="display:flex"><input id="s${i}_a2" placeholder="Tým 2" readonly><input id="s${i}_as2" type="number" readonly></div></div>
-                    <div class="match"><div style="display:flex; border-bottom:1px solid #222"><input id="s${i}_b1" placeholder="Tým 3" readonly><input id="s${i}_bs1" type="number" readonly></div><div style="display:flex"><input id="s${i}_b2" placeholder="Tým 4" readonly><input id="s${i}_bs2" type="number" readonly></div></div>
-                    <input id="s${i}_w" style="background:#222; text-align:center; margin-top:10px;" placeholder="POSTUPUJÍCÍ" readonly>
+                html += `<div class="group-card">
+                    <div style="color:var(--accent); font-weight:800; font-size:12px; margin-bottom:15px; letter-spacing:2px;">SKUPINA #${i}</div>
+                    <div class="match"><div style="display:flex; border-bottom:1px solid var(--glass-border)"><input id="s${i}_a1" placeholder="Tým 1" readonly><input id="s${i}_as1" type="number" readonly></div><div style="display:flex"><input id="s${i}_a2" placeholder="Tým 2" readonly><input id="s${i}_as2" type="number" readonly></div></div>
+                    <div class="match"><div style="display:flex; border-bottom:1px solid var(--glass-border)"><input id="s${i}_b1" placeholder="Tým 3" readonly><input id="s${i}_bs1" type="number" readonly></div><div style="display:flex"><input id="s${i}_b2" placeholder="Tým 4" readonly><input id="s${i}_bs2" type="number" readonly></div></div>
+                    <input id="s${i}_w" class="winner-input" placeholder="POSTUPUJÍCÍ" readonly>
                 </div>`;
             }
             html += '</div>';
-            document.getElementById('qual-content').innerHTML = html;
-            
+            document.getElementById('content').innerHTML = html;
             if(isAdmin) {
                 document.querySelectorAll('input').forEach(el => {
                     el.readOnly = false;
                     el.oninput = e => localChanges[e.target.id] = e.target.value;
                 });
             }
+            loadData();
         }
 
-        function loadQualData() {
+        function loadData() {
             onSnapshot(doc(db, "tournament", "qual_" + activeId), d => {
                 if(d.exists()) {
                     const data = d.data();
@@ -118,7 +121,7 @@
 
         document.getElementById('save-btn').onclick = async () => {
             await setDoc(doc(db, "tournament", "qual_" + activeId), localChanges, { merge: true });
-            alert("Změny uloženy!");
+            alert("Uloženo!");
         };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
     </script>
