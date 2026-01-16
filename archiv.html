@@ -5,140 +5,93 @@
     <title>Turnaje - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); width: 100%; }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; height: 70px; }
-        .user-controls { display: flex; align-items: center; gap: 15px; position: absolute; left: 20px; }
-        .admin-controls { display: flex; position: absolute; right: 20px; }
-        .nav-link { color: #fff; text-decoration: none; padding: 10px 15px; font-weight: 600; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; letter-spacing: 1px; opacity: 0.7; }
-        .nav-link:hover, .nav-link.active { opacity: 1; color: var(--accent-color); }
-        #google-login-btn { background: #fff; color: #000; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.7em; }
-        .page { width: 100%; max-width: 900px; padding: 40px 20px; box-sizing: border-box; }
-        .card { background: var(--card-bg); border-radius: 12px; padding: 25px; margin-bottom: 20px; border: 1px solid #222; text-align: left; }
-        .admin-edit { background: rgba(0, 123, 255, 0.05); padding: 15px; border-radius: 8px; margin-top: 15px; display: none; }
-        input, textarea { width: 100%; background: #080808; border: 1px solid #333; color: white; padding: 10px; border-radius: 6px; margin: 5px 0; font-family: inherit; }
-        .btn-acc { background: #28a745; color: white; border: none; padding: 8px 15px; border-radius: 4px; cursor: pointer; }
+        /* POUŽIJTE STEJNÉ CSS JAKO V INDEX.HTML PRO NAVIGACI A BODY */
+        :root { --bg: #05070a; --accent: #007bff; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.07); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; margin: 0; background-image: radial-gradient(circle at 50% -20%, #001f3f, var(--bg)); }
+        nav { background: rgba(5,7,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); position: sticky; top:0; height:80px; display:flex; justify-content:center; }
+        .nav-container { display:flex; width:100%; max-width:1200px; align-items:center; justify-content:center; position:relative; }
+        .nav-link { color: rgba(255,255,255,0.6); text-decoration:none; padding:10px 18px; font-weight:600; font-size:0.85rem; text-transform:uppercase; }
+        .nav-link.active { color:white; border-bottom:2px solid var(--accent); }
+        .page { width:100%; max-width:900px; margin:auto; padding:60px 20px; }
+        .card { background: var(--glass); border:1px solid var(--glass-border); padding:30px; border-radius:20px; margin-bottom:20px; position:relative; }
+        .status-pill { display:inline-block; padding:4px 12px; border-radius:20px; font-size:10px; font-weight:800; margin-bottom:15px; background: #333; }
+        .active-pill { background: #28a745; color:white; }
+        input, textarea { width:100%; background:rgba(0,0,0,0.3); border:1px solid #333; color:white; padding:12px; border-radius:10px; margin-top:10px; }
+        .admin-controls { position:absolute; right:20px; }
     </style>
 </head>
 <body>
-    <nav>
-        <div class="nav-container">
-            <div class="user-controls">
-                <div id="google-login-btn">PŘIHLÁSIT GOOGLE</div>
-                <div id="user-area" style="display:none; align-items: center; gap:10px;">
-                    <a href="profil.html" class="nav-link">Profil</a>
-                    <a href="tym.html" class="nav-link">Tým</a>
-                </div>
-            </div>
+    <nav><div class="nav-container">
+        <div class="nav-links">
             <a href="index.html" class="nav-link">Domů</a>
             <a href="playoff.html" class="nav-link">PlayOff</a>
             <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
             <a href="pravidla.html" class="nav-link">Pravidla</a>
             <a href="archiv.html" class="nav-link active">Turnaje</a>
-            <div class="admin-controls">
-                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
-            </div>
         </div>
-    </nav>
-
+        <div class="admin-controls">
+            <a id="save-btn" class="nav-link" style="display:none; color:#28a745;">ULOŽIT</a>
+            <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d;">ODHLÁSIT</a>
+        </div>
+    </div></nav>
     <div class="page">
-        <h1 style="text-align:center; color:var(--accent-color);">SEZNAM TURNAJŮ</h1>
-        <button id="add-btn" class="card" style="width:100%; cursor:pointer; font-weight:bold; display:none;">+ VYTVOŘIT NOVÝ TURNAJ</button>
-        <div id="seasons-container"></div>
-        
-        <div id="admin-registrations" style="display:none; margin-top:50px; border-top:1px solid #333; padding-top:30px;">
-            <h2 style="color:#28a745">ČEKAJÍCÍ PŘIHLÁŠKY</h2>
-            <div id="registrations-container"></div>
-        </div>
+        <h1 style="text-align:center; margin-bottom:40px;">HISTORIE TURNAJŮ</h1>
+        <button id="add-btn" style="display:none; width:100%; padding:15px; border-radius:12px; background:var(--accent); color:white; border:none; font-weight:bold; margin-bottom:30px;">+ NOVÝ TURNAJ (ADMIN)</button>
+        <div id="container"></div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
-        import { getFirestore, doc, onSnapshot, setDoc, collection, query, where, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
 
-        let isAdmin = false;
-        let seasonsData = {};
-
-        document.getElementById('google-login-btn').onclick = () => signInWithPopup(auth, provider);
+        let isAdmin = false; let seasons = {};
 
         onAuthStateChanged(auth, user => {
             isAdmin = user && user.providerData.some(p => p.providerId === 'password');
-            if(isAdmin) {
-                document.getElementById('save-btn').style.display='block';
-                document.getElementById('logout-btn').style.display='block';
-                document.getElementById('add-btn').style.display='block';
-                document.getElementById('admin-registrations').style.display='block';
-            } else if(user) {
-                document.getElementById('google-login-btn').style.display='none';
-                document.getElementById('user-area').style.display='flex';
-                document.getElementById('logout-btn').style.display='block';
+            if(isAdmin) { 
+                document.getElementById('save-btn').style.display='block'; 
+                document.getElementById('logout-btn').style.display='block'; 
+                document.getElementById('add-btn').style.display='block'; 
             }
-            renderSeasons();
+            render();
         });
 
-        onSnapshot(doc(db, "tournament", "archive_list"), d => {
-            if(d.exists()) { seasonsData = d.data(); renderSeasons(); }
-        });
+        onSnapshot(doc(db, "tournament", "archive_list"), d => { if(d.exists()) { seasons = d.data(); render(); } });
 
-        function renderSeasons() {
-            const container = document.getElementById('seasons-container');
-            container.innerHTML = "";
-            Object.keys(seasonsData).sort().reverse().forEach(id => {
-                const s = seasonsData[id];
-                const div = document.createElement('div');
-                div.className = "card";
-                div.innerHTML = `
-                    <div style="display:flex; justify-content:space-between;">
-                        <h2 style="margin:0">${s.title}</h2>
-                        <span style="color:${s.active ? '#28a745':'#777'}">${s.active ? '● AKTIVNÍ' : 'ARCHIV'}</span>
-                    </div>
-                    <p style="color:#aaa">${s.desc}</p>
-                    <div class="admin-edit" id="edit_${id}" style="${isAdmin ? 'display:block' : 'display:none'}">
-                        <input id="in_t_${id}" value="${s.title}" placeholder="Název">
-                        <textarea id="in_d_${id}" placeholder="Popis">${s.desc}</textarea>
-                        <button onclick="window.toggleAct('${id}')" style="background:${s.active ? '#444' : '#28a745'}; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">
-                            ${s.active ? 'DEAKTIVOVAT' : 'NASTAVIT JAKO AKTIVNÍ'}
-                        </button>
-                        <button onclick="window.delT('${id}')" style="background:#ff4d4d; color:white; border:none; padding:5px 10px; border-radius:4px; cursor:pointer; margin-left:10px;">SMAZAT</button>
-                    </div>
+        function render() {
+            const cont = document.getElementById('container'); cont.innerHTML = "";
+            Object.keys(seasons).sort().reverse().forEach(id => {
+                const s = seasons[id]; const card = document.createElement('div'); card.className = "card";
+                card.innerHTML = `
+                    <div class="status-pill ${s.active ? 'active-pill':''}">${s.active ? 'AKTIVNÍ':'ARCHIV'}</div>
+                    <h2 style="margin:0">${s.title}</h2>
+                    <p style="color:#777">${s.desc}</p>
+                    ${isAdmin ? `
+                        <input id="t_${id}" value="${s.title}">
+                        <textarea id="d_${id}">${s.desc}</textarea>
+                        <button onclick="window.act('${id}')" style="margin-top:10px;">AKTIVOVAT</button>
+                        <button onclick="window.del('${id}')" style="color:red">SMAZAT</button>
+                    `:''}
                 `;
-                container.appendChild(div);
+                cont.appendChild(card);
             });
         }
 
-        window.toggleAct = async (id) => {
-            const currentStatus = seasonsData[id].active;
-            Object.keys(seasonsData).forEach(k => seasonsData[k].active = false);
-            seasonsData[id].active = !currentStatus;
-            await setDoc(doc(db, "tournament", "archive_list"), seasonsData);
-        };
-
-        window.delT = async (id) => { if(confirm("Opravdu smazat?")) { delete seasonsData[id]; await setDoc(doc(db, "tournament", "archive_list"), seasonsData); } };
-
-        document.getElementById('save-btn').onclick = async () => {
-            Object.keys(seasonsData).forEach(id => {
-                if(document.getElementById(`in_t_${id}`)) {
-                    seasonsData[id].title = document.getElementById(`in_t_${id}`).value;
-                    seasonsData[id].desc = document.getElementById(`in_d_${id}`).value;
-                }
+        window.act = id => { Object.keys(seasons).forEach(k => seasons[k].active = false); seasons[id].active = true; save(); };
+        window.del = id => { if(confirm("Smazat?")) { delete seasons[id]; save(); } };
+        async function save() { await setDoc(doc(db, "tournament", "archive_list"), seasons); }
+        document.getElementById('save-btn').onclick = () => {
+            Object.keys(seasons).forEach(id => {
+                seasons[id].title = document.getElementById(`t_${id}`).value;
+                seasons[id].desc = document.getElementById(`d_${id}`).value;
             });
-            await setDoc(doc(db, "tournament", "archive_list"), seasonsData);
-            alert("Uloženo!");
+            save(); alert("Uloženo");
         };
-
-        document.getElementById('add-btn').onclick = () => {
-            const newId = "t" + Date.now();
-            seasonsData[newId] = { title: "Nový Turnaj", desc: "Zde upravte popis...", active: false };
-            renderSeasons();
-        };
-
+        document.getElementById('add-btn').onclick = () => { seasons[Date.now()] = {title:"Nový", desc:"...", active:false}; render(); };
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
