@@ -5,133 +5,96 @@
     <title>PlayOff - LIGHTSMC.EU</title>
     <link rel="icon" type="image/jpeg" href="logo.jpeg">
     <style>
-        :root { --bg-color: #0a0a0a; --accent-color: #007bff; --card-bg: #161616; --nav-bg: rgba(10, 10, 10, 0.95); }
-        body { font-family: 'Segoe UI', sans-serif; background: var(--bg-color); color: white; margin: 0; display: flex; flex-direction: column; align-items: center; min-height: 100vh; background-image: radial-gradient(circle at 50% -20%, #002b55, #0a0a0a); width: 100%; }
-        
-        /* Sjednocená navigace */
-        nav { background: var(--nav-bg); width: 100%; display: flex; justify-content: center; border-bottom: 1px solid rgba(0, 123, 255, 0.2); position: sticky; top: 0; z-index: 1000; backdrop-filter: blur(15px); width: 100%; }
-        .nav-container { display: flex; max-width: 1200px; width: 100%; justify-content: center; align-items: center; position: relative; padding: 0 20px; height: 70px; }
-        .nav-link { color: #fff; text-decoration: none; padding: 10px 15px; font-weight: 600; text-transform: uppercase; font-size: 0.75em; transition: 0.3s; opacity: 0.7; letter-spacing: 1px; }
-        .nav-link.active { opacity: 1; color: var(--accent-color); }
-        .user-controls { position: absolute; left: 20px; display: flex; align-items: center; gap: 10px; }
-        .admin-controls { position: absolute; right: 20px; display: flex; }
-        #google-login-btn { background: #fff; color: #000; padding: 8px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.7em; }
-
-        /* Styl pavouka */
-        .bracket-container { display: flex; justify-content: center; align-items: center; gap: 50px; margin-top: 50px; overflow-x: auto; width: 100%; padding-bottom: 50px; }
+        :root { --bg: #05070a; --accent: #007bff; --glass: rgba(255, 255, 255, 0.03); --glass-border: rgba(255, 255, 255, 0.07); }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: white; margin: 0; background-image: radial-gradient(circle at 50% -20%, #001f3f, var(--bg)); }
+        nav { background: rgba(5,7,10,0.8); backdrop-filter: blur(20px); border-bottom: 1px solid var(--glass-border); height: 80px; display: flex; justify-content: center; position: sticky; top: 0; z-index: 1000; }
+        .nav-container { display: flex; width: 100%; max-width: 1200px; align-items: center; justify-content: center; position: relative; }
+        .nav-link { color: rgba(255,255,255,0.6); text-decoration: none; padding: 10px 18px; font-weight: 600; font-size: 0.85rem; text-transform: uppercase; }
+        .nav-link.active { color: white; border-bottom: 2px solid var(--accent); }
+        .page { width: 100%; max-width: 1200px; margin: auto; padding: 60px 20px; text-align: center; }
+        .bracket { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 50px; overflow-x: auto; padding: 40px 0; }
         .column { display: flex; flex-direction: column; justify-content: space-around; height: 500px; }
-        .match-box { background: var(--card-bg); border: 1px solid #222; width: 220px; border-radius: 8px; position: relative; }
-        .match-box::before { content: ""; position: absolute; right: -50px; top: 50%; width: 50px; height: 2px; background: #333; z-index: -1; }
-        .column:last-child .match-box::before { display: none; }
-        
-        input { background: transparent; border: none; color: white; padding: 10px; width: 100%; font-size: 0.85em; outline: none; box-sizing: border-box; }
-        input[type="number"] { width: 40px; text-align: center; color: var(--accent-color); border-left: 1px solid #222; font-weight: bold; }
-        .phase-label { position: absolute; top: -25px; left: 0; font-size: 10px; color: var(--accent-color); text-transform: uppercase; font-weight: bold; }
+        .match-card { background: var(--glass); border: 1px solid var(--glass-border); width: 240px; border-radius: 16px; padding: 10px; position: relative; }
+        .match-card::after { content: ""; position: absolute; right: -40px; top: 50%; width: 40px; height: 1px; background: var(--glass-border); z-index: -1; }
+        .column:last-child .match-card::after { display: none; }
+        input { background: transparent; border: none; color: white; padding: 10px; width: 100%; font-size: 0.8rem; outline: none; }
+        input[type="number"] { width: 40px; text-align: center; color: var(--accent); border-left: 1px solid var(--glass-border); font-weight: 800; }
+        .admin-zone { position: absolute; right: 20px; }
     </style>
 </head>
 <body>
     <nav>
         <div class="nav-container">
-            <div class="user-controls">
-                <div id="google-login-btn">PŘIHLÁSIT GOOGLE</div>
-                <div id="user-area" style="display:none; gap:10px;"><a href="profil.html" class="nav-link">Profil</a><a href="tym.html" class="nav-link">Tým</a></div>
+            <div class="nav-links">
+                <a href="index.html" class="nav-link">Domů</a>
+                <a href="playoff.html" class="nav-link active">PlayOff</a>
+                <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
+                <a href="pravidla.html" class="nav-link">Pravidla</a>
+                <a href="archiv.html" class="nav-link">Turnaje</a>
             </div>
-            <a href="index.html" class="nav-link">Domů</a>
-            <a href="playoff.html" class="nav-link active">PlayOff</a>
-            <a href="kvalifikace.html" class="nav-link">Kvalifikace</a>
-            <a href="pravidla.html" class="nav-link">Pravidla</a>
-            <a href="archiv.html" class="nav-link">Turnaje</a>
-            <div class="admin-controls">
-                <a id="save-btn" class="nav-link" style="display:none; color:#28a745">ULOŽIT</a>
-                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d">ODHLÁSIT</a>
+            <div class="admin-zone">
+                <a id="save-btn" class="nav-link" style="display:none; color:#28a745;">ULOŽIT</a>
+                <a id="logout-btn" class="nav-link" style="display:none; color:#ff4d4d;">ODHLÁSIT</a>
             </div>
         </div>
     </nav>
-
-    <div class="page" style="width:100%; max-width:1200px; padding:40px;">
-        <h1 id="title-text" style="text-align:center; letter-spacing: 5px;">PLAYOFF</h1>
-        <div id="bracket-content">
-            <p style="text-align:center; color:#555;">Načítám data...</p>
+    <div class="page">
+        <h1 id="title-text" style="letter-spacing: 5px;">PLAYOFF</h1>
+        <div id="bracket-area">
+            <p style="color:#555; margin-top:100px;">PlayOff bude dostupné po skončení kvalifikace.</p>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-app.js";
         import { getFirestore, doc, onSnapshot, setDoc } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-firestore.js";
-        import { getAuth, onAuthStateChanged, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
+        import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/12.7.0/firebase-auth.js";
         
         const firebaseConfig = { apiKey: "AIzaSyBwygFWO20kcMtOVuNT9hpfZPWTfGxNz_U", authDomain: "cspro-web.firebaseapp.com", projectId: "cspro-web", storageBucket: "cspro-web.firebasestorage.app", appId: "1:412820092666:web:cf2f3e419fd9b90b35bb43" };
         const app = initializeApp(firebaseConfig); const db = getFirestore(app); const auth = getAuth(app);
-        const provider = new GoogleAuthProvider();
-
-        let activeId = null;
-        let isAdmin = false;
-        let localChanges = {};
-
-        document.getElementById('google-login-btn').onclick = () => signInWithPopup(auth, provider);
+        
+        let activeId = null; let isAdmin = false; let localChanges = {};
 
         onAuthStateChanged(auth, user => {
             isAdmin = user && user.providerData.some(p => p.providerId === 'password');
-            if(isAdmin) { 
-                document.getElementById('save-btn').style.display='block'; 
-                document.getElementById('logout-btn').style.display='block'; 
-            } else if(user) { 
-                document.getElementById('google-login-btn').style.display='none'; 
-                document.getElementById('user-area').style.display='flex'; 
-                document.getElementById('logout-btn').style.display='block'; 
-            }
+            if(isAdmin) { document.getElementById('save-btn').style.display='block'; document.getElementById('logout-btn').style.display='block'; }
+            renderBracket();
         });
 
         onSnapshot(doc(db, "tournament", "archive_list"), d => {
             if(d.exists()) {
-                const data = d.data();
-                activeId = Object.keys(data).find(k => data[k].active === true);
-                if(activeId) {
-                    document.getElementById('title-text').innerText = "PLAYOFF: " + data[activeId].title;
-                    buildBracket();
-                    loadBracketData();
-                } else {
-                    document.getElementById('bracket-content').innerHTML = '<p style="text-align:center; color:#555; margin-top:50px;">Momentálně neprobíhá žádné PlayOff.</p>';
-                }
+                activeId = Object.keys(d.data()).find(k => d.data()[k].active === true);
+                if(activeId) renderBracket();
             }
         });
 
-        function buildBracket() {
-            document.getElementById('bracket-content').innerHTML = `
-                <div class="bracket-container">
-                    <div class="column">
-                        ${renderMatch('q1', 'Čtvrtfinále 1')} ${renderMatch('q2', 'Čtvrtfinále 2')}
-                    </div>
-                    <div class="column">
-                        ${renderMatch('s1', 'Semifinále')}
-                    </div>
-                    <div class="column">
-                        <div class="match-box" style="border:2px solid var(--accent-color); scale:1.1;">
-                            <span class="phase-label">Grand Finále</span>
-                            <div style="display:flex; border-bottom:1px solid #222"><input id="f_t1" placeholder="Finalista 1" readonly><input id="f_s1" type="number" readonly></div>
-                            <div style="display:flex"><input id="f_t2" placeholder="Finalista 2" readonly><input id="f_s2" type="number" readonly></div>
-                        </div>
-                    </div>
+        function renderBracket() {
+            if(!activeId) return;
+            document.getElementById('bracket-area').innerHTML = `
+                <div class="bracket">
+                    <div class="column">${renderMatch('q1')}${renderMatch('q2')}</div>
+                    <div class="column">${renderMatch('s1')}</div>
+                    <div class="column"><div class="match-card" style="border:1px solid var(--accent); scale:1.1">
+                        <div style="display:flex; border-bottom:1px solid var(--glass-border)"><input id="f_t1" placeholder="FINÁLE A" readonly><input id="f_s1" type="number" readonly></div>
+                        <div style="display:flex"><input id="f_t2" placeholder="FINÁLE B" readonly><input id="f_s2" type="number" readonly></div>
+                    </div></div>
                 </div>`;
-            
             if(isAdmin) {
                 document.querySelectorAll('input').forEach(el => {
-                    el.readOnly = false;
-                    el.oninput = e => localChanges[e.target.id] = e.target.value;
+                    el.readOnly = false; el.oninput = e => localChanges[e.target.id] = e.target.value;
                 });
             }
+            loadData();
         }
 
-        function renderMatch(id, label) {
-            return `
-                <div class="match-box">
-                    <span class="phase-label">${label}</span>
-                    <div style="display:flex; border-bottom:1px solid #222"><input id="${id}_t1" placeholder="Tým A" readonly><input id="${id}_s1" type="number" readonly></div>
-                    <div style="display:flex"><input id="${id}_t2" placeholder="Tým B" readonly><input id="${id}_s2" type="number" readonly></div>
-                </div>`;
+        function renderMatch(id) {
+            return `<div class="match-card" style="margin:20px 0">
+                <div style="display:flex; border-bottom:1px solid var(--glass-border)"><input id="${id}_t1" placeholder="Tým" readonly><input id="${id}_s1" type="number" readonly></div>
+                <div style="display:flex"><input id="${id}_t2" placeholder="Tým" readonly><input id="${id}_s2" type="number" readonly></div>
+            </div>`;
         }
 
-        function loadBracketData() {
+        function loadData() {
             onSnapshot(doc(db, "tournament", "playoff_" + activeId), d => {
                 if(d.exists()) {
                     const data = d.data();
@@ -145,9 +108,8 @@
 
         document.getElementById('save-btn').onclick = async () => {
             await setDoc(doc(db, "tournament", "playoff_" + activeId), localChanges, { merge: true });
-            alert("Pavouk aktualizován!");
+            alert("Uloženo!");
         };
-
         document.getElementById('logout-btn').onclick = () => signOut(auth).then(() => location.reload());
     </script>
 </body>
